@@ -44,7 +44,9 @@ public class MiniApp {
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
+                try (FileInputStream fis = new FileInputStream(configFile)) {
+                    props.load(fis);
+                }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
             } else {
                 System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
@@ -76,14 +78,14 @@ public class MiniApp {
     private void startServer() {
         try {
             // BLOCKER: Hardcoded port number
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
-            System.out.println("Server started on port: " + SERVER_PORT);
-            System.out.println("Server ready to accept connections...");
-            
-            // Simulate server running
-            Thread.sleep(1000);
-            serverSocket.close();
-            
+            try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
+                System.out.println("Server started on port: " + SERVER_PORT);
+                System.out.println("Server ready to accept connections...");
+
+                // Simulate server running
+                Thread.sleep(1000);
+            }
+
         } catch (Exception e) {
             System.err.println("Failed to start server: " + e.getMessage());
         }
