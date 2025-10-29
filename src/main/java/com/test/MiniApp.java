@@ -1,22 +1,23 @@
 package com.test;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
- * Mini Java Application with intentional containerization blockers for testing
+ * Mini Java Application - Cloud Ready Version
  */
 public class MiniApp {
-    
-    // BLOCKER: Hardcoded port number
-    private static final int SERVER_PORT = 8080;
-    
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+
+    private static final Logger logger = Logger.getLogger(MiniApp.class.getName());
+
+    // Cloud-ready: Use environment variables for configuration
+    private static final int SERVER_PORT = Integer.parseInt(System.getenv().getOrDefault("SERVER_PORT", "8080"));
+
+    // Cloud-ready: Use classpath resources instead of absolute file paths
+    private static final String CONFIG_FILE_PATH = System.getenv().getOrDefault("CONFIG_FILE_PATH", "application.properties");
     
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
@@ -40,52 +41,57 @@ public class MiniApp {
     
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
-            File configFile = new File(CONFIG_FILE_PATH);
-            if (configFile.exists()) {
-                Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
-                System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
+            // Cloud-ready: Use classpath resources or environment variables
+            Properties props = new Properties();
+            InputStream configStream = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE_PATH);
+
+            if (configStream != null) {
+                props.load(configStream);
+                logger.info("Configuration loaded from classpath: " + CONFIG_FILE_PATH);
+                configStream.close();
             } else {
-                System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
+                logger.warning("Configuration file not found in classpath: " + CONFIG_FILE_PATH + ", using defaults");
             }
         } catch (IOException e) {
-            System.err.println("Failed to load configuration: " + e.getMessage());
+            logger.severe("Failed to load configuration: " + e.getMessage());
         }
     }
     
     private void initializeLogging() {
-        try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
-            if (!logDir.exists()) {
-                logDir.mkdirs();
-            }
-            
-            File logFile = new File(LOG_FILE_PATH);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
-            
-            System.out.println("Logging initialized at: " + LOG_FILE_PATH);
-        } catch (IOException e) {
-            System.err.println("Failed to initialize logging: " + e.getMessage());
-        }
+        // Cloud-ready: Use structured logging to stdout for cloud environments
+        // Cloud platforms handle log aggregation and storage automatically
+        String logLevel = System.getenv().getOrDefault("LOG_LEVEL", "INFO");
+        System.setProperty("java.util.logging.SimpleFormatter.format",
+            "{\"timestamp\":\"%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS\",\"level\":\"%4$s\",\"logger\":\"%3$s\",\"message\":\"%5$s\"}%n");
+
+        logger.info("Structured logging initialized with level: " + logLevel);
     }
     
     private void startServer() {
+        ServerSocket serverSocket = null;
         try {
-            // BLOCKER: Hardcoded port number
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
-            System.out.println("Server started on port: " + SERVER_PORT);
-            System.out.println("Server ready to accept connections...");
-            
+            // Cloud-ready: Use environment variable for port configuration
+            serverSocket = new ServerSocket(SERVER_PORT);
+            logger.info("Server started on port: " + SERVER_PORT);
+            logger.info("Server ready to accept connections...");
+
+            // Add connection timeout for cloud environments
+            serverSocket.setSoTimeout(Integer.parseInt(System.getenv().getOrDefault("SERVER_TIMEOUT", "30000")));
+
             // Simulate server running
             Thread.sleep(1000);
-            serverSocket.close();
-            
+
         } catch (Exception e) {
-            System.err.println("Failed to start server: " + e.getMessage());
+            logger.severe("Failed to start server: " + e.getMessage());
+        } finally {
+            // Cloud-ready: Ensure resources are properly cleaned up
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    logger.warning("Failed to close server socket: " + e.getMessage());
+                }
+            }
         }
     }
 }
