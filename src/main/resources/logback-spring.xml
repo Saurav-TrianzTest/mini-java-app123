@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Cloud-ready logging configuration -->
+
+    <!-- Console appender for cloud environments (stdout) -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <version/>
+                <logLevel/>
+                <loggerName/>
+                <mdc/>
+                <arguments/>
+                <message/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Fallback console appender with simple pattern (if JSON encoder not available) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Async appender for better performance in cloud environments -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="CONSOLE"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
+
+    <!-- Root logger configuration -->
+    <root level="${LOGGING_LEVEL:-INFO}">
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+    <!-- Application-specific logger -->
+    <logger name="com.test" level="${APP_LOGGING_LEVEL:-DEBUG}" additivity="false">
+        <appender-ref ref="ASYNC"/>
+    </logger>
+
+    <!-- Spring Boot specific loggers -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+</configuration>
