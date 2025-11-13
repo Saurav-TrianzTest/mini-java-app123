@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build: .
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport
+      - TZ=UTC
+      - SPRING_PROFILES_ACTIVE=docker
+      # Database Configuration (External Service)
+      - DB_HOST=${DB_HOST:-mysql-server}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-password123}
+      - DB_POOL_MAX_CONNECTIONS=${DB_POOL_MAX_CONNECTIONS:-20}
+      - DB_POOL_TIMEOUT=${DB_POOL_TIMEOUT:-5000}
+      # Redis Configuration (External Service)
+      - REDIS_HOST=${REDIS_HOST:-redis-server}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_secret_123}
+      # External API Configuration
+      - EXTERNAL_API_KEY=${EXTERNAL_API_KEY:-api_key_placeholder}
+      - EXTERNAL_API_URL=${EXTERNAL_API_URL:-http://api.example.com:8080/v1}
+      # Payment Service Configuration
+      - PAYMENT_SERVICE_USERNAME=${PAYMENT_SERVICE_USERNAME:-payment_user}
+      - PAYMENT_SERVICE_PASSWORD=${PAYMENT_SERVICE_PASSWORD:-payment_secret_456}
+      # Security Configuration
+      - JWT_SECRET=${JWT_SECRET:-jwt_secret_key_changeme}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      # Application Directories
+      - APP_CONFIG_DIR=/app/config
+      - APP_LOG_DIR=/app/logs
+      - APP_TEMP_DIR=/app/temp
+      - APP_UPLOAD_DIR=/app/uploads
+      - CONFIG_FILE_PATH=/app/config/app.properties
+      - LOG_FILE_PATH=/app/logs/mini-app.log
+      - LOG_DIR=/app/logs
+      # Monitoring Configuration
+      - MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://monitoring.company.com:9090/metrics}
+      # Messaging Configuration
+      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq.company.com}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-rabbitmq_user}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-rabbitmq_secret}
+      # Application Environment
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+      - ./temp:/app/temp
+      - ./uploads:/app/uploads
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z localhost 8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  app-logs:
+  app-config:
+  app-temp:
+  app-uploads:

@@ -1,0 +1,63 @@
+{
+  "family": "mini-java-app-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "{{IMAGE_URI}}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {"name": "SERVER_PORT", "value": "8080"},
+        {"name": "SERVER_HOST", "value": "0.0.0.0"},
+        {"name": "JAVA_OPTS", "value": "-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"},
+        {"name": "TZ", "value": "UTC"},
+        {"name": "SPRING_PROFILES_ACTIVE", "value": "docker"},
+        {"name": "APP_CONFIG_DIR", "value": "/app/config"},
+        {"name": "APP_LOG_DIR", "value": "/app/logs"},
+        {"name": "APP_TEMP_DIR", "value": "/app/temp"},
+        {"name": "APP_UPLOAD_DIR", "value": "/app/uploads"},
+        {"name": "CONFIG_FILE_PATH", "value": "/app/config/app.properties"},
+        {"name": "LOG_FILE_PATH", "value": "/app/logs/mini-app.log"},
+        {"name": "LOG_DIR", "value": "/app/logs"},
+        {"name": "ENVIRONMENT", "value": "production"}
+      ],
+      "secrets": [
+        {"name": "DB_HOST", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/db-host"},
+        {"name": "DB_USERNAME", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/db-username"},
+        {"name": "DB_PASSWORD", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/db-password"},
+        {"name": "REDIS_HOST", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/redis-host"},
+        {"name": "REDIS_PASSWORD", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/redis-password"},
+        {"name": "EXTERNAL_API_KEY", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/external-api-key"},
+        {"name": "JWT_SECRET", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/jwt-secret"},
+        {"name": "ADMIN_USERNAME", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/admin-username"},
+        {"name": "ADMIN_PASSWORD", "valueFrom": "arn:aws:ssm:{{AWS_REGION}}:{{ACCOUNT_ID}}:parameter/mini-java-app/admin-password"}
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "{{AWS_REGION}}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "nc -z localhost 8080 || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 90
+      }
+    }
+  ]
+}

@@ -11,12 +11,12 @@ import java.util.Properties;
  */
 public class MiniApp {
     
-    // BLOCKER: Hardcoded port number
-    private static final int SERVER_PORT = 8080;
+    // BLOCKER: Hardcoded port number - FIXED with environment variable
+    private static final int SERVER_PORT = Integer.parseInt(System.getenv().getOrDefault("SERVER_PORT", "8080"));
     
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+    // BLOCKER: Hardcoded absolute file path - FIXED with environment variables
+    private static final String CONFIG_FILE_PATH = System.getenv().getOrDefault("CONFIG_FILE_PATH", "/opt/app/config/app.properties");
+    private static final String LOG_FILE_PATH = System.getenv().getOrDefault("LOG_FILE_PATH", "/var/log/mini-app.log");
     
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
@@ -56,8 +56,8 @@ public class MiniApp {
     
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
+            // BLOCKER: Hardcoded absolute path for log file - FIXED with environment variable
+            File logDir = new File(System.getenv().getOrDefault("LOG_DIR", "/var/log"));
             if (!logDir.exists()) {
                 logDir.mkdirs();
             }
