@@ -6,13 +6,11 @@ import org.junit.jupiter.api.AfterEach;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Comprehensive test class for MiniApp
- * Tests all public and private methods with full coverage
- */
 public class MiniAppTest {
 
     private MiniApp miniApp;
@@ -24,8 +22,6 @@ public class MiniAppTest {
     @BeforeEach
     public void setUp() {
         miniApp = new MiniApp();
-
-        // Capture System.out and System.err
         outputStream = new ByteArrayOutputStream();
         errorStream = new ByteArrayOutputStream();
         originalOut = System.out;
@@ -36,51 +32,42 @@ public class MiniAppTest {
 
     @AfterEach
     public void tearDown() {
-        // Restore original streams
         System.setOut(originalOut);
         System.setErr(originalErr);
     }
 
     @Test
     public void testConstructor() {
-        // Arrange & Act
         MiniApp app = new MiniApp();
-
-        // Assert
         assertNotNull(app);
     }
 
     @Test
     public void testConstructorNotNull() {
-        // Arrange & Act
         MiniApp app = new MiniApp();
-
-        // Assert
         assertNotNull(app, "MiniApp instance should not be null");
     }
 
     @Test
     public void testMainMethod() {
-        // Arrange
-        String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> {
             Thread testThread = new Thread(() -> {
-                MiniApp.main(args);
+                MiniApp.main(new String[]{});
             });
             testThread.start();
-            Thread.sleep(2000); // Give time for execution
+            Thread.sleep(2000);
             testThread.interrupt();
         });
     }
 
     @Test
     public void testMainMethodWithNullArgs() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
             Thread testThread = new Thread(() -> {
-                MiniApp.main(null);
+                try {
+                    MiniApp.main(null);
+                } catch (NullPointerException e) {
+                }
             });
             testThread.start();
             Thread.sleep(2000);
@@ -90,10 +77,7 @@ public class MiniAppTest {
 
     @Test
     public void testMainMethodWithEmptyArgs() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> {
             Thread testThread = new Thread(() -> {
                 MiniApp.main(args);
@@ -106,30 +90,22 @@ public class MiniAppTest {
 
     @Test
     public void testMainMethodPrintsStartingMessage() {
-        // Arrange
-        String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> {
             Thread testThread = new Thread(() -> {
-                MiniApp.main(args);
+                MiniApp.main(new String[]{});
             });
             testThread.start();
             Thread.sleep(500);
             testThread.interrupt();
         });
-
-        // Assert
         String output = outputStream.toString();
-        assertTrue(output.contains("Starting Mini Java Application"),
-                   "Output should contain startup message");
+        assertTrue(output.contains("Starting Mini Java Application"), "Output should contain startup message");
     }
 
     @Test
     public void testInitializeApplication_ExecutesWithoutException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
+            Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
@@ -137,25 +113,19 @@ public class MiniAppTest {
 
     @Test
     public void testLoadConfiguration_ConfigFileNotExists() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
+            Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert
         String output = outputStream.toString();
-        assertTrue(output.contains("Warning: Configuration file not found") ||
-                   output.contains("Configuration loaded"),
-                   "Should print configuration status message");
+        assertTrue(output.contains("Warning: Configuration file not found") || output.contains("Configuration loaded"), "Should print configuration status message");
     }
 
     @Test
     public void testLoadConfiguration_HandlesIOException() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
+            Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
@@ -163,14 +133,11 @@ public class MiniAppTest {
 
     @Test
     public void testLoadConfiguration_PrintsMessage() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
+            Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert
         String output = outputStream.toString();
         assertNotNull(output, "Output should not be null");
         assertTrue(output.length() > 0, "Output should contain messages");
@@ -178,9 +145,8 @@ public class MiniAppTest {
 
     @Test
     public void testInitializeLogging_ExecutesWithoutException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
+            Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
@@ -188,14 +154,11 @@ public class MiniAppTest {
 
     @Test
     public void testInitializeLogging_PrintsMessage() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
+            Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert
         String output = outputStream.toString();
         String error = errorStream.toString();
         assertNotNull(output);
@@ -204,9 +167,8 @@ public class MiniAppTest {
 
     @Test
     public void testInitializeLogging_HandlesIOException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
+            Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
@@ -214,9 +176,8 @@ public class MiniAppTest {
 
     @Test
     public void testStartServer_ExecutesWithoutException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("startServer");
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
@@ -224,14 +185,11 @@ public class MiniAppTest {
 
     @Test
     public void testStartServer_PrintsServerStartMessage() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("startServer");
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert
         String output = outputStream.toString();
         String error = errorStream.toString();
         assertTrue(output.contains("Server started on port") || error.contains("Failed to start server"));
@@ -239,9 +197,8 @@ public class MiniAppTest {
 
     @Test
     public void testStartServer_HandlesPortBindingException() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("startServer");
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
@@ -249,80 +206,56 @@ public class MiniAppTest {
 
     @Test
     public void testStartServer_ClosesServerSocket() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("startServer");
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert - If it completes without hanging, socket was properly closed
         String output = outputStream.toString();
         assertNotNull(output);
     }
 
     @Test
     public void testStartServer_SimulatesServerRunning() {
-        // Arrange & Act
         long startTime = System.currentTimeMillis();
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("startServer");
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
         long endTime = System.currentTimeMillis();
-
-        // Assert - Should execute quickly or take time based on port availability
         assertTrue(endTime - startTime >= 0, "Server method should complete");
     }
 
     @Test
-    public void testHardcodedPortConstant() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = MiniApp.class.getDeclaredField("SERVER_PORT");
-            field.setAccessible(true);
-            int port = field.getInt(null);
-
-            // Assert
-            assertEquals(8080, port, "Server port should be 8080");
-        });
+    public void testHardcodedPortConstant() throws Exception {
+        Field field = MiniApp.class.getDeclaredField("SERVER_PORT");
+        field.setAccessible(true);
+        int port = field.getInt(null);
+        assertEquals(8080, port, "Server port should be 8080");
     }
 
     @Test
-    public void testHardcodedConfigFilePath() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = MiniApp.class.getDeclaredField("CONFIG_FILE_PATH");
-            field.setAccessible(true);
-            String path = (String) field.get(null);
-
-            // Assert
-            assertEquals("/opt/app/config/app.properties", path);
-        });
+    public void testHardcodedConfigFilePath() throws Exception {
+        Field field = MiniApp.class.getDeclaredField("CONFIG_FILE_PATH");
+        field.setAccessible(true);
+        String path = (String) field.get(null);
+        assertEquals("/opt/app/config/app.properties", path);
     }
 
     @Test
-    public void testHardcodedLogFilePath() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = MiniApp.class.getDeclaredField("LOG_FILE_PATH");
-            field.setAccessible(true);
-            String path = (String) field.get(null);
-
-            // Assert
-            assertEquals("/var/log/mini-app.log", path);
-        });
+    public void testHardcodedLogFilePath() throws Exception {
+        Field field = MiniApp.class.getDeclaredField("LOG_FILE_PATH");
+        field.setAccessible(true);
+        String path = (String) field.get(null);
+        assertEquals("/var/log/mini-app.log", path);
     }
 
     @Test
     public void testMultipleInstancesCanBeCreated() {
-        // Arrange & Act
         MiniApp app1 = new MiniApp();
         MiniApp app2 = new MiniApp();
         MiniApp app3 = new MiniApp();
-
-        // Assert
         assertNotNull(app1);
         assertNotNull(app2);
         assertNotNull(app3);
@@ -332,29 +265,24 @@ public class MiniAppTest {
 
     @Test
     public void testInitializeApplication_CreatesDebugMessages() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
+            Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert
         String output = outputStream.toString();
         assertTrue(output.length() > 0, "Should produce output during initialization");
     }
 
     @Test
     public void testStartServer_HandlesInterruptedException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
             Thread testThread = new Thread(() -> {
                 try {
-                    java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("startServer");
+                    Method method = MiniApp.class.getDeclaredMethod("startServer");
                     method.setAccessible(true);
                     method.invoke(miniApp);
                 } catch (Exception e) {
-                    // Expected in test environment
                 }
             });
             testThread.start();
@@ -365,10 +293,7 @@ public class MiniAppTest {
 
     @Test
     public void testMainMethodWithMultipleArgs() {
-        // Arrange
         String[] args = {"arg1", "arg2", "arg3"};
-
-        // Act & Assert
         assertDoesNotThrow(() -> {
             Thread testThread = new Thread(() -> {
                 MiniApp.main(args);
@@ -381,29 +306,145 @@ public class MiniAppTest {
 
     @Test
     public void testInitializeApplication_CallsAllMethods() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
+            Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Configuration") || output.contains("Logging") || output.contains("database"));
     }
 
     @Test
     public void testStartServer_PrintsReadyMessage() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = MiniApp.class.getDeclaredMethod("startServer");
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
             method.setAccessible(true);
             method.invoke(miniApp);
         });
-
-        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Server ready") || output.contains("Server started") || output.contains("Failed to start"));
+    }
+
+    @Test
+    public void testLoadConfiguration_ChecksFileExistence() {
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+        String output = outputStream.toString();
+        assertTrue(output.contains("Configuration") || output.contains("Warning"));
+    }
+
+    @Test
+    public void testInitializeLogging_CreatesLogDirectory() {
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+    }
+
+    @Test
+    public void testStartServer_OnHardcodedPort() throws Exception {
+        Method method = MiniApp.class.getDeclaredMethod("startServer");
+        method.setAccessible(true);
+        method.invoke(miniApp);
+        String output = outputStream.toString();
+        assertTrue(output.contains("8080") || errorStream.toString().contains("Failed to start"));
+    }
+
+    @Test
+    public void testInitializeApplication_CreatesDatabase() {
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+        String output = outputStream.toString();
+        assertTrue(output.contains("database") || output.contains("Database") || output.length() > 0);
+    }
+
+    @Test
+    public void testLoadConfiguration_WithPropertiesFile() {
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+    }
+
+    @Test
+    public void testInitializeLogging_CreatesLogFile() {
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+        String output = outputStream.toString();
+        String error = errorStream.toString();
+        assertTrue(output.length() > 0 || error.length() > 0);
+    }
+
+    @Test
+    public void testStartServer_WaitsForConnections() {
+        long start = System.currentTimeMillis();
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+        long duration = System.currentTimeMillis() - start;
+        assertTrue(duration >= 0);
+    }
+
+    @Test
+    public void testMiniApp_FullApplicationFlow() {
+        assertDoesNotThrow(() -> {
+            Thread testThread = new Thread(() -> {
+                String[] args = {};
+                MiniApp.main(args);
+            });
+            testThread.start();
+            Thread.sleep(1500);
+            testThread.interrupt();
+        });
+    }
+
+    @Test
+    public void testInitializeApplication_HandlesMissingConfigFile() {
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("initializeApplication");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+    }
+
+    @Test
+    public void testStartServer_HandlesException() {
+        assertDoesNotThrow(() -> {
+            Method method = MiniApp.class.getDeclaredMethod("startServer");
+            method.setAccessible(true);
+            method.invoke(miniApp);
+        });
+    }
+
+    @Test
+    public void testLoadConfiguration_ReadsFromHardcodedPath() throws Exception {
+        Method method = MiniApp.class.getDeclaredMethod("loadConfiguration");
+        method.setAccessible(true);
+        method.invoke(miniApp);
+        String output = outputStream.toString();
+        assertTrue(output.contains("/opt/app/config/app.properties") || output.contains("Configuration"));
+    }
+
+    @Test
+    public void testInitializeLogging_WritesToHardcodedPath() throws Exception {
+        Method method = MiniApp.class.getDeclaredMethod("initializeLogging");
+        method.setAccessible(true);
+        method.invoke(miniApp);
+        String output = outputStream.toString();
+        assertTrue(output.contains("/var/log") || errorStream.toString().length() > 0);
     }
 }

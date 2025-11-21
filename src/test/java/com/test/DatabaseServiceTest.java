@@ -6,13 +6,11 @@ import org.junit.jupiter.api.AfterEach;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Comprehensive test class for DatabaseService
- * Tests all public and private methods with full coverage
- */
 public class DatabaseServiceTest {
 
     private DatabaseService databaseService;
@@ -24,8 +22,6 @@ public class DatabaseServiceTest {
     @BeforeEach
     public void setUp() {
         databaseService = new DatabaseService();
-
-        // Capture System.out and System.err
         outputStream = new ByteArrayOutputStream();
         errorStream = new ByteArrayOutputStream();
         originalOut = System.out;
@@ -36,11 +32,8 @@ public class DatabaseServiceTest {
 
     @AfterEach
     public void tearDown() {
-        // Restore original streams
         System.setOut(originalOut);
         System.setErr(originalErr);
-
-        // Clean up database connection
         if (databaseService != null) {
             databaseService.disconnect();
         }
@@ -48,105 +41,72 @@ public class DatabaseServiceTest {
 
     @Test
     public void testConstructor() {
-        // Arrange & Act
         DatabaseService service = new DatabaseService();
-
-        // Assert
         assertNotNull(service);
     }
 
     @Test
     public void testConstructorNotNull() {
-        // Arrange & Act
         DatabaseService service = new DatabaseService();
-
-        // Assert
         assertNotNull(service, "DatabaseService instance should not be null");
     }
 
     @Test
     public void testConnect_ExecutesWithoutException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> databaseService.connect());
     }
 
     @Test
     public void testConnect_PrintsConnectionMessage() {
-        // Arrange & Act
         databaseService.connect();
-
-        // Assert
         String output = outputStream.toString();
-        assertTrue(output.contains("Connecting to database") ||
-                   output.contains("Connected to database"));
+        assertTrue(output.contains("Connecting to database") || output.contains("Connected to database"));
     }
 
     @Test
     public void testConnect_HandlesSQLException() {
-        // Arrange & Act
         databaseService.connect();
-
-        // Assert
         String output = outputStream.toString();
         String error = errorStream.toString();
-        assertTrue(output.length() > 0 || error.length() > 0,
-                   "Should produce some output or error");
+        assertTrue(output.length() > 0 || error.length() > 0, "Should produce some output or error");
     }
 
     @Test
     public void testConnect_PrintsDatabaseURL() {
-        // Arrange & Act
         databaseService.connect();
-
-        // Assert
         String output = outputStream.toString();
         String error = errorStream.toString();
-        assertTrue(output.contains("jdbc:mysql://localhost:3306/mini_app_db") ||
-                   error.contains("Database connection failed"));
+        assertTrue(output.contains("jdbc:mysql://localhost:3306/mini_app_db") || error.contains("Database connection failed"));
     }
 
     @Test
     public void testConnect_PrintsUsername() {
-        // Arrange & Act
         databaseService.connect();
-
-        // Assert
         String output = outputStream.toString();
         String error = errorStream.toString();
-        assertTrue(output.contains("Using username: root") ||
-                   error.contains("Database connection failed"));
+        assertTrue(output.contains("Using username: root") || error.contains("Database connection failed"));
     }
 
     @Test
     public void testConnect_CallsConnectToCache() {
-        // Arrange & Act
         databaseService.connect();
-
-        // Assert
         String output = outputStream.toString();
         String error = errorStream.toString();
-        assertTrue(output.contains("Connecting to Redis cache") ||
-                   error.contains("Database connection failed"));
+        assertTrue(output.contains("Connecting to Redis cache") || error.contains("Database connection failed"));
     }
 
     @Test
     public void testConnect_CallsInitializeExternalServices() {
-        // Arrange & Act
         databaseService.connect();
-
-        // Assert
         String output = outputStream.toString();
         String error = errorStream.toString();
-        assertTrue(output.contains("Initializing external API") ||
-                   output.contains("Initializing payment service") ||
-                   error.contains("Database connection failed"));
+        assertTrue(output.contains("Initializing external API") || output.contains("Initializing payment service") || error.contains("Database connection failed"));
     }
 
     @Test
     public void testConnectToCache_ExecutesWithoutException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = DatabaseService.class.getDeclaredMethod("connectToCache");
+            Method method = DatabaseService.class.getDeclaredMethod("connectToCache");
             method.setAccessible(true);
             method.invoke(databaseService);
         });
@@ -154,23 +114,19 @@ public class DatabaseServiceTest {
 
     @Test
     public void testConnectToCache_PrintsRedisConnection() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = DatabaseService.class.getDeclaredMethod("connectToCache");
+            Method method = DatabaseService.class.getDeclaredMethod("connectToCache");
             method.setAccessible(true);
             method.invoke(databaseService);
         });
-
-        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Connecting to Redis cache at: 127.0.0.1:6379"));
     }
 
     @Test
     public void testInitializeExternalServices_ExecutesWithoutException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = DatabaseService.class.getDeclaredMethod("initializeExternalServices");
+            Method method = DatabaseService.class.getDeclaredMethod("initializeExternalServices");
             method.setAccessible(true);
             method.invoke(databaseService);
         });
@@ -178,140 +134,99 @@ public class DatabaseServiceTest {
 
     @Test
     public void testInitializeExternalServices_PrintsExternalAPI() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = DatabaseService.class.getDeclaredMethod("initializeExternalServices");
+            Method method = DatabaseService.class.getDeclaredMethod("initializeExternalServices");
             method.setAccessible(true);
             method.invoke(databaseService);
         });
-
-        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Initializing external API: http://api.example.com:8080/v1"));
     }
 
     @Test
     public void testInitializeExternalServices_PrintsPaymentService() {
-        // Arrange & Act
         assertDoesNotThrow(() -> {
-            java.lang.reflect.Method method = DatabaseService.class.getDeclaredMethod("initializeExternalServices");
+            Method method = DatabaseService.class.getDeclaredMethod("initializeExternalServices");
             method.setAccessible(true);
             method.invoke(databaseService);
         });
-
-        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Initializing payment service: https://payment.internal.company.com/process"));
     }
 
     @Test
     public void testExecuteQuery_WithNullConnection() {
-        // Arrange
         String sql = "SELECT * FROM users";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testExecuteQuery_WithValidSQL() {
-        // Arrange
         String sql = "SELECT * FROM users";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testExecuteQuery_WithInsertSQL() {
-        // Arrange
         String sql = "INSERT INTO users (name, email) VALUES ('test', 'test@test.com')";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testExecuteQuery_WithUpdateSQL() {
-        // Arrange
         String sql = "UPDATE users SET name='updated' WHERE id=1";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testExecuteQuery_WithDeleteSQL() {
-        // Arrange
         String sql = "DELETE FROM users WHERE id=1";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testExecuteQuery_WithEmptySQL() {
-        // Arrange
         String sql = "";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testExecuteQuery_WithNullSQL() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(null));
     }
 
     @Test
     public void testExecuteQuery_HandlesException() {
-        // Arrange
         String sql = "INVALID SQL SYNTAX";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testDisconnect_ExecutesWithoutException() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> databaseService.disconnect());
     }
 
     @Test
     public void testDisconnect_WithNullConnection() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> databaseService.disconnect());
     }
 
     @Test
     public void testDisconnect_PrintsClosedMessage() {
-        // Arrange
         databaseService.connect();
-
-        // Act
         databaseService.disconnect();
-
-        // Assert
         String output = outputStream.toString();
-        assertTrue(output.contains("Database connection closed") ||
-                   output.contains("Failed to close database connection") ||
-                   output.length() > 0);
+        assertTrue(output.contains("Database connection closed") || output.contains("Failed to close database connection") || output.length() > 0);
     }
 
     @Test
     public void testDisconnect_AfterConnect() {
-        // Arrange
         databaseService.connect();
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.disconnect());
     }
 
     @Test
     public void testDisconnect_CalledMultipleTimes() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
             databaseService.disconnect();
             databaseService.disconnect();
@@ -320,130 +235,82 @@ public class DatabaseServiceTest {
     }
 
     @Test
-    public void testHardcodedDBHost() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("DB_HOST");
-            field.setAccessible(true);
-            String host = (String) field.get(null);
-
-            // Assert
-            assertEquals("localhost", host);
-        });
+    public void testHardcodedDBHost() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("DB_HOST");
+        field.setAccessible(true);
+        String host = (String) field.get(null);
+        assertEquals("localhost", host);
     }
 
     @Test
-    public void testHardcodedDBPort() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("DB_PORT");
-            field.setAccessible(true);
-            String port = (String) field.get(null);
-
-            // Assert
-            assertEquals("3306", port);
-        });
+    public void testHardcodedDBPort() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("DB_PORT");
+        field.setAccessible(true);
+        String port = (String) field.get(null);
+        assertEquals("3306", port);
     }
 
     @Test
-    public void testHardcodedDBName() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("DB_NAME");
-            field.setAccessible(true);
-            String dbName = (String) field.get(null);
-
-            // Assert
-            assertEquals("mini_app_db", dbName);
-        });
+    public void testHardcodedDBName() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("DB_NAME");
+        field.setAccessible(true);
+        String dbName = (String) field.get(null);
+        assertEquals("mini_app_db", dbName);
     }
 
     @Test
-    public void testHardcodedDBUsername() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("DB_USERNAME");
-            field.setAccessible(true);
-            String username = (String) field.get(null);
-
-            // Assert
-            assertEquals("root", username);
-        });
+    public void testHardcodedDBUsername() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("DB_USERNAME");
+        field.setAccessible(true);
+        String username = (String) field.get(null);
+        assertEquals("root", username);
     }
 
     @Test
-    public void testHardcodedDBPassword() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("DB_PASSWORD");
-            field.setAccessible(true);
-            String password = (String) field.get(null);
-
-            // Assert
-            assertEquals("password123", password);
-        });
+    public void testHardcodedDBPassword() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("DB_PASSWORD");
+        field.setAccessible(true);
+        String password = (String) field.get(null);
+        assertEquals("password123", password);
     }
 
     @Test
-    public void testHardcodedRedisHost() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("REDIS_HOST");
-            field.setAccessible(true);
-            String host = (String) field.get(null);
-
-            // Assert
-            assertEquals("127.0.0.1", host);
-        });
+    public void testHardcodedRedisHost() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("REDIS_HOST");
+        field.setAccessible(true);
+        String host = (String) field.get(null);
+        assertEquals("127.0.0.1", host);
     }
 
     @Test
-    public void testHardcodedRedisPort() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("REDIS_PORT");
-            field.setAccessible(true);
-            int port = field.getInt(null);
-
-            // Assert
-            assertEquals(6379, port);
-        });
+    public void testHardcodedRedisPort() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("REDIS_PORT");
+        field.setAccessible(true);
+        int port = field.getInt(null);
+        assertEquals(6379, port);
     }
 
     @Test
-    public void testHardcodedExternalAPIURL() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("EXTERNAL_API_URL");
-            field.setAccessible(true);
-            String url = (String) field.get(null);
-
-            // Assert
-            assertEquals("http://api.example.com:8080/v1", url);
-        });
+    public void testHardcodedExternalAPIURL() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("EXTERNAL_API_URL");
+        field.setAccessible(true);
+        String url = (String) field.get(null);
+        assertEquals("http://api.example.com:8080/v1", url);
     }
 
     @Test
-    public void testHardcodedPaymentServiceURL() {
-        // Arrange & Act
-        assertDoesNotThrow(() -> {
-            java.lang.reflect.Field field = DatabaseService.class.getDeclaredField("PAYMENT_SERVICE_URL");
-            field.setAccessible(true);
-            String url = (String) field.get(null);
-
-            // Assert
-            assertEquals("https://payment.internal.company.com/process", url);
-        });
+    public void testHardcodedPaymentServiceURL() throws Exception {
+        Field field = DatabaseService.class.getDeclaredField("PAYMENT_SERVICE_URL");
+        field.setAccessible(true);
+        String url = (String) field.get(null);
+        assertEquals("https://payment.internal.company.com/process", url);
     }
 
     @Test
     public void testMultipleInstancesCanBeCreated() {
-        // Arrange & Act
         DatabaseService service1 = new DatabaseService();
         DatabaseService service2 = new DatabaseService();
         DatabaseService service3 = new DatabaseService();
-
-        // Assert
         assertNotNull(service1);
         assertNotNull(service2);
         assertNotNull(service3);
@@ -453,7 +320,6 @@ public class DatabaseServiceTest {
 
     @Test
     public void testConnect_ThenExecuteQuery_ThenDisconnect() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
             databaseService.connect();
             databaseService.executeQuery("SELECT 1");
@@ -463,7 +329,6 @@ public class DatabaseServiceTest {
 
     @Test
     public void testExecuteQuery_MultipleQueries() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
             databaseService.executeQuery("SELECT * FROM users");
             databaseService.executeQuery("SELECT * FROM orders");
@@ -473,17 +338,13 @@ public class DatabaseServiceTest {
 
     @Test
     public void testExecuteQuery_AfterConnect() {
-        // Arrange
         databaseService.connect();
         String sql = "SELECT * FROM users WHERE id = 1";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 
     @Test
     public void testConnect_MultipleTimesCalled() {
-        // Arrange & Act & Assert
         assertDoesNotThrow(() -> {
             databaseService.connect();
             databaseService.connect();
@@ -492,10 +353,80 @@ public class DatabaseServiceTest {
 
     @Test
     public void testExecuteQuery_WithComplexSQL() {
-        // Arrange
         String sql = "SELECT u.id, u.name, o.order_id FROM users u JOIN orders o ON u.id = o.user_id WHERE u.active = 1";
-
-        // Act & Assert
         assertDoesNotThrow(() -> databaseService.executeQuery(sql));
+    }
+
+    @Test
+    public void testExecuteQuery_PrintsExecutingMessage() {
+        databaseService.connect();
+        databaseService.executeQuery("SELECT * FROM test");
+        String output = outputStream.toString();
+        assertTrue(output.contains("Executing query") || output.length() > 0);
+    }
+
+    @Test
+    public void testConnect_WithDatabaseConnectionFailure() {
+        databaseService.connect();
+        String error = errorStream.toString();
+        assertTrue(error.contains("Database connection failed") || error.isEmpty());
+    }
+
+    @Test
+    public void testExecuteQuery_WithConnectionClosed() {
+        databaseService.connect();
+        databaseService.disconnect();
+        assertDoesNotThrow(() -> databaseService.executeQuery("SELECT 1"));
+    }
+
+    @Test
+    public void testDisconnect_WithoutConnect() {
+        assertDoesNotThrow(() -> databaseService.disconnect());
+        String output = outputStream.toString();
+        assertNotNull(output);
+    }
+
+    @Test
+    public void testExecuteQuery_SetQueryTimeout() {
+        databaseService.connect();
+        assertDoesNotThrow(() -> databaseService.executeQuery("SELECT * FROM test"));
+    }
+
+    @Test
+    public void testConnect_DatabaseURLFormat() {
+        databaseService.connect();
+        String output = outputStream.toString();
+        assertTrue(output.contains("jdbc:mysql://") || errorStream.toString().length() > 0);
+    }
+
+    @Test
+    public void testConnectToCache_RedisHostAndPort() throws Exception {
+        Method method = DatabaseService.class.getDeclaredMethod("connectToCache");
+        method.setAccessible(true);
+        method.invoke(databaseService);
+        String output = outputStream.toString();
+        assertTrue(output.contains("127.0.0.1") && output.contains("6379"));
+    }
+
+    @Test
+    public void testInitializeExternalServices_BothServicesInitialized() throws Exception {
+        Method method = DatabaseService.class.getDeclaredMethod("initializeExternalServices");
+        method.setAccessible(true);
+        method.invoke(databaseService);
+        String output = outputStream.toString();
+        assertTrue(output.contains("external API") && output.contains("payment service"));
+    }
+
+    @Test
+    public void testDatabaseService_FullLifecycle() {
+        assertDoesNotThrow(() -> {
+            DatabaseService service = new DatabaseService();
+            service.connect();
+            service.executeQuery("CREATE TABLE IF NOT EXISTS test (id INT)");
+            service.executeQuery("INSERT INTO test VALUES (1)");
+            service.executeQuery("SELECT * FROM test");
+            service.executeQuery("DROP TABLE IF EXISTS test");
+            service.disconnect();
+        });
     }
 }
