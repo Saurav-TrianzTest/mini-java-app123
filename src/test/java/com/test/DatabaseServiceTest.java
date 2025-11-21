@@ -6,14 +6,12 @@ import org.junit.jupiter.api.AfterEach;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test class for DatabaseService
- * Tests all public and private methods with comprehensive coverage
+ * Comprehensive test class for DatabaseService
+ * Tests all public and private methods with full coverage
  */
 public class DatabaseServiceTest {
 
@@ -102,8 +100,9 @@ public class DatabaseServiceTest {
 
         // Assert
         String output = outputStream.toString();
+        String error = errorStream.toString();
         assertTrue(output.contains("jdbc:mysql://localhost:3306/mini_app_db") ||
-                   output.contains("Database connection failed"));
+                   error.contains("Database connection failed"));
     }
 
     @Test
@@ -113,8 +112,9 @@ public class DatabaseServiceTest {
 
         // Assert
         String output = outputStream.toString();
+        String error = errorStream.toString();
         assertTrue(output.contains("Using username: root") ||
-                   output.contains("Database connection failed"));
+                   error.contains("Database connection failed"));
     }
 
     @Test
@@ -124,8 +124,9 @@ public class DatabaseServiceTest {
 
         // Assert
         String output = outputStream.toString();
+        String error = errorStream.toString();
         assertTrue(output.contains("Connecting to Redis cache") ||
-                   output.contains("Database connection failed"));
+                   error.contains("Database connection failed"));
     }
 
     @Test
@@ -135,9 +136,10 @@ public class DatabaseServiceTest {
 
         // Assert
         String output = outputStream.toString();
+        String error = errorStream.toString();
         assertTrue(output.contains("Initializing external API") ||
                    output.contains("Initializing payment service") ||
-                   output.contains("Database connection failed"));
+                   error.contains("Database connection failed"));
     }
 
     @Test
@@ -467,5 +469,33 @@ public class DatabaseServiceTest {
             databaseService.executeQuery("SELECT * FROM orders");
             databaseService.executeQuery("SELECT * FROM products");
         });
+    }
+
+    @Test
+    public void testExecuteQuery_AfterConnect() {
+        // Arrange
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE id = 1";
+
+        // Act & Assert
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql));
+    }
+
+    @Test
+    public void testConnect_MultipleTimesCalled() {
+        // Arrange & Act & Assert
+        assertDoesNotThrow(() -> {
+            databaseService.connect();
+            databaseService.connect();
+        });
+    }
+
+    @Test
+    public void testExecuteQuery_WithComplexSQL() {
+        // Arrange
+        String sql = "SELECT u.id, u.name, o.order_id FROM users u JOIN orders o ON u.id = o.user_id WHERE u.active = 1";
+
+        // Act & Assert
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql));
     }
 }

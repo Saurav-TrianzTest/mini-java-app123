@@ -1,20 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.test.DatabaseServiceTest
 -------------------------------------------------------------------------------
-Tests run: 39, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 0.272 s <<< FAILURE! - in com.test.DatabaseServiceTest
-testConnect_CallsConnectToCache  Time elapsed: 0.011 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
-	at com.test.DatabaseServiceTest.testConnect_CallsConnectToCache(DatabaseServiceTest.java:127)
-
-testConnect_PrintsUsername  Time elapsed: 0.002 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
-	at com.test.DatabaseServiceTest.testConnect_PrintsUsername(DatabaseServiceTest.java:116)
-
-testConnect_CallsInitializeExternalServices  Time elapsed: 0.001 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
-	at com.test.DatabaseServiceTest.testConnect_CallsInitializeExternalServices(DatabaseServiceTest.java:138)
-
-testConnect_PrintsDatabaseURL  Time elapsed: 0.002 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
-	at com.test.DatabaseServiceTest.testConnect_PrintsDatabaseURL(DatabaseServiceTest.java:105)
-
+Tests run: 42, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.268 s - in com.test.DatabaseServiceTest
