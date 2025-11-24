@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.test.MiniAppTest
 -------------------------------------------------------------------------------
-Tests run: 46, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 42.154 s <<< FAILURE! - in com.test.MiniAppTest
-com.test.MiniAppTest.testRedisHostConstant  Time elapsed: 1.006 s  <<< FAILURE!
+Tests run: 46, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 42.144 s <<< FAILURE! - in com.test.MiniAppTest
+com.test.MiniAppTest.testRedisHostConstant  Time elapsed: 1.005 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should reference Redis/cache connection ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -158,7 +158,7 @@ org.opentest4j.AssertionFailedError: Output should reference log file path ==> e
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 
-com.test.MiniAppTest.testPaymentServiceConstant  Time elapsed: 1.003 s  <<< FAILURE!
+com.test.MiniAppTest.testPaymentServiceConstant  Time elapsed: 1.002 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should reference payment service ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -236,7 +236,7 @@ org.opentest4j.AssertionFailedError: Output should reference payment service ==>
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 
-com.test.MiniAppTest.testLoggingInitializationMessage  Time elapsed: 1.003 s  <<< FAILURE!
+com.test.MiniAppTest.testLoggingInitializationMessage  Time elapsed: 1.002 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should contain logging initialization information ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -314,7 +314,7 @@ org.opentest4j.AssertionFailedError: Output should contain logging initializatio
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 
-com.test.MiniAppTest.testExternalAPIConstant  Time elapsed: 1.003 s  <<< FAILURE!
+com.test.MiniAppTest.testExternalAPIConstant  Time elapsed: 1.002 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should reference external API ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
