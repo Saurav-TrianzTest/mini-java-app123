@@ -1,93 +1,146 @@
 package com.test;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
+ * Modernized database service using Spring JDBC and connection pooling
+ * Replaces hardcoded connection details with externalized configuration
  */
+@Service
 public class DatabaseService {
-    
-    // BLOCKER: Hardcoded database connection details
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "password123";
-    
-    // BLOCKER: Hardcoded cache server details
-    private static final String REDIS_HOST = "127.0.0.1";
-    private static final int REDIS_PORT = 6379;
-    
-    // BLOCKER: Hardcoded API endpoints
-    private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
-    private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
-    
-    private Connection connection;
-    
+
+    private final JdbcTemplate jdbcTemplate;
+    private final DataSource dataSource;
+
+    // Externalized configuration values
+    @Value("${cache.redis.host}")
+    private String redisHost;
+
+    @Value("${cache.redis.port}")
+    private int redisPort;
+
+    @Value("${external.api.base-url}")
+    private String externalApiUrl;
+
+    @Value("${payment.service.url}")
+    private String paymentServiceUrl;
+
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    private boolean initialized = false;
+
+    /**
+     * Constructor with dependency injection
+     * Modern approach using DataSource and JdbcTemplate instead of DriverManager
+     */
+    @Autowired
+    public DatabaseService(JdbcTemplate jdbcTemplate, DataSource dataSource) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.dataSource = dataSource;
+    }
+
+    /**
+     * Initialize connection pool and services after bean construction
+     * Replaces manual connect() method with automatic initialization
+     */
+    @PostConstruct
     public void connect() {
         try {
             System.out.println("Connecting to database...");
 
-            // JDBC 4.0+ auto-loads drivers, no explicit Class.forName needed
-            // Modern approach for Java 17 compatibility
+            // Test connection from pool
+            try (Connection connection = dataSource.getConnection()) {
+                System.out.println("Connected to database: " + dbUrl);
+                System.out.println("Using username: " + dbUsername);
+                initialized = true;
+            }
 
-            // BLOCKER: Hardcoded connection string and credentials
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-            
-            System.out.println("Connected to database: " + DB_URL);
-            System.out.println("Using username: " + DB_USERNAME);
-            
-            // BLOCKER: Hardcoded cache connection
+            // Initialize external services
             connectToCache();
-            
-            // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
 
         } catch (SQLException e) {
             System.err.println("Database connection failed: " + e.getMessage());
         }
     }
-    
+
+    /**
+     * Connect to cache using externalized configuration
+     */
     private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
-        System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
+        System.out.println("Connecting to Redis cache at: " + redisHost + ":" + redisPort);
         // Simulate cache connection
     }
-    
+
+    /**
+     * Initialize external services using externalized configuration
+     */
     private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
-        System.out.println("Initializing external API: " + EXTERNAL_API_URL);
-        System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
+        System.out.println("Initializing external API: " + externalApiUrl);
+        System.out.println("Initializing payment service: " + paymentServiceUrl);
     }
-    
+
+    /**
+     * Execute SQL query using JdbcTemplate
+     * Modern approach with automatic resource management and exception handling
+     */
     public void executeQuery(String sql) {
         try {
-            if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
-                
-                System.out.println("Executing query: " + sql);
-                stmt.execute();
-                stmt.close();
+            if (sql == null || sql.trim().isEmpty()) {
+                return;
             }
-        } catch (SQLException e) {
+
+            System.out.println("Executing query: " + sql);
+            jdbcTemplate.execute(sql);
+
+        } catch (DataAccessException e) {
             System.err.println("Query execution failed: " + e.getMessage());
         }
     }
-    
+
+    /**
+     * Cleanup method called before bean destruction
+     * Connection pool is managed by Spring, no manual close needed
+     */
+    @PreDestroy
     public void disconnect() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
+            // Connection pool cleanup is handled by Spring
+            // This method maintained for backward compatibility
+            if (initialized) {
                 System.out.println("Database connection closed");
+                initialized = false;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("Failed to close database connection: " + e.getMessage());
         }
+    }
+
+    /**
+     * Get DataSource for advanced use cases
+     */
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * Get JdbcTemplate for advanced database operations
+     */
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
     }
 }

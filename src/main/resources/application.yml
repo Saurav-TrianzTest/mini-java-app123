@@ -1,0 +1,86 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/mini_app_db}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:password123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_MAX_SIZE:20}
+      minimum-idle: ${DATABASE_POOL_MIN_IDLE:5}
+      connection-timeout: ${DATABASE_POOL_TIMEOUT:5000}
+      idle-timeout: ${DATABASE_POOL_IDLE_TIMEOUT:600000}
+      max-lifetime: ${DATABASE_POOL_MAX_LIFETIME:1800000}
+      auto-commit: true
+      pool-name: HikariPool-MiniApp
+
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:none}
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        use_sql_comments: true
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:/mini-app}
+
+cache:
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:redis_secret_123}
+    database: ${REDIS_DATABASE:0}
+
+external:
+  api:
+    base-url: ${EXTERNAL_API_URL:http://api.example.com:8080/v1}
+    timeout: ${EXTERNAL_API_TIMEOUT:30000}
+    key: ${EXTERNAL_API_KEY:hardcoded_api_key_12345}
+
+payment:
+  service:
+    url: ${PAYMENT_SERVICE_URL:https://payment.internal.company.com/process}
+    username: ${PAYMENT_SERVICE_USERNAME:payment_user}
+    password: ${PAYMENT_SERVICE_PASSWORD:payment_secret_456}
+
+app:
+  config:
+    directory: ${APP_CONFIG_DIR:/opt/app/config}
+  log:
+    directory: ${APP_LOG_DIR:/var/log/mini-app}
+  temp:
+    directory: ${APP_TEMP_DIR:/tmp/mini-app}
+  upload:
+    directory: ${APP_UPLOAD_DIR:/opt/uploads}
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:my_super_secret_jwt_key_123456789}
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin123}
+  encryption:
+    key: ${ENCRYPTION_KEY:encryption_key_hardcoded}
+
+monitoring:
+  endpoint: ${MONITORING_ENDPOINT:http://monitoring.internal.company.com:9090/metrics}
+  username: ${MONITORING_USERNAME:monitor_user}
+  password: ${MONITORING_PASSWORD:monitor_pass}
+
+messaging:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq.internal.company.com}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:rabbitmq_user}
+    password: ${RABBITMQ_PASSWORD:rabbitmq_secret}
+
+environment: ${ENVIRONMENT:production}
+debug:
+  enabled: ${DEBUG_ENABLED:false}
+logging:
+  level:
+    root: ${LOGGING_LEVEL:INFO}

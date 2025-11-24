@@ -3,13 +3,20 @@ package com.test;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class DatabaseServiceTest {
 
@@ -19,9 +26,33 @@ public class DatabaseServiceTest {
     private PrintStream originalOut;
     private PrintStream originalErr;
 
+    @Mock
+    private JdbcTemplate mockJdbcTemplate;
+
+    @Mock
+    private DataSource mockDataSource;
+
+    @Mock
+    private Connection mockConnection;
+
     @BeforeEach
-    public void setUp() {
-        databaseService = new DatabaseService();
+    public void setUp() throws SQLException {
+        MockitoAnnotations.openMocks(this);
+
+        // Mock DataSource to return a mock connection
+        when(mockDataSource.getConnection()).thenReturn(mockConnection);
+
+        // Create DatabaseService with mocked dependencies
+        databaseService = new DatabaseService(mockJdbcTemplate, mockDataSource);
+
+        // Set up field values using reflection
+        setPrivateField(databaseService, "redisHost", "127.0.0.1");
+        setPrivateField(databaseService, "redisPort", 6379);
+        setPrivateField(databaseService, "externalApiUrl", "http://api.example.com:8080/v1");
+        setPrivateField(databaseService, "paymentServiceUrl", "https://payment.internal.company.com/process");
+        setPrivateField(databaseService, "dbUrl", "jdbc:mysql://localhost:3306/mini_app_db");
+        setPrivateField(databaseService, "dbUsername", "root");
+
         outputStream = new ByteArrayOutputStream();
         errorStream = new ByteArrayOutputStream();
         originalOut = System.out;
@@ -39,15 +70,25 @@ public class DatabaseServiceTest {
         }
     }
 
+    private void setPrivateField(Object target, String fieldName, Object value) {
+        try {
+            Field field = target.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (Exception e) {
+            // Ignore field setting errors in tests
+        }
+    }
+
     @Test
     public void testConstructor() {
-        DatabaseService service = new DatabaseService();
+        DatabaseService service = new DatabaseService(mockJdbcTemplate, mockDataSource);
         assertNotNull(service);
     }
 
     @Test
     public void testConstructorNotNull() {
-        DatabaseService service = new DatabaseService();
+        DatabaseService service = new DatabaseService(mockJdbcTemplate, mockDataSource);
         assertNotNull(service, "DatabaseService instance should not be null");
     }
 
@@ -236,81 +277,95 @@ public class DatabaseServiceTest {
 
     @Test
     public void testHardcodedDBHost() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("DB_HOST");
+        // Modernized: DB_HOST field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("dbUrl");
         field.setAccessible(true);
-        String host = (String) field.get(null);
-        assertEquals("localhost", host);
+        String url = (String) field.get(databaseService);
+        assertTrue(url.contains("localhost"));
     }
 
     @Test
     public void testHardcodedDBPort() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("DB_PORT");
+        // Modernized: DB_PORT field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("dbUrl");
         field.setAccessible(true);
-        String port = (String) field.get(null);
-        assertEquals("3306", port);
+        String url = (String) field.get(databaseService);
+        assertTrue(url.contains("3306"));
     }
 
     @Test
     public void testHardcodedDBName() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("DB_NAME");
+        // Modernized: DB_NAME field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("dbUrl");
         field.setAccessible(true);
-        String dbName = (String) field.get(null);
-        assertEquals("mini_app_db", dbName);
+        String url = (String) field.get(databaseService);
+        assertTrue(url.contains("mini_app_db"));
     }
 
     @Test
     public void testHardcodedDBUsername() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("DB_USERNAME");
+        // Modernized: DB_USERNAME field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("dbUsername");
         field.setAccessible(true);
-        String username = (String) field.get(null);
+        String username = (String) field.get(databaseService);
         assertEquals("root", username);
     }
 
     @Test
     public void testHardcodedDBPassword() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("DB_PASSWORD");
-        field.setAccessible(true);
-        String password = (String) field.get(null);
-        assertEquals("password123", password);
+        // Modernized: DB_PASSWORD field no longer exists, passwords are externalized
+        // This test now verifies that password is not hardcoded in the class
+        assertDoesNotThrow(() -> {
+            Field[] fields = DatabaseService.class.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.getName().contains("password")) {
+                    fail("Password fields should not be hardcoded");
+                }
+            }
+        });
     }
 
     @Test
     public void testHardcodedRedisHost() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("REDIS_HOST");
+        // Modernized: REDIS_HOST field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("redisHost");
         field.setAccessible(true);
-        String host = (String) field.get(null);
+        String host = (String) field.get(databaseService);
         assertEquals("127.0.0.1", host);
     }
 
     @Test
     public void testHardcodedRedisPort() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("REDIS_PORT");
+        // Modernized: REDIS_PORT field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("redisPort");
         field.setAccessible(true);
-        int port = field.getInt(null);
+        int port = field.getInt(databaseService);
         assertEquals(6379, port);
     }
 
     @Test
     public void testHardcodedExternalAPIURL() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("EXTERNAL_API_URL");
+        // Modernized: EXTERNAL_API_URL field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("externalApiUrl");
         field.setAccessible(true);
-        String url = (String) field.get(null);
+        String url = (String) field.get(databaseService);
         assertEquals("http://api.example.com:8080/v1", url);
     }
 
     @Test
     public void testHardcodedPaymentServiceURL() throws Exception {
-        Field field = DatabaseService.class.getDeclaredField("PAYMENT_SERVICE_URL");
+        // Modernized: PAYMENT_SERVICE_URL field no longer exists, configuration is externalized
+        Field field = DatabaseService.class.getDeclaredField("paymentServiceUrl");
         field.setAccessible(true);
-        String url = (String) field.get(null);
+        String url = (String) field.get(databaseService);
         assertEquals("https://payment.internal.company.com/process", url);
     }
 
     @Test
     public void testMultipleInstancesCanBeCreated() {
-        DatabaseService service1 = new DatabaseService();
-        DatabaseService service2 = new DatabaseService();
-        DatabaseService service3 = new DatabaseService();
+        DatabaseService service1 = new DatabaseService(mockJdbcTemplate, mockDataSource);
+        DatabaseService service2 = new DatabaseService(mockJdbcTemplate, mockDataSource);
+        DatabaseService service3 = new DatabaseService(mockJdbcTemplate, mockDataSource);
         assertNotNull(service1);
         assertNotNull(service2);
         assertNotNull(service3);
@@ -420,7 +475,14 @@ public class DatabaseServiceTest {
     @Test
     public void testDatabaseService_FullLifecycle() {
         assertDoesNotThrow(() -> {
-            DatabaseService service = new DatabaseService();
+            DatabaseService service = new DatabaseService(mockJdbcTemplate, mockDataSource);
+            setPrivateField(service, "dbUrl", "jdbc:mysql://localhost:3306/mini_app_db");
+            setPrivateField(service, "dbUsername", "root");
+            setPrivateField(service, "redisHost", "127.0.0.1");
+            setPrivateField(service, "redisPort", 6379);
+            setPrivateField(service, "externalApiUrl", "http://api.example.com:8080/v1");
+            setPrivateField(service, "paymentServiceUrl", "https://payment.internal.company.com/process");
+
             service.connect();
             service.executeQuery("CREATE TABLE IF NOT EXISTS test (id INT)");
             service.executeQuery("INSERT INTO test VALUES (1)");
@@ -428,5 +490,19 @@ public class DatabaseServiceTest {
             service.executeQuery("DROP TABLE IF EXISTS test");
             service.disconnect();
         });
+    }
+
+    @Test
+    public void testGetDataSource() {
+        DataSource ds = databaseService.getDataSource();
+        assertNotNull(ds);
+        assertEquals(mockDataSource, ds);
+    }
+
+    @Test
+    public void testGetJdbcTemplate() {
+        JdbcTemplate template = databaseService.getJdbcTemplate();
+        assertNotNull(template);
+        assertEquals(mockJdbcTemplate, template);
     }
 }
