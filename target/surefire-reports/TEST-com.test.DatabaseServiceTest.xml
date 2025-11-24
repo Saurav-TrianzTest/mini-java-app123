@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.test.DatabaseServiceTest" time="0.035" tests="50" errors="0" skipped="0" failures="0">
+  <properties/>
+  <testcase name="testExternalAPIConfiguration" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithMultiLineSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithSQLInjection" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithCreateTableSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testServiceLifecycle" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnectHandlesClassNotFoundException" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithUnionSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testDisconnectWithoutConnection" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithGrantSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithOrderBySQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithAlterTableSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithTransactionSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithCreateIndexSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testMultipleDisconnectCalls" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testExecuteQueryWithLongSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testConnectWithCacheConnection" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithDropTableSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnectHandlesSQLException" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithValidSelectSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithRollbackSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithSpecialCharacters" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testDisconnect" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithoutConnection" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithUpdateSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testConnectDisconnectConnectCycle" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testExecuteQueryWithAggregateSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithLimitSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithEmptySQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithStoredProcedureCall" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testHardcodedDatabaseConfiguration" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryMultipleTimes" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithCommitSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConstructorCreatesIndependentInstances" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryWithTruncateSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnect" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithHavingSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testQueryTimeoutConfiguration" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithWhitespaceSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testConnectWithValidConfiguration" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithSubquery" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithNullSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testRedisConnectionInitialization" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testDisconnectAfterConnect" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithInsertSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithDeleteSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryAfterDisconnect" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnectInitializesExternalServices" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testExecuteQueryWithJoinSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testMultipleConnectCalls" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testConstructor" classname="com.test.DatabaseServiceTest" time="0"/>
+</testsuite>

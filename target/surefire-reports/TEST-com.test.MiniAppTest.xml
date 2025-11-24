@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.test.MiniAppTest" time="45.238" tests="50" errors="0" skipped="0" failures="0">
+  <properties/>
+  <testcase name="testDatabaseServiceInitialization" classname="com.test.MiniAppTest" time="0.017"/>
+  <testcase name="testApplicationHandlesPortInUse" classname="com.test.MiniAppTest" time="1.087"/>
+  <testcase name="testPropertiesLoadingMechanism" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testLogFilePathIsAbsolute" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testConfigurationPropertiesFileFormat" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testMainInitializesAllSubsystems" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testMainPrintsStartingMessage" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testApplicationCreatesLogFile" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testErrorOutputForFailedOperations" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationHandlesPermissionErrors" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationStartupSequence" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testMultipleApplicationInstances" classname="com.test.MiniAppTest" time="0.001"/>
+  <testcase name="testMainInitializesApplication" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testExceptionHandlingInMain" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testServerThreadSleeps" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testFileInputStreamHandling" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testHardcodedLogFilePath" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationOutputsErrorsToSystemErr" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainCallsStartServer" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainStartsServer" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainCallsInitializeApplication" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testServerSocketClosure" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testLoggingInitialization" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testHardcodedConfigurationFilePath" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testConstructorCreatesIndependentInstances" classname="com.test.MiniAppTest" time="0.001"/>
+  <testcase name="testApplicationHandlesSQLException" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainWithNullArgs" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationCreatesRequiredDirectories" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationOutputsToSystemOut" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainWithSingleArg" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationHandlesIOException" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testServerAcceptsConnectionsMessage" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainWithEmptyArgs" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testConfigurationLoadingWithMissingFile" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationInitializationFlow" classname="com.test.MiniAppTest" time="0"/>
+  <testcase name="testLogDirectoryCreation" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationInitializesWithHardcodedValues" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testServerReadyMessage" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testDatabaseServiceInstantiation" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainWithMultipleArgs" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainOutputContainsDatabaseInfo" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainCreatesInstance" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationHandlesMissingConfiguration" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationWithConcurrentExecution" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testConfigurationFilePathIsAbsolute" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testServerSocketCreation" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testServerStartupOnHardcodedPort" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testServerPortConfiguration" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testConstructor" classname="com.test.MiniAppTest" time="0"/>
+  <testcase name="testConfigurationFileExistenceCheck" classname="com.test.MiniAppTest" time="1.003"/>
+</testsuite>
