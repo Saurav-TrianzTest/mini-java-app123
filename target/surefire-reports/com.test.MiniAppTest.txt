@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.test.MiniAppTest
 -------------------------------------------------------------------------------
-Tests run: 50, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 45.238 s - in com.test.MiniAppTest
+Tests run: 50, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 45.362 s - in com.test.MiniAppTest
