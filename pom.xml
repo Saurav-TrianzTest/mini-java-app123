@@ -66,6 +66,8 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <executable>/home/studioai/.sdkman/candidates/java/11.0.25-tem/bin/javac</executable>
+                    <fork>true</fork>
                 </configuration>
             </plugin>
             <plugin>
