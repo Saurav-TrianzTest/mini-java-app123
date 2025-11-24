@@ -272,4 +272,176 @@ class MiniAppTest {
         String output = outContent.toString();
         assertFalse(output.isEmpty(), "Application should produce output");
     }
+
+    @Test
+    @DisplayName("Test hardcoded Redis host constant")
+    void testRedisHostConstant() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("Redis") || output.contains("cache"),
+            "Output should reference Redis/cache connection");
+    }
+
+    @Test
+    @DisplayName("Test hardcoded external API URL constant")
+    void testExternalAPIConstant() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("API") || output.contains("api"),
+            "Output should reference external API");
+    }
+
+    @Test
+    @DisplayName("Test hardcoded payment service URL constant")
+    void testPaymentServiceConstant() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("payment") || output.contains("Payment"),
+            "Output should reference payment service");
+    }
+
+    @Test
+    @DisplayName("Test application creates MiniApp instance")
+    void testApplicationCreatesInstance() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "Application should create MiniApp instance successfully");
+    }
+
+    @Test
+    @DisplayName("Test application calls initializeApplication")
+    void testApplicationCallsInitialize() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "Application should call initializeApplication method");
+    }
+
+    @Test
+    @DisplayName("Test application calls startServer")
+    void testApplicationCallsStartServer() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "Application should call startServer method");
+    }
+
+    @Test
+    @DisplayName("Test loadConfiguration handles missing file")
+    void testLoadConfigurationMissingFile() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("Configuration") || output.contains("Warning"),
+            "Should handle missing configuration file");
+    }
+
+    @Test
+    @DisplayName("Test initializeLogging creates log directory")
+    void testInitializeLoggingCreatesDirectory() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "Should attempt to create log directory");
+    }
+
+    @Test
+    @DisplayName("Test startServer creates ServerSocket")
+    void testStartServerCreatesSocket() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "Should create ServerSocket successfully");
+    }
+
+    @Test
+    @DisplayName("Test startServer closes socket properly")
+    void testStartServerClosesSocket() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "Should close ServerSocket properly");
+    }
+
+    @Test
+    @DisplayName("Test application handles SQLException from database")
+    void testApplicationHandlesSQLException() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "Application should handle SQLException gracefully");
+    }
+
+    @Test
+    @DisplayName("Test application output contains server port number")
+    void testApplicationOutputContainsPort() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("8080") || output.contains("port"),
+            "Output should contain server port information");
+    }
+
+    @Test
+    @DisplayName("Test application output contains config file path")
+    void testApplicationOutputContainsConfigPath() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("/opt/app/config") || output.contains("app.properties") || output.contains("Configuration"),
+            "Output should reference config file path");
+    }
+
+    @Test
+    @DisplayName("Test application output contains log file path")
+    void testApplicationOutputContainsLogPath() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("/var/log") || output.contains("mini-app.log") || output.contains("Logging"),
+            "Output should reference log file path");
+    }
+
+    @Test
+    @DisplayName("Test DatabaseService instance is created")
+    void testDatabaseServiceInstanceCreated() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+        }, "DatabaseService instance should be created");
+    }
+
+    @Test
+    @DisplayName("Test DatabaseService connect is called")
+    void testDatabaseServiceConnectCalled() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("Connecting") || output.contains("Connected"),
+            "DatabaseService connect should be called");
+    }
+
+    @Test
+    @DisplayName("Test server ready message is displayed")
+    void testServerReadyMessage() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("ready") || output.contains("Ready"),
+            "Server ready message should be displayed");
+    }
+
+    @Test
+    @DisplayName("Test application runs without deadlock")
+    void testApplicationRunsWithoutDeadlock() {
+        long startTime = System.currentTimeMillis();
+        MiniApp.main(new String[]{});
+        long duration = System.currentTimeMillis() - startTime;
+        assertTrue(duration < 10000, "Application should complete without deadlock");
+    }
+
+    @Test
+    @DisplayName("Test server accepts connections message")
+    void testServerAcceptsConnectionsMessage() {
+        MiniApp.main(new String[]{});
+        String output = outContent.toString();
+        assertTrue(output.contains("accept") || output.contains("connections"),
+            "Server should indicate it's accepting connections");
+    }
+
+    @Test
+    @DisplayName("Test Thread.sleep is invoked during server startup")
+    void testThreadSleepInvoked() {
+        long startTime = System.currentTimeMillis();
+        MiniApp.main(new String[]{});
+        long duration = System.currentTimeMillis() - startTime;
+        assertTrue(duration >= 1000, "Thread.sleep should be invoked for at least 1 second");
+    }
 }

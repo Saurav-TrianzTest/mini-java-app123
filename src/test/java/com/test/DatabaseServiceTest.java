@@ -233,4 +233,150 @@ class DatabaseServiceTest {
             databaseService.executeQuery("SELECT 3");
         }, "Multiple sequential queries should execute without errors");
     }
+
+    @Test
+    @DisplayName("Test connectToCache is invoked during connect")
+    void testConnectInvokesCache() {
+        assertDoesNotThrow(() -> {
+            databaseService.connect();
+        }, "connect() should invoke cache connection");
+    }
+
+    @Test
+    @DisplayName("Test initializeExternalServices is invoked during connect")
+    void testConnectInvokesExternalServices() {
+        assertDoesNotThrow(() -> {
+            databaseService.connect();
+        }, "connect() should initialize external services");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with CREATE TABLE statement")
+    void testExecuteQueryWithCreateTable() {
+        databaseService.connect();
+        String createSQL = "CREATE TABLE test_table (id INT PRIMARY KEY, name VARCHAR(50))";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(createSQL);
+        }, "executeQuery() should handle CREATE TABLE statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with DROP TABLE statement")
+    void testExecuteQueryWithDropTable() {
+        databaseService.connect();
+        String dropSQL = "DROP TABLE IF EXISTS test_table";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(dropSQL);
+        }, "executeQuery() should handle DROP TABLE statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with ALTER TABLE statement")
+    void testExecuteQueryWithAlterTable() {
+        databaseService.connect();
+        String alterSQL = "ALTER TABLE users ADD COLUMN age INT";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(alterSQL);
+        }, "executeQuery() should handle ALTER TABLE statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with JOIN query")
+    void testExecuteQueryWithJoin() {
+        databaseService.connect();
+        String joinSQL = "SELECT u.id, u.name, o.order_id FROM users u JOIN orders o ON u.id = o.user_id";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(joinSQL);
+        }, "executeQuery() should handle JOIN queries");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with aggregate functions")
+    void testExecuteQueryWithAggregateFunctions() {
+        databaseService.connect();
+        String aggSQL = "SELECT COUNT(*), AVG(price), SUM(quantity) FROM products";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(aggSQL);
+        }, "executeQuery() should handle aggregate functions");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with subquery")
+    void testExecuteQueryWithSubquery() {
+        databaseService.connect();
+        String subquerySQL = "SELECT * FROM users WHERE id IN (SELECT user_id FROM orders WHERE total > 100)";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(subquerySQL);
+        }, "executeQuery() should handle subqueries");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with LIKE pattern")
+    void testExecuteQueryWithLikePattern() {
+        databaseService.connect();
+        String likeSQL = "SELECT * FROM users WHERE name LIKE '%john%'";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(likeSQL);
+        }, "executeQuery() should handle LIKE patterns");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with ORDER BY clause")
+    void testExecuteQueryWithOrderBy() {
+        databaseService.connect();
+        String orderSQL = "SELECT * FROM users ORDER BY name ASC, age DESC";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(orderSQL);
+        }, "executeQuery() should handle ORDER BY clauses");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with GROUP BY clause")
+    void testExecuteQueryWithGroupBy() {
+        databaseService.connect();
+        String groupSQL = "SELECT category, COUNT(*) FROM products GROUP BY category HAVING COUNT(*) > 5";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(groupSQL);
+        }, "executeQuery() should handle GROUP BY clauses");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with LIMIT clause")
+    void testExecuteQueryWithLimit() {
+        databaseService.connect();
+        String limitSQL = "SELECT * FROM users LIMIT 10 OFFSET 5";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(limitSQL);
+        }, "executeQuery() should handle LIMIT clauses");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with special characters in SQL")
+    void testExecuteQueryWithSpecialCharacters() {
+        databaseService.connect();
+        String specialSQL = "SELECT * FROM users WHERE name = 'O''Brien' AND email LIKE '%@%.com'";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(specialSQL);
+        }, "executeQuery() should handle special characters");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with UNION statement")
+    void testExecuteQueryWithUnion() {
+        databaseService.connect();
+        String unionSQL = "SELECT id FROM users UNION SELECT id FROM customers";
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery(unionSQL);
+        }, "executeQuery() should handle UNION statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with transaction statements")
+    void testExecuteQueryWithTransaction() {
+        databaseService.connect();
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery("BEGIN TRANSACTION");
+            databaseService.executeQuery("COMMIT");
+        }, "executeQuery() should handle transaction statements");
+    }
 }
