@@ -1,0 +1,1 @@
+ECS Fargate task definition with awsvpc network mode, cpu: 512, memory: 1024, CloudWatch logging

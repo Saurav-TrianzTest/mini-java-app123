@@ -1,0 +1,1 @@
+Comprehensive 8000+ word deployment guide covering prerequisites, local setup, AWS ECS Fargate deployment, configuration, monitoring, troubleshooting, and scaling

@@ -1,0 +1,1 @@
+Interactive build script with registry selection, tag sanitization, and ECR auto-creation

@@ -1,0 +1,1 @@
+Multi-stage Dockerfile with Maven builder and Amazon Corretto 11 runtime

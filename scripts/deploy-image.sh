@@ -1,0 +1,1 @@
+Automated ECS deployment with cluster creation, task registration, service management, and ALB setup
