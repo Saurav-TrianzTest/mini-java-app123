@@ -47,9 +47,9 @@ import java.sql.SQLException;
             // BLOCKER: Hardcoded external service URLs
 <span class="nc" id="L48">            initializeExternalServices();</span>
 
-<span class="fc" id="L50">        } catch (SQLException e) {</span>
+<span class="pc" id="L50">        } catch (SQLException e) {</span>
 <span class="fc" id="L51">            System.err.println(&quot;Database connection failed: &quot; + e.getMessage());</span>
-<span class="nc" id="L52">        }</span>
+        }
 <span class="fc" id="L53">    }</span>
     
     private void connectToCache() {
@@ -77,7 +77,7 @@ import java.sql.SQLException;
             }
 <span class="nc" id="L78">        } catch (SQLException e) {</span>
 <span class="nc" id="L79">            System.err.println(&quot;Query execution failed: &quot; + e.getMessage());</span>
-<span class="fc" id="L80">        }</span>
+        }
 <span class="fc" id="L81">    }</span>
     
     public void disconnect() {
@@ -88,7 +88,7 @@ import java.sql.SQLException;
             }
 <span class="nc" id="L89">        } catch (SQLException e) {</span>
 <span class="nc" id="L90">            System.err.println(&quot;Failed to close database connection: &quot; + e.getMessage());</span>
-<span class="fc" id="L91">        }</span>
+        }
 <span class="fc" id="L92">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

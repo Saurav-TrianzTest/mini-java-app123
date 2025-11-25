@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 Test set: com.test.MiniAppTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.99 s <<< FAILURE! - in com.test.MiniAppTest
+Tests run: 4, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.997 s <<< FAILURE! - in com.test.MiniAppTest
 testHardcodedLogPath(com.test.MiniAppTest)  Time elapsed: 0 s  <<< FAILURE!
 java.lang.AssertionError: Hardcoded log path should be externalized
 	at com.test.MiniAppTest.testHardcodedLogPath(MiniAppTest.java:62)
