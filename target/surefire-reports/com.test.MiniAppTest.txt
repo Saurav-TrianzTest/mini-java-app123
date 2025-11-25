@@ -1,16 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.test.MiniAppTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.997 s <<< FAILURE! - in com.test.MiniAppTest
-testHardcodedLogPath(com.test.MiniAppTest)  Time elapsed: 0 s  <<< FAILURE!
-java.lang.AssertionError: Hardcoded log path should be externalized
-	at com.test.MiniAppTest.testHardcodedLogPath(MiniAppTest.java:62)
-
-testHardcodedPortNumber(com.test.MiniAppTest)  Time elapsed: 0 s  <<< FAILURE!
-java.lang.AssertionError: Hardcoded port 8080 should be externalized
-	at com.test.MiniAppTest.testHardcodedPortNumber(MiniAppTest.java:48)
-
-testHardcodedConfigPath(com.test.MiniAppTest)  Time elapsed: 0.001 s  <<< FAILURE!
-java.lang.AssertionError: Hardcoded config path should be externalized
-	at com.test.MiniAppTest.testHardcodedConfigPath(MiniAppTest.java:55)
-
+Tests run: 33, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 30.1 s - in com.test.MiniAppTest
