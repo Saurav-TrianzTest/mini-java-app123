@@ -1,0 +1,20 @@
+-------------------------------------------------------------------------------
+Test set: com.test.DatabaseServiceTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 0.236 s <<< FAILURE! - in com.test.DatabaseServiceTest
+testHardcodedDatabaseHost(com.test.DatabaseServiceTest)  Time elapsed: 0.005 s  <<< FAILURE!
+java.lang.AssertionError: Hardcoded DB host should be externalized
+	at com.test.DatabaseServiceTest.testHardcodedDatabaseHost(DatabaseServiceTest.java:53)
+
+testHardcodedAPIEndpoints(com.test.DatabaseServiceTest)  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError: Hardcoded API endpoints should be externalized
+	at com.test.DatabaseServiceTest.testHardcodedAPIEndpoints(DatabaseServiceTest.java:74)
+
+testHardcodedRedisConnection(com.test.DatabaseServiceTest)  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError: Hardcoded Redis connection should be externalized
+	at com.test.DatabaseServiceTest.testHardcodedRedisConnection(DatabaseServiceTest.java:67)
+
+testHardcodedDatabaseCredentials(com.test.DatabaseServiceTest)  Time elapsed: 0.001 s  <<< FAILURE!
+java.lang.AssertionError: Hardcoded DB credentials should be externalized
+	at com.test.DatabaseServiceTest.testHardcodedDatabaseCredentials(DatabaseServiceTest.java:60)
+
