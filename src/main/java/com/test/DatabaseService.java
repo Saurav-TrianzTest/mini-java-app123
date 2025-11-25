@@ -1,95 +1,115 @@
 package com.test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
+ * Modernized Database service using Spring JDBC Template and DataSource
+ * with externalized configuration and proper resource management
  */
+@Service
+@Transactional
 public class DatabaseService {
-    
-    // BLOCKER: Hardcoded database connection details
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "password123";
-    
-    // BLOCKER: Hardcoded cache server details
-    private static final String REDIS_HOST = "127.0.0.1";
-    private static final int REDIS_PORT = 6379;
-    
-    // BLOCKER: Hardcoded API endpoints
-    private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
-    private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
-    
-    private Connection connection;
-    
+
+    private static final Logger log = LoggerFactory.getLogger(DatabaseService.class);
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Value("${db.query.timeout:30}")
+    private int queryTimeout;
+
+    @Value("${spring.redis.host:localhost}")
+    private String redisHost;
+
+    @Value("${spring.redis.port:6379}")
+    private int redisPort;
+
+    @Value("${external.api.base-url}")
+    private String externalApiUrl;
+
+    @Value("${payment.service.url}")
+    private String paymentServiceUrl;
+
+    /**
+     * Initialize database connection using Spring's managed DataSource
+     */
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
-            
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            
-            // BLOCKER: Hardcoded connection string and credentials
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-            
-            System.out.println("Connected to database: " + DB_URL);
-            System.out.println("Using username: " + DB_USERNAME);
-            
-            // BLOCKER: Hardcoded cache connection
+            log.info("Verifying database connection...");
+
+            // Test connection using try-with-resources
+            try (var connection = dataSource.getConnection()) {
+                if (connection.isValid(5)) {
+                    log.info("Database connection established successfully");
+                    log.info("Database URL: {}", connection.getMetaData().getURL());
+                } else {
+                    log.error("Database connection validation failed");
+                }
+            }
+
             connectToCache();
-            
-            // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
-            
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
-        } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+
+        } catch (Exception e) {
+            log.error("Database connection failed", e);
+            throw new RuntimeException("Failed to connect to database", e);
         }
     }
-    
+
     private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
-        System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
+        log.info("Connecting to Redis cache at: {}:{}", redisHost, redisPort);
         // Simulate cache connection
     }
-    
+
     private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
-        System.out.println("Initializing external API: " + EXTERNAL_API_URL);
-        System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
+        log.info("Initializing external API: {}", externalApiUrl);
+        log.info("Initializing payment service: {}", paymentServiceUrl);
     }
-    
-    public void executeQuery(String sql) {
+
+    /**
+     * Execute parameterized query using JdbcTemplate for SQL injection prevention
+     * @param sql SQL query with placeholders
+     * @param params Query parameters
+     */
+    @Transactional
+    public void executeQuery(String sql, Object... params) {
         try {
-            if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
-                
-                System.out.println("Executing query: " + sql);
-                stmt.execute();
-                stmt.close();
+            log.debug("Executing parameterized query: {}", sql);
+
+            // Set query timeout
+            jdbcTemplate.setQueryTimeout(queryTimeout);
+
+            // Execute query with parameters (prevents SQL injection)
+            if (params != null && params.length > 0) {
+                jdbcTemplate.update(sql, params);
+            } else {
+                jdbcTemplate.execute(sql);
             }
-        } catch (SQLException e) {
-            System.err.println("Query execution failed: " + e.getMessage());
+
+            log.info("Query executed successfully");
+
+        } catch (Exception e) {
+            log.error("Query execution failed for SQL: {}", sql, e);
+            throw new RuntimeException("Query execution failed", e);
         }
     }
-    
+
+    /**
+     * No explicit disconnect needed - Spring manages connection lifecycle
+     * Connection pooling (HikariCP) handles connection management automatically
+     */
     public void disconnect() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Database connection closed");
-            }
-        } catch (SQLException e) {
-            System.err.println("Failed to close database connection: " + e.getMessage());
-        }
+        log.info("Connection pool managed by Spring - no explicit disconnect needed");
     }
 }
