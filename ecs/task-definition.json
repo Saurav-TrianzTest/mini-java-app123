@@ -1,0 +1,141 @@
+{
+  "family": "mini-java-app-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "{{IMAGE_URI}}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        },
+        {
+          "containerPort": 8081,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "SERVER_HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "HEALTH_CHECK_PORT",
+          "value": "8081"
+        },
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+        },
+        {
+          "name": "CONFIG_DIR",
+          "value": "/app/config"
+        },
+        {
+          "name": "LOG_DIR",
+          "value": "/app/logs"
+        },
+        {
+          "name": "TEMP_DIR",
+          "value": "/app/temp"
+        },
+        {
+          "name": "UPLOAD_DIR",
+          "value": "/app/uploads"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "{{DB_HOST}}"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "{{DB_PORT}}"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "{{DB_NAME}}"
+        },
+        {
+          "name": "DB_USERNAME",
+          "value": "{{DB_USERNAME}}"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "{{DB_PASSWORD}}"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "{{REDIS_HOST}}"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "{{REDIS_PORT}}"
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "value": "{{REDIS_PASSWORD}}"
+        },
+        {
+          "name": "EXTERNAL_API_BASE_URL",
+          "value": "{{EXTERNAL_API_BASE_URL}}"
+        },
+        {
+          "name": "EXTERNAL_API_KEY",
+          "value": "{{EXTERNAL_API_KEY}}"
+        },
+        {
+          "name": "JWT_SECRET",
+          "value": "{{JWT_SECRET}}"
+        },
+        {
+          "name": "ADMIN_USERNAME",
+          "value": "{{ADMIN_USERNAME}}"
+        },
+        {
+          "name": "ADMIN_PASSWORD",
+          "value": "{{ADMIN_PASSWORD}}"
+        },
+        {
+          "name": "MONITORING_ENDPOINT",
+          "value": "{{MONITORING_ENDPOINT}}"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "value": "production"
+        },
+        {
+          "name": "DEBUG_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "LOGGING_LEVEL",
+          "value": "INFO"
+        },
+        {
+          "name": "TZ",
+          "value": "UTC"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "{{AWS_REGION}}",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}

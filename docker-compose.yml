@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      # Application Configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      - HEALTH_CHECK_PORT=8081
+      
+      # JVM Configuration
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+      
+      # Database Configuration (external service)
+      - DB_HOST=${DB_HOST:-localhost}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-mini_app_db}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-password123}
+      
+      # Redis Configuration (external service)
+      - REDIS_HOST=${REDIS_HOST:-127.0.0.1}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_secret_123}
+      
+      # External API Configuration
+      - EXTERNAL_API_BASE_URL=${EXTERNAL_API_BASE_URL:-http://api.example.com:8080/v1}
+      - EXTERNAL_API_KEY=${EXTERNAL_API_KEY:-hardcoded_api_key_12345}
+      
+      # File Paths
+      - CONFIG_DIR=/app/config
+      - LOG_DIR=/app/logs
+      - TEMP_DIR=/app/temp
+      - UPLOAD_DIR=/app/uploads
+      
+      # Security Configuration
+      - JWT_SECRET=${JWT_SECRET:-my_super_secret_jwt_key_123456789}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      
+      # Monitoring Configuration
+      - MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://monitoring.internal.company.com:9090/metrics}
+      
+      # Environment
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DEBUG_ENABLED=${DEBUG_ENABLED:-false}
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+      - ./temp:/app/temp
+      - ./uploads:/app/uploads
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/app/app.jar", "org.springframework.boot.loader.JarLauncher", "--health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  app-network:
+    driver: bridge
