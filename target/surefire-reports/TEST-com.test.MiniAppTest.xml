@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="2" failures="0" name="com.test.MiniAppTest" time="1.003" errors="0" skipped="0">
+<testsuite tests="2" failures="0" name="com.test.MiniAppTest" time="1" errors="0" skipped="0">
   <properties>
     <property name="jansi.mode" value="force"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
-    <property name="java.vm.version" value="21.0.9+10-LTS"/>
-    <property name="sun.boot.library.path" value="/tmp/jdk/lib"/>
+    <property name="java.vm.version" value="21.0.2+13-58"/>
+    <property name="sun.boot.library.path" value="/tmp/jdk-21.0.2/lib"/>
     <property name="maven.multiModuleProjectDirectory" value="/modernize-data/studio-data/TNT1001/APP1602/transformed-code/404/studio-workspace/java-mini"/>
-    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
-    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
     <property name="path.separator" value=":"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
@@ -16,7 +16,7 @@
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="user.dir" value="/modernize-data/studio-data/TNT1001/APP1602/transformed-code/404/studio-workspace/java-mini"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
-    <property name="java.runtime.version" value="21.0.9+10-LTS"/>
+    <property name="java.runtime.version" value="21.0.2+13-58"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.io.tmpdir" value="/tmp"/>
     <property name="line.separator" value="
@@ -37,28 +37,28 @@
     <property name="library.jansi.path" value="/usr/share/maven/lib/jansi-native"/>
     <property name="user.home" value="/home/studioai"/>
     <property name="user.timezone" value="Etc/UTC"/>
+    <property name="testFailureIgnore" value="true"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.specification.version" value="21"/>
     <property name="user.name" value="studioai"/>
     <property name="java.class.path" value="/usr/share/maven/boot/plexus-classworlds-2.x.jar"/>
     <property name="java.vm.specification.version" value="21"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher clean test jacoco:report"/>
-    <property name="java.home" value="/tmp/jdk"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher clean test jacoco:report -DtestFailureIgnore=true"/>
+    <property name="java.home" value="/tmp/jdk-21.0.2"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
-    <property name="java.version" value="21.0.9"/>
+    <property name="java.version" value="21.0.2"/>
     <property name="native.encoding" value="UTF-8"/>
-    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
     <property name="maven.home" value="/usr/share/maven"/>
     <property name="file.separator" value="/"/>
-    <property name="java.version.date" value="2025-10-21"/>
-    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.version.date" value="2024-01-16"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.cpu.endian" value="little"/>
-    <property name="java.vendor.version" value="Temurin-21.0.9+10"/>
   </properties>
   <testcase classname="com.test.MiniAppTest" name="testApplicationInitialization" time="0"/>
-  <testcase classname="com.test.MiniAppTest" name="testMainMethodExecution" time="1.003"/>
+  <testcase classname="com.test.MiniAppTest" name="testMainMethodExecution" time="1"/>
 </testsuite>
