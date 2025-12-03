@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.test.DatabaseServiceTest" time="0.301" tests="26" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02/target/test-classes:/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02/target/classes:/home/studioai/.m2/repository/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar:/home/studioai/.m2/repository/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-web/2.7.15/spring-boot-starter-web-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter/2.7.15/spring-boot-starter-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot/2.7.15/spring-boot-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.7.15/spring-boot-autoconfigure-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-logging/2.7.15/spring-boot-starter-logging-2.7.15.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-classic/1.2.12/logback-classic-1.2.12.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-core/1.2.12/logback-core-1.2.12.jar:/home/studioai/.m2/repository/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.17.2/log4j-to-slf4j-2.17.2.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-api/2.17.2/log4j-api-2.17.2.jar:/home/studioai/.m2/repository/org/slf4j/jul-to-slf4j/1.7.36/jul-to-slf4j-1.7.36.jar:/home/studioai/.m2/repository/jakarta/annotation/jakarta.annotation-api/1.3.5/jakarta.annotation-api-1.3.5.jar:/home/studioai/.m2/repository/org/springframework/spring-core/5.3.29/spring-core-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-jcl/5.3.29/spring-jcl-5.3.29.jar:/home/studioai/.m2/repository/org/yaml/snakeyaml/1.30/snakeyaml-1.30.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-json/2.7.15/spring-boot-starter-json-2.7.15.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.13.5/jackson-databind-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.13.5/jackson-annotations-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.13.5/jackson-core-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.13.5/jackson-datatype-jdk8-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.13.5/jackson-datatype-jsr310-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.13.5/jackson-module-parameter-names-2.13.5.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/2.7.15/spring-boot-starter-tomcat-2.7.15.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/9.0.79/tomcat-embed-core-9.0.79.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/9.0.79/tomcat-embed-el-9.0.79.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/9.0.79/tomcat-embed-websocket-9.0.79.jar:/home/studioai/.m2/repository/org/springframework/spring-web/5.3.29/spring-web-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-beans/5.3.29/spring-beans-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-webmvc/5.3.29/spring-webmvc-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-aop/5.3.29/spring-aop-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-context/5.3.29/spring-context-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-expression/5.3.29/spring-expression-5.3.29.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/home/studioai/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/home/studioai/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:/home/studioai/.m2/repository/org/mockito/mockito-core/5.3.1/mockito-core-5.3.1.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy/1.14.4/byte-buddy-1.14.4.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.4/byte-buddy-agent-1.14.4.jar:/home/studioai/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:"/>
+    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="/opt/java/openjdk/lib"/>
+    <property name="sun.java.command" value="/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02/target/surefire/surefirebooter-20251203104555398_3.jar /modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02/target/surefire 2025-12-03T10-45-55_345-jvmRun1 surefire-20251203104555398_1tmp surefire_0-20251203104555398_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02/target/test-classes:/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02/target/classes:/home/studioai/.m2/repository/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar:/home/studioai/.m2/repository/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-web/2.7.15/spring-boot-starter-web-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter/2.7.15/spring-boot-starter-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot/2.7.15/spring-boot-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.7.15/spring-boot-autoconfigure-2.7.15.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-logging/2.7.15/spring-boot-starter-logging-2.7.15.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-classic/1.2.12/logback-classic-1.2.12.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-core/1.2.12/logback-core-1.2.12.jar:/home/studioai/.m2/repository/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.17.2/log4j-to-slf4j-2.17.2.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-api/2.17.2/log4j-api-2.17.2.jar:/home/studioai/.m2/repository/org/slf4j/jul-to-slf4j/1.7.36/jul-to-slf4j-1.7.36.jar:/home/studioai/.m2/repository/jakarta/annotation/jakarta.annotation-api/1.3.5/jakarta.annotation-api-1.3.5.jar:/home/studioai/.m2/repository/org/springframework/spring-core/5.3.29/spring-core-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-jcl/5.3.29/spring-jcl-5.3.29.jar:/home/studioai/.m2/repository/org/yaml/snakeyaml/1.30/snakeyaml-1.30.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-json/2.7.15/spring-boot-starter-json-2.7.15.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.13.5/jackson-databind-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.13.5/jackson-annotations-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.13.5/jackson-core-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.13.5/jackson-datatype-jdk8-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.13.5/jackson-datatype-jsr310-2.13.5.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.13.5/jackson-module-parameter-names-2.13.5.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/2.7.15/spring-boot-starter-tomcat-2.7.15.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/9.0.79/tomcat-embed-core-9.0.79.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/9.0.79/tomcat-embed-el-9.0.79.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/9.0.79/tomcat-embed-websocket-9.0.79.jar:/home/studioai/.m2/repository/org/springframework/spring-web/5.3.29/spring-web-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-beans/5.3.29/spring-beans-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-webmvc/5.3.29/spring-webmvc-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-aop/5.3.29/spring-aop-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-context/5.3.29/spring-context-5.3.29.jar:/home/studioai/.m2/repository/org/springframework/spring-expression/5.3.29/spring-expression-5.3.29.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/home/studioai/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/home/studioai/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:/home/studioai/.m2/repository/org/mockito/mockito-core/5.3.1/mockito-core-5.3.1.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy/1.14.4/byte-buddy-1.14.4.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.4/byte-buddy-agent-1.14.4.jar:/home/studioai/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/studioai"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-10-21"/>
+    <property name="java.home" value="/opt/java/openjdk"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="surefire.real.class.path" value="/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02/target/surefire/surefirebooter-20251203104555398_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.9+10-LTS"/>
+    <property name="user.name" value="studioai"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="6.8.0-1030-aws"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Temurin-21.0.9+10"/>
+    <property name="testFailureIgnore" value="true"/>
+    <property name="localRepository" value="/home/studioai/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="21.0.9"/>
+    <property name="user.dir" value="/modernize-data/studio-data/TNT1001/APP1750/transformed-code/431/studio-workspace/mini-02"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vm.version" value="21.0.9+10-LTS"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="testExecuteQueryWithDeleteStatement" classname="com.test.DatabaseServiceTest" time="0.041"/>
+  <testcase name="testExecuteQueryWithUpdateStatement" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testConnectMultipleTimes" classname="com.test.DatabaseServiceTest" time="0.203">
+    <system-out><![CDATA[Connecting to database...
+Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testConstructorMultipleInstances" classname="com.test.DatabaseServiceTest" time="0.003"/>
+  <testcase name="testExecuteQueryWithUnicodeCharacters" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testDisconnectMultipleTimes" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithLongSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithInsertStatement" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithSpecialCharacters" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testDisconnect" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithEmptySQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithMalformedSQL" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testDisconnectWithoutConnect" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnect" classname="com.test.DatabaseServiceTest" time="0.003">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQueryWithSelectStatement" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithCreateTable" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testFullLifecycle" classname="com.test.DatabaseServiceTest" time="0.001">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQueryWithNullSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithDropTable" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithValidSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithAlterTable" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testMultipleQueriesInSequence" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnectDisconnectCycle" classname="com.test.DatabaseServiceTest" time="0.003">
+    <system-out><![CDATA[Connecting to database...
+Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQueryBeforeConnect" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryWithComplexSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConstructor" classname="com.test.DatabaseServiceTest" time="0.001"/>
+</testsuite>
