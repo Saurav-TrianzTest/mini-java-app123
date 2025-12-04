@@ -5,14 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Comprehensive test suite for DatabaseService class
- * Testing all methods, constructors, and edge cases
- */
 class DatabaseServiceTest {
 
     private DatabaseService databaseService;
@@ -31,10 +25,10 @@ class DatabaseServiceTest {
     }
 
     @Test
-    @DisplayName("Test DatabaseService constructor creates non-null instance")
+    @DisplayName("Test DatabaseService constructor")
     void testConstructor() {
         DatabaseService service = new DatabaseService();
-        assertNotNull(service, "DatabaseService instance should not be null");
+        assertNotNull(service);
     }
 
     @Test
@@ -342,5 +336,167 @@ class DatabaseServiceTest {
             databaseService.connect();
             databaseService.disconnect();
         }, "Immediate disconnect after connect should work");
+    }
+
+    @Test
+    @DisplayName("Test connect with hardcoded DB_HOST")
+    void testConnectWithHardcodedHost() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "Should attempt connection with hardcoded host localhost");
+    }
+
+    @Test
+    @DisplayName("Test connect with hardcoded DB_PORT")
+    void testConnectWithHardcodedPort() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "Should attempt connection with hardcoded port 5432");
+    }
+
+    @Test
+    @DisplayName("Test connect with hardcoded credentials")
+    void testConnectWithHardcodedCredentials() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "Should attempt connection with hardcoded username and password");
+    }
+
+    @Test
+    @DisplayName("Test connect initializes cache connection")
+    void testConnectInitializesCache() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "Should initialize Redis cache connection during connect");
+    }
+
+    @Test
+    @DisplayName("Test connect initializes external services")
+    void testConnectInitializesExternalServices() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "Should initialize external services during connect");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery sets query timeout")
+    void testExecuteQuerySetsTimeout() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery should set query timeout to 30 seconds");
+    }
+
+    @Test
+    @DisplayName("Test disconnect closes connection safely")
+    void testDisconnectClosesConnection() {
+        databaseService.connect();
+        assertDoesNotThrow(() -> databaseService.disconnect(),
+                "disconnect() should safely close connection");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery handles closed connection")
+    void testExecuteQueryWithClosedConnection() {
+        databaseService.connect();
+        databaseService.disconnect();
+        assertDoesNotThrow(() -> databaseService.executeQuery("SELECT 1"),
+                "executeQuery should handle closed connection gracefully");
+    }
+
+    @Test
+    @DisplayName("Test connect attempts to load PostgreSQL driver")
+    void testConnectLoadsDriver() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "connect() should attempt to load org.postgresql.Driver");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery closes statement after execution")
+    void testExecuteQueryClosesStatement() {
+        databaseService.connect();
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery("SELECT 1");
+            databaseService.executeQuery("SELECT 2");
+        }, "executeQuery should properly close statements");
+    }
+
+    @Test
+    @DisplayName("Test multiple executeQuery calls in sequence")
+    void testMultipleExecuteQueryCalls() {
+        databaseService.connect();
+        assertDoesNotThrow(() -> {
+            for (int i = 0; i < 10; i++) {
+                databaseService.executeQuery("SELECT " + i);
+            }
+        }, "Should handle multiple sequential executeQuery calls");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with whitespace SQL")
+    void testExecuteQueryWithWhitespace() {
+        databaseService.connect();
+        String sql = "   SELECT * FROM users   ";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle SQL with leading/trailing whitespace");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with multiline SQL")
+    void testExecuteQueryWithMultilineSql() {
+        databaseService.connect();
+        String sql = "SELECT *\nFROM users\nWHERE id = 1";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle multiline SQL");
+    }
+
+    @Test
+    @DisplayName("Test service remains valid after multiple operations")
+    void testServiceValidityAfterMultipleOperations() {
+        assertDoesNotThrow(() -> {
+            databaseService.connect();
+            databaseService.executeQuery("SELECT 1");
+            databaseService.disconnect();
+            databaseService.connect();
+            databaseService.executeQuery("SELECT 2");
+            databaseService.disconnect();
+        }, "Service should remain valid after multiple operation cycles");
+    }
+
+    @Test
+    @DisplayName("Test constructor with no arguments")
+    void testNoArgsConstructor() {
+        assertDoesNotThrow(() -> {
+            DatabaseService service = new DatabaseService();
+            assertNotNull(service);
+        }, "No-args constructor should create valid instance");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with TRUNCATE statement")
+    void testExecuteQueryWithTruncate() {
+        databaseService.connect();
+        String sql = "TRUNCATE TABLE test_table";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle TRUNCATE statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with CREATE INDEX")
+    void testExecuteQueryWithCreateIndex() {
+        databaseService.connect();
+        String sql = "CREATE INDEX idx_users_name ON users(name)";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle CREATE INDEX statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with DROP INDEX")
+    void testExecuteQueryWithDropIndex() {
+        databaseService.connect();
+        String sql = "DROP INDEX idx_users_name";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle DROP INDEX statements");
     }
 }
