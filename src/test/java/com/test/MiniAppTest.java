@@ -3,14 +3,9 @@ package com.test;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
