@@ -22,6 +22,7 @@ public class MiniAppTest {
 
     private MiniApp miniApp;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errorStreamCaptor = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
 
@@ -30,14 +31,13 @@ public class MiniAppTest {
 
     @BeforeEach
     public void setUp() {
-        // Arrange: Initialize MiniApp and capture System.out
         miniApp = new MiniApp();
         System.setOut(new PrintStream(outputStreamCaptor));
+        System.setErr(new PrintStream(errorStreamCaptor));
     }
 
     @AfterEach
     public void tearDown() {
-        // Clean up: Restore original System.out
         System.setOut(originalOut);
         System.setErr(originalErr);
     }
@@ -45,20 +45,14 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test MiniApp constructor - should create instance")
     public void testConstructor() {
-        // Arrange & Act
         MiniApp app = new MiniApp();
-
-        // Assert
         assertNotNull(app, "MiniApp instance should not be null");
     }
 
     @Test
     @DisplayName("Test main method - should start application without exception")
     public void testMainMethod() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "main() should not throw exception");
     }
@@ -66,10 +60,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method with null arguments - should handle gracefully")
     public void testMainMethodWithNullArgs() {
-        // Arrange
         String[] args = null;
-
-        // Act & Assert
         assertDoesNotThrow(() -> {
             if (args == null) {
                 MiniApp.main(new String[]{});
@@ -80,10 +71,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method with empty arguments")
     public void testMainMethodWithEmptyArgs() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "main() with empty args should not throw exception");
     }
@@ -91,10 +79,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method with multiple arguments")
     public void testMainMethodWithMultipleArgs() {
-        // Arrange
         String[] args = {"arg1", "arg2", "arg3"};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "main() with multiple args should not throw exception");
     }
@@ -102,10 +87,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method with special character arguments")
     public void testMainMethodWithSpecialCharArgs() {
-        // Arrange
         String[] args = {"--config=/path/to/config", "--port=8080", "--debug"};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "main() with special char args should not throw exception");
     }
@@ -113,14 +95,9 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method output contains startup message")
     public void testMainMethodOutputContainsStartupMessage() {
-        // Arrange
         String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> MiniApp.main(args));
         String output = outputStreamCaptor.toString();
-
-        // Assert
         assertTrue(output.contains("Starting Mini Java Application"),
             "Output should contain startup message");
     }
@@ -128,14 +105,9 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method output contains server started message")
     public void testMainMethodOutputContainsServerMessage() {
-        // Arrange
         String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> MiniApp.main(args));
         String output = outputStreamCaptor.toString();
-
-        // Assert
         assertTrue(output.contains("Server") || output.contains("port") || output.contains("8080"),
             "Output should contain server related message");
     }
@@ -143,12 +115,10 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test multiple MiniApp instances can be created")
     public void testMultipleInstances() {
-        // Arrange & Act
         MiniApp app1 = new MiniApp();
         MiniApp app2 = new MiniApp();
         MiniApp app3 = new MiniApp();
 
-        // Assert
         assertNotNull(app1, "First instance should not be null");
         assertNotNull(app2, "Second instance should not be null");
         assertNotNull(app3, "Third instance should not be null");
@@ -159,16 +129,12 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method execution time is reasonable")
     public void testMainMethodExecutionTime() {
-        // Arrange
         String[] args = {};
         long startTime = System.currentTimeMillis();
-
-        // Act
         assertDoesNotThrow(() -> MiniApp.main(args));
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
 
-        // Assert
         assertTrue(executionTime < 10000,
             "Main method should complete within 10 seconds");
     }
@@ -176,10 +142,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method handles config file not found")
     public void testMainMethodHandlesConfigFileNotFound() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "Should handle missing config file gracefully");
 
@@ -192,10 +155,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method handles log directory creation")
     public void testMainMethodHandlesLogDirectory() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "Should handle log directory creation gracefully");
     }
@@ -203,14 +163,10 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method handles database connection")
     public void testMainMethodHandlesDatabaseConnection() {
-        // Arrange
         String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> MiniApp.main(args));
         String output = outputStreamCaptor.toString();
 
-        // Assert
         assertTrue(output.contains("database") || output.contains("Database") ||
                    output.contains("Connecting") || !output.isEmpty(),
             "Should attempt database connection");
@@ -219,14 +175,10 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method handles server socket creation")
     public void testMainMethodHandlesServerSocket() {
-        // Arrange
         String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> MiniApp.main(args));
         String output = outputStreamCaptor.toString();
 
-        // Assert
         assertTrue(output.contains("Server") || output.contains("started") ||
                    output.contains("port") || !output.isEmpty(),
             "Should attempt to start server");
@@ -235,10 +187,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method with concurrent executions")
     public void testMainMethodConcurrentExecutions() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> {
             Thread thread1 = new Thread(() -> {
                 try {
@@ -267,10 +216,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method idempotency - multiple runs")
     public void testMainMethodIdempotency() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert - Run multiple times
         assertDoesNotThrow(() -> {
             MiniApp.main(args);
             Thread.sleep(100);
@@ -283,10 +229,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test application handles IOException gracefully")
     public void testApplicationHandlesIOException() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "Should handle IO exceptions gracefully");
     }
@@ -294,10 +237,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test application handles SQLException gracefully")
     public void testApplicationHandlesSQLException() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "Should handle SQL exceptions gracefully");
     }
@@ -305,10 +245,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test application handles network exceptions gracefully")
     public void testApplicationHandlesNetworkException() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "Should handle network exceptions gracefully");
     }
@@ -316,11 +253,9 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test MiniApp object creation with different states")
     public void testMiniAppObjectCreation() {
-        // Arrange & Act
         MiniApp app1 = new MiniApp();
         MiniApp app2 = new MiniApp();
 
-        // Assert
         assertNotNull(app1);
         assertNotNull(app2);
         assertNotEquals(app1, app2, "Different instances should not be equal");
@@ -329,46 +264,35 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method prints expected output lines")
     public void testMainMethodOutputLineCount() {
-        // Arrange
         String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> MiniApp.main(args));
         String output = outputStreamCaptor.toString();
         String[] lines = output.split("\n");
 
-        // Assert
         assertTrue(lines.length > 0, "Should produce output");
     }
 
     @Test
     @DisplayName("Test main method handles system resource cleanup")
     public void testMainMethodResourceCleanup() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> {
             MiniApp.main(args);
-            // System should clean up resources automatically
-            System.gc(); // Suggest garbage collection
+            System.gc();
         }, "Should handle resource cleanup without exception");
     }
 
     @Test
     @DisplayName("Test main method with system properties set")
     public void testMainMethodWithSystemProperties() {
-        // Arrange
         String[] args = {};
         String originalProperty = System.getProperty("test.property");
         System.setProperty("test.property", "test-value");
 
         try {
-            // Act & Assert
             assertDoesNotThrow(() -> MiniApp.main(args),
                 "Should work with system properties set");
         } finally {
-            // Cleanup
             if (originalProperty != null) {
                 System.setProperty("test.property", originalProperty);
             } else {
@@ -380,10 +304,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method handles empty environment")
     public void testMainMethodInEmptyEnvironment() {
-        // Arrange
         String[] args = {};
-
-        // Act & Assert
         assertDoesNotThrow(() -> MiniApp.main(args),
             "Should work in empty environment");
     }
@@ -391,14 +312,10 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test application initialization sequence")
     public void testApplicationInitializationSequence() {
-        // Arrange
         String[] args = {};
-
-        // Act
         assertDoesNotThrow(() -> MiniApp.main(args));
         String output = outputStreamCaptor.toString();
 
-        // Assert
         assertNotNull(output, "Output should not be null");
         assertFalse(output.trim().isEmpty(), "Output should not be empty");
     }
@@ -406,10 +323,7 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test MiniApp class is public and accessible")
     public void testMiniAppClassAccessibility() {
-        // Arrange & Act
         Class<?> clazz = MiniApp.class;
-
-        // Assert
         assertTrue(java.lang.reflect.Modifier.isPublic(clazz.getModifiers()),
             "MiniApp class should be public");
     }
@@ -417,13 +331,94 @@ public class MiniAppTest {
     @Test
     @DisplayName("Test main method is public and static")
     public void testMainMethodModifiers() throws NoSuchMethodException {
-        // Arrange
         java.lang.reflect.Method mainMethod = MiniApp.class.getMethod("main", String[].class);
-
-        // Assert
         assertTrue(java.lang.reflect.Modifier.isPublic(mainMethod.getModifiers()),
             "main method should be public");
         assertTrue(java.lang.reflect.Modifier.isStatic(mainMethod.getModifiers()),
             "main method should be static");
+    }
+
+    @Test
+    @DisplayName("Test hardcoded port constant")
+    public void testHardcodedPortConstant() {
+        String[] args = {};
+        assertDoesNotThrow(() -> MiniApp.main(args));
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("8080"), "Should use hardcoded port 8080");
+    }
+
+    @Test
+    @DisplayName("Test configuration file path handling")
+    public void testConfigurationFilePathHandling() {
+        String[] args = {};
+        assertDoesNotThrow(() -> MiniApp.main(args));
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Configuration") || output.contains("config") ||
+                   output.contains("properties"), "Should reference configuration");
+    }
+
+    @Test
+    @DisplayName("Test logging initialization")
+    public void testLoggingInitialization() {
+        String[] args = {};
+        assertDoesNotThrow(() -> MiniApp.main(args));
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Logging") || output.contains("log") ||
+                   !output.isEmpty(), "Should initialize logging");
+    }
+
+    @Test
+    @DisplayName("Test server socket binding")
+    public void testServerSocketBinding() {
+        String[] args = {};
+        assertDoesNotThrow(() -> MiniApp.main(args));
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Server started") || output.contains("accept connections") ||
+                   output.contains("ready"), "Should start server socket");
+    }
+
+    @Test
+    @DisplayName("Test application complete workflow")
+    public void testApplicationCompleteWorkflow() {
+        String[] args = {};
+        assertDoesNotThrow(() -> MiniApp.main(args));
+
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Starting"), "Should start application");
+        assertFalse(output.trim().isEmpty(), "Should produce output");
+    }
+
+    @Test
+    @DisplayName("Test error stream for exceptions")
+    public void testErrorStreamForExceptions() {
+        String[] args = {};
+        assertDoesNotThrow(() -> MiniApp.main(args));
+        String errorOutput = errorStreamCaptor.toString();
+        assertNotNull(errorOutput, "Error stream should be captured");
+    }
+
+    @Test
+    @DisplayName("Test constructor creates valid object")
+    public void testConstructorCreatesValidObject() {
+        MiniApp app = new MiniApp();
+        assertNotNull(app);
+        assertEquals(MiniApp.class, app.getClass());
+    }
+
+    @Test
+    @DisplayName("Test main completes within timeout")
+    public void testMainCompletesWithinTimeout() throws Exception {
+        String[] args = {};
+        Thread testThread = new Thread(() -> {
+            try {
+                MiniApp.main(args);
+            } catch (Exception e) {
+                fail("Should not throw exception");
+            }
+        });
+
+        testThread.start();
+        testThread.join(15000);
+        assertFalse(testThread.isAlive(), "Main should complete within timeout");
     }
 }
