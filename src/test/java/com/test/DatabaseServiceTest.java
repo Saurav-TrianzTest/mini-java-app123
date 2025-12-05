@@ -499,4 +499,130 @@ class DatabaseServiceTest {
         assertDoesNotThrow(() -> databaseService.executeQuery(sql),
                 "executeQuery() should handle DROP INDEX statements");
     }
+
+    @Test
+    @DisplayName("Test executeQuery with DISTINCT clause")
+    void testExecuteQueryWithDistinct() {
+        databaseService.connect();
+        String sql = "SELECT DISTINCT name FROM users";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle DISTINCT clause");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with aggregate functions")
+    void testExecuteQueryWithAggregateFunctions() {
+        databaseService.connect();
+        String sql = "SELECT COUNT(*), AVG(age), MAX(salary) FROM users";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle aggregate functions");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with HAVING clause")
+    void testExecuteQueryWithHaving() {
+        databaseService.connect();
+        String sql = "SELECT status, COUNT(*) FROM orders GROUP BY status HAVING COUNT(*) > 5";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle HAVING clause");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with UNION")
+    void testExecuteQueryWithUnion() {
+        databaseService.connect();
+        String sql = "SELECT name FROM users UNION SELECT name FROM customers";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle UNION statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with CASE statement")
+    void testExecuteQueryWithCase() {
+        databaseService.connect();
+        String sql = "SELECT name, CASE WHEN age < 18 THEN 'minor' ELSE 'adult' END FROM users";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle CASE statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with NULL handling")
+    void testExecuteQueryWithNullHandling() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE email IS NULL";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle NULL checks");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with LIKE operator")
+    void testExecuteQueryWithLike() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE name LIKE '%John%'";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle LIKE operator");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with IN operator")
+    void testExecuteQueryWithIn() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE id IN (1, 2, 3, 4, 5)";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle IN operator");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with BETWEEN operator")
+    void testExecuteQueryWithBetween() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE age BETWEEN 18 AND 65";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle BETWEEN operator");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with nested subqueries")
+    void testExecuteQueryWithNestedSubqueries() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE id IN (SELECT user_id FROM orders WHERE order_id IN (SELECT id FROM products))";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle nested subqueries");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with LEFT JOIN")
+    void testExecuteQueryWithLeftJoin() {
+        databaseService.connect();
+        String sql = "SELECT u.*, o.* FROM users u LEFT JOIN orders o ON u.id = o.user_id";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle LEFT JOIN");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with RIGHT JOIN")
+    void testExecuteQueryWithRightJoin() {
+        databaseService.connect();
+        String sql = "SELECT u.*, o.* FROM users u RIGHT JOIN orders o ON u.id = o.user_id";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle RIGHT JOIN");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with FULL OUTER JOIN")
+    void testExecuteQueryWithFullOuterJoin() {
+        databaseService.connect();
+        String sql = "SELECT u.*, o.* FROM users u FULL OUTER JOIN orders o ON u.id = o.user_id";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle FULL OUTER JOIN");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with CROSS JOIN")
+    void testExecuteQueryWithCrossJoin() {
+        databaseService.connect();
+        String sql = "SELECT u.*, p.* FROM users u CROSS JOIN products p";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle CROSS JOIN");
+    }
 }
