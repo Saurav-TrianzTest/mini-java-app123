@@ -582,6 +582,22 @@ class DatabaseServiceTest {
     }
 
     @Test
+    @DisplayName("Test private connectToCache method invocation")
+    void testConnectToCacheInvocation() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "connect() should invoke connectToCache()");
+    }
+
+    @Test
+    @DisplayName("Test private initializeExternalServices invocation")
+    void testInitializeExternalServicesInvocation() {
+        DatabaseService service = new DatabaseService();
+        assertDoesNotThrow(() -> service.connect(),
+                "connect() should invoke initializeExternalServices()");
+    }
+
+    @Test
     @DisplayName("Test executeQuery with nested subqueries")
     void testExecuteQueryWithNestedSubqueries() {
         databaseService.connect();

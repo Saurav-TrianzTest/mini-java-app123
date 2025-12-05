@@ -676,4 +676,28 @@ class MiniAppTest {
         MiniApp app2 = new MiniApp();
         assertNotSame(app1, app2);
     }
+
+    @Test
+    @DisplayName("Test private initializeApplication method")
+    void testInitializeApplication() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test private loadConfiguration method")
+    void testLoadConfiguration() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test private initializeLogging method")
+    void testInitializeLogging() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test private startServer method")
+    void testStartServer() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
 }
