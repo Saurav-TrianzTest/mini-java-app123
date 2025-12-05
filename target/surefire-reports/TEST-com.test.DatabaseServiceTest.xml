@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.test.DatabaseServiceTest" time="0.036" tests="33" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="17"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build/target/test-classes:/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build/target/classes:/home/studioai/.m2/repository/com/mysql/mysql-connector-j/8.2.0/mysql-connector-j-8.2.0.jar:/home/studioai/.m2/repository/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.2.0/spring-boot-starter-web-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter/3.2.0/spring-boot-starter-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot/3.2.0/spring-boot-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.2.0/spring-boot-autoconfigure-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.2.0/spring-boot-starter-logging-3.2.0.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-classic/1.4.11/logback-classic-1.4.11.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-core/1.4.11/logback-core-1.4.11.jar:/home/studioai/.m2/repository/org/slf4j/slf4j-api/2.0.7/slf4j-api-2.0.7.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.21.1/log4j-to-slf4j-2.21.1.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-api/2.21.1/log4j-api-2.21.1.jar:/home/studioai/.m2/repository/org/slf4j/jul-to-slf4j/2.0.9/jul-to-slf4j-2.0.9.jar:/home/studioai/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-core/6.1.1/spring-core-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-jcl/6.1.1/spring-jcl-6.1.1.jar:/home/studioai/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.2.0/spring-boot-starter-json-3.2.0.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.3/jackson-databind-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.3/jackson-annotations-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.3/jackson-core-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.15.3/jackson-datatype-jdk8-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.3/jackson-datatype-jsr310-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.15.3/jackson-module-parameter-names-2.15.3.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.2.0/spring-boot-starter-tomcat-3.2.0.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.16/tomcat-embed-core-10.1.16.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.16/tomcat-embed-el-10.1.16.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.16/tomcat-embed-websocket-10.1.16.jar:/home/studioai/.m2/repository/org/springframework/spring-web/6.1.1/spring-web-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-beans/6.1.1/spring-beans-6.1.1.jar:/home/studioai/.m2/repository/io/micrometer/micrometer-observation/1.12.0/micrometer-observation-1.12.0.jar:/home/studioai/.m2/repository/io/micrometer/micrometer-commons/1.12.0/micrometer-commons-1.12.0.jar:/home/studioai/.m2/repository/org/springframework/spring-webmvc/6.1.1/spring-webmvc-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-aop/6.1.1/spring-aop-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-context/6.1.1/spring-context-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-expression/6.1.1/spring-expression-6.1.1.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/home/studioai/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/home/studioai/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:/home/studioai/.m2/repository/org/mockito/mockito-core/5.3.1/mockito-core-5.3.1.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy/1.14.4/byte-buddy-1.14.4.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.4/byte-buddy-agent-1.14.4.jar:/home/studioai/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:"/>
+    <property name="java.vm.vendor" value="Ubuntu"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://ubuntu.com/"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="17"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-17-openjdk-amd64/lib"/>
+    <property name="sun.java.command" value="/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build/target/surefire/surefirebooter3558905162318637618.jar /modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build/target/surefire 2025-12-05T12-49-33_111-jvmRun1 surefire6728474364169258964tmp surefire_07478385475671966350tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build/target/test-classes:/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build/target/classes:/home/studioai/.m2/repository/com/mysql/mysql-connector-j/8.2.0/mysql-connector-j-8.2.0.jar:/home/studioai/.m2/repository/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.2.0/spring-boot-starter-web-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter/3.2.0/spring-boot-starter-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot/3.2.0/spring-boot-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.2.0/spring-boot-autoconfigure-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.2.0/spring-boot-starter-logging-3.2.0.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-classic/1.4.11/logback-classic-1.4.11.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-core/1.4.11/logback-core-1.4.11.jar:/home/studioai/.m2/repository/org/slf4j/slf4j-api/2.0.7/slf4j-api-2.0.7.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.21.1/log4j-to-slf4j-2.21.1.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-api/2.21.1/log4j-api-2.21.1.jar:/home/studioai/.m2/repository/org/slf4j/jul-to-slf4j/2.0.9/jul-to-slf4j-2.0.9.jar:/home/studioai/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-core/6.1.1/spring-core-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-jcl/6.1.1/spring-jcl-6.1.1.jar:/home/studioai/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.2.0/spring-boot-starter-json-3.2.0.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.3/jackson-databind-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.3/jackson-annotations-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.3/jackson-core-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.15.3/jackson-datatype-jdk8-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.3/jackson-datatype-jsr310-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.15.3/jackson-module-parameter-names-2.15.3.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.2.0/spring-boot-starter-tomcat-3.2.0.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.16/tomcat-embed-core-10.1.16.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.16/tomcat-embed-el-10.1.16.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.16/tomcat-embed-websocket-10.1.16.jar:/home/studioai/.m2/repository/org/springframework/spring-web/6.1.1/spring-web-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-beans/6.1.1/spring-beans-6.1.1.jar:/home/studioai/.m2/repository/io/micrometer/micrometer-observation/1.12.0/micrometer-observation-1.12.0.jar:/home/studioai/.m2/repository/io/micrometer/micrometer-commons/1.12.0/micrometer-commons-1.12.0.jar:/home/studioai/.m2/repository/org/springframework/spring-webmvc/6.1.1/spring-webmvc-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-aop/6.1.1/spring-aop-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-context/6.1.1/spring-context-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-expression/6.1.1/spring-expression-6.1.1.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/home/studioai/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/home/studioai/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:/home/studioai/.m2/repository/org/mockito/mockito-core/5.3.1/mockito-core-5.3.1.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy/1.14.4/byte-buddy-1.14.4.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.4/byte-buddy-agent-1.14.4.jar:/home/studioai/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/studioai"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-10-21"/>
+    <property name="java.home" value="/usr/lib/jvm/java-17-openjdk-amd64"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="surefire.real.class.path" value="/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build/target/surefire/surefirebooter3558905162318637618.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="17.0.17+10-Ubuntu-124.04"/>
+    <property name="user.name" value="studioai"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="6.14.0-1013-aws"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="testFailureIgnore" value="true"/>
+    <property name="localRepository" value="/home/studioai/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-17"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="17.0.17"/>
+    <property name="user.dir" value="/modernize-data/studio-data/TNT1001/APP1691/transformed-code/470/studio-workspace/Java-Build"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Ubuntu"/>
+    <property name="java.vm.version" value="17.0.17+10-Ubuntu-124.04"/>
+    <property name="java.specification.maintenance.version" value="1"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="61.0"/>
+  </properties>
+  <testcase name="testConnectDisconnectLifecycle" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testConnectToCache" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testConnectionFieldInitialization" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testPrivateMethodsAccessibility" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testConnectPrintsInformation" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryNullConnection" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testConstructorMultipleInstances" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testDbHostConstant" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testRedisHostConstant" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testInitializeExternalServices" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testDisconnectMultipleTimes" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testExecuteQueryPrintsInformation" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testExecuteQuerySpecialCharacters" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testExecuteQueryMultiple" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryInvalidSQL" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testConnectInitializesCache" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testDbUsernameConstant" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testExecuteQueryEmptySQL" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testDbPortConstant" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testRedisPortConstant" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testDbPasswordConstant" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnect" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testPaymentServiceUrlConstant" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExternalApiUrlConstant" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testClassTypeVerification" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testDbUrlConstant" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testDisconnectAfterConnect" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testDisconnectNullConnection" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryNullSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQueryValidSQL" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testConnectInitializesExternalServices" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testDbNameConstant" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConstructor" classname="com.test.DatabaseServiceTest" time="0"/>
+</testsuite>
