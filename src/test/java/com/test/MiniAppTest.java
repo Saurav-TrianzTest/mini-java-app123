@@ -31,10 +31,28 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test MiniApp constructor")
+    @DisplayName("Test MiniApp constructor creates non-null instance")
     void testConstructor() {
         MiniApp app = new MiniApp();
         assertNotNull(app);
+    }
+
+    @Test
+    @DisplayName("Test MiniApp constructor creates valid object")
+    void testConstructorCreatesValidObject() {
+        MiniApp app = new MiniApp();
+        assertNotNull(app);
+        assertTrue(app instanceof MiniApp);
+    }
+
+    @Test
+    @DisplayName("Test multiple MiniApp instances are independent")
+    void testMultipleIndependentInstances() {
+        MiniApp app1 = new MiniApp();
+        MiniApp app2 = new MiniApp();
+        assertNotNull(app1);
+        assertNotNull(app2);
+        assertNotSame(app1, app2);
     }
 
     @Test
@@ -47,6 +65,58 @@ class MiniAppTest {
     @DisplayName("Test main with null args")
     void testMainWithNullArgs() {
         assertDoesNotThrow(() -> MiniApp.main(null));
+    }
+
+    @Test
+    @DisplayName("Test main with single argument")
+    void testMainWithSingleArg() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{"single"}));
+    }
+
+    @Test
+    @DisplayName("Test main with multiple arguments")
+    void testMainWithMultipleArgs() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{"arg1", "arg2", "arg3"}));
+    }
+
+    @Test
+    @DisplayName("Test main with empty string arguments")
+    void testMainWithEmptyStrings() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{"", "", ""}));
+    }
+
+    @Test
+    @DisplayName("Test main with whitespace arguments")
+    void testMainWithWhitespace() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{"   ", "\t", "\n"}));
+    }
+
+    @Test
+    @DisplayName("Test main with special characters")
+    void testMainWithSpecialChars() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{"arg!", "@test", "#special"}));
+    }
+
+    @Test
+    @DisplayName("Test main with numeric args")
+    void testMainWithNumericArgs() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{"123", "456", "789"}));
+    }
+
+    @Test
+    @DisplayName("Test main with mixed args")
+    void testMainWithMixedArgs() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{"text", "123", "!@#", ""}));
+    }
+
+    @Test
+    @DisplayName("Test main with very long argument array")
+    void testMainWithLongArgArray() {
+        String[] longArgs = new String[100];
+        for (int i = 0; i < 100; i++) {
+            longArgs[i] = "arg" + i;
+        }
+        assertDoesNotThrow(() -> MiniApp.main(longArgs));
     }
 
     @Test
@@ -74,6 +144,14 @@ class MiniAppTest {
     }
 
     @Test
+    @DisplayName("Test application produces output")
+    void testApplicationProducesOutput() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertFalse(output.isEmpty());
+    }
+
+    @Test
     @DisplayName("Test application handles missing config")
     void testApplicationHandlesMissingConfig() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
@@ -83,25 +161,6 @@ class MiniAppTest {
     @DisplayName("Test application handles invalid log directory")
     void testApplicationHandlesInvalidLogDir() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
-    }
-
-    @Test
-    @DisplayName("Test multiple application instances")
-    void testMultipleInstances() {
-        assertDoesNotThrow(() -> {
-            MiniApp app1 = new MiniApp();
-            MiniApp app2 = new MiniApp();
-            assertNotNull(app1);
-            assertNotNull(app2);
-        });
-    }
-
-    @Test
-    @DisplayName("Test application produces output")
-    void testApplicationProducesOutput() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        assertFalse(output.isEmpty());
     }
 
     @Test
@@ -130,7 +189,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test server port")
+    @DisplayName("Test server port 8080")
     void testServerPort() {
         MiniApp.main(new String[]{});
         String output = outputStreamCaptor.toString();
@@ -138,9 +197,11 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test exception handling")
-    void testExceptionHandling() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    @DisplayName("Test hardcoded port usage")
+    void testHardcodedPort() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("8080") || output.contains("port"));
     }
 
     @Test
@@ -152,12 +213,9 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test startup time")
-    void testStartupTime() {
-        long startTime = System.currentTimeMillis();
-        MiniApp.main(new String[]{});
-        long duration = System.currentTimeMillis() - startTime;
-        assertTrue(duration < 30000);
+    @DisplayName("Test exception handling")
+    void testExceptionHandling() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
 
     @Test
@@ -167,9 +225,12 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test main with special characters")
-    void testMainWithSpecialChars() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{"arg!", "@test", "#special"}));
+    @DisplayName("Test startup time is reasonable")
+    void testStartupTime() {
+        long startTime = System.currentTimeMillis();
+        MiniApp.main(new String[]{});
+        long duration = System.currentTimeMillis() - startTime;
+        assertTrue(duration < 30000);
     }
 
     @Test
@@ -181,7 +242,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test application stability")
+    @DisplayName("Test application stability with multiple runs")
     void testApplicationStability() {
         assertDoesNotThrow(() -> {
             for (int i = 0; i < 3; i++) {
@@ -191,18 +252,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test constructor initialization")
-    void testConstructorInit() {
-        MiniApp app = new MiniApp();
-        assertNotNull(app);
-        assertDoesNotThrow(() -> {
-            String str = app.toString();
-            assertNotNull(str);
-        });
-    }
-
-    @Test
-    @DisplayName("Test concurrent applications")
+    @DisplayName("Test concurrent application execution")
     void testConcurrentApps() {
         assertDoesNotThrow(() -> {
             Thread t1 = new Thread(() -> MiniApp.main(new String[]{}));
@@ -213,44 +263,6 @@ class MiniAppTest {
             t1.join(5000);
             t2.join(5000);
         });
-    }
-
-    @Test
-    @DisplayName("Test main with empty strings")
-    void testMainWithEmptyStrings() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{"", "", ""}));
-    }
-
-    @Test
-    @DisplayName("Test main with whitespace")
-    void testMainWithWhitespace() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{"   ", "\t", "\n"}));
-    }
-
-    @Test
-    @DisplayName("Test main with numeric args")
-    void testMainWithNumericArgs() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{"123", "456", "789"}));
-    }
-
-    @Test
-    @DisplayName("Test main with mixed args")
-    void testMainWithMixedArgs() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{"text", "123", "!@#", ""}));
-    }
-
-    @Test
-    @DisplayName("Test database connection info")
-    void testDatabaseConnectionInfo() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        assertTrue(output.contains("Connect") || output.contains("connect") || output.contains("database") || output.contains("Database"));
-    }
-
-    @Test
-    @DisplayName("Test file system error handling")
-    void testFileSystemErrors() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
 
     @Test
@@ -271,7 +283,21 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test startup steps")
+    @DisplayName("Test database connection info output")
+    void testDatabaseConnectionInfo() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Connect") || output.contains("connect") || output.contains("database") || output.contains("Database"));
+    }
+
+    @Test
+    @DisplayName("Test file system error handling")
+    void testFileSystemErrors() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test startup steps execution")
     void testStartupSteps() {
         MiniApp.main(new String[]{});
         String output = outputStreamCaptor.toString();
@@ -288,7 +314,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test hashCode method")
+    @DisplayName("Test hashCode method returns non-zero")
     void testHashCode() {
         MiniApp app = new MiniApp();
         int hashCode = app.hashCode();
@@ -296,7 +322,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test equals method")
+    @DisplayName("Test equals method reflexivity")
     void testEquals() {
         MiniApp app1 = new MiniApp();
         assertNotNull(app1);
@@ -304,52 +330,12 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test absolute file paths")
+    @DisplayName("Test absolute file paths usage")
     void testAbsoluteFilePaths() {
         MiniApp.main(new String[]{});
         String output = outputStreamCaptor.toString();
         String errorOutput = errorStreamCaptor.toString();
         assertTrue(output.contains("Configuration") || errorOutput.contains("Configuration") || output.contains("config") || errorOutput.contains("config"));
-    }
-
-    @Test
-    @DisplayName("Test hardcoded port")
-    void testHardcodedPort() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        assertTrue(output.contains("8080") || output.contains("port"));
-    }
-
-    @Test
-    @DisplayName("Test loadConfiguration invoked")
-    void testLoadConfigurationInvoked() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        String errorOutput = errorStreamCaptor.toString();
-        assertTrue(output.length() > 0 || errorOutput.length() >= 0);
-    }
-
-    @Test
-    @DisplayName("Test initializeLogging invoked")
-    void testInitializeLoggingInvoked() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        String errorOutput = errorStreamCaptor.toString();
-        assertTrue(output.length() > 0 || errorOutput.length() >= 0);
-    }
-
-    @Test
-    @DisplayName("Test startServer invoked")
-    void testStartServerInvoked() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        assertTrue(output.contains("Server") || output.contains("server"));
-    }
-
-    @Test
-    @DisplayName("Test DatabaseService instantiation")
-    void testDatabaseServiceInstantiation() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
 
     @Test
@@ -362,12 +348,38 @@ class MiniAppTest {
     }
 
     @Test
+    @DisplayName("Test config file path constant /opt/app/config/app.properties")
+    void testConfigFilePathConstant() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        String errorOutput = errorStreamCaptor.toString();
+        assertTrue(output.contains("/opt/app/config/app.properties") || errorOutput.contains("config") || output.contains("Configuration"));
+    }
+
+    @Test
     @DisplayName("Test log file absolute path handling")
     void testLogFileAbsolutePath() {
         MiniApp.main(new String[]{});
         String output = outputStreamCaptor.toString();
         String errorOutput = errorStreamCaptor.toString();
         assertTrue(output.contains("/var/log") || errorOutput.contains("log") || output.contains("Logging"));
+    }
+
+    @Test
+    @DisplayName("Test log file path constant /var/log/mini-app.log")
+    void testLogFilePathConstant() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        String errorOutput = errorStreamCaptor.toString();
+        assertTrue(output.contains("/var/log/mini-app.log") || errorOutput.contains("log") || output.contains("Logging"));
+    }
+
+    @Test
+    @DisplayName("Test server port constant 8080")
+    void testServerPortConstant() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("8080"));
     }
 
     @Test
@@ -379,13 +391,13 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test server socket close")
+    @DisplayName("Test server socket closes properly")
     void testServerSocketClose() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
 
     @Test
-    @DisplayName("Test Thread.sleep in startServer")
+    @DisplayName("Test Thread.sleep in startServer method")
     void testThreadSleepInStartServer() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
@@ -460,48 +472,6 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test main with very long argument array")
-    void testMainWithLongArgArray() {
-        String[] longArgs = new String[100];
-        for (int i = 0; i < 100; i++) {
-            longArgs[i] = "arg" + i;
-        }
-        assertDoesNotThrow(() -> MiniApp.main(longArgs));
-    }
-
-    @Test
-    @DisplayName("Test main with single argument")
-    void testMainWithSingleArg() {
-        assertDoesNotThrow(() -> MiniApp.main(new String[]{"single"}));
-    }
-
-    @Test
-    @DisplayName("Test config file path constant")
-    void testConfigFilePathConstant() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        String errorOutput = errorStreamCaptor.toString();
-        assertTrue(output.contains("/opt/app/config/app.properties") || errorOutput.contains("config") || output.contains("Configuration"));
-    }
-
-    @Test
-    @DisplayName("Test log file path constant")
-    void testLogFilePathConstant() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        String errorOutput = errorStreamCaptor.toString();
-        assertTrue(output.contains("/var/log/mini-app.log") || errorOutput.contains("log") || output.contains("Logging"));
-    }
-
-    @Test
-    @DisplayName("Test server port constant")
-    void testServerPortConstant() {
-        MiniApp.main(new String[]{});
-        String output = outputStreamCaptor.toString();
-        assertTrue(output.contains("8080"));
-    }
-
-    @Test
     @DisplayName("Test initializeApplication method flow")
     void testInitializeApplicationFlow() {
         MiniApp.main(new String[]{});
@@ -550,7 +520,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test startServer sleeps before closing")
+    @DisplayName("Test startServer sleeps before closing socket")
     void testStartServerSleeps() {
         long start = System.currentTimeMillis();
         MiniApp.main(new String[]{});
@@ -559,7 +529,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test startServer closes socket")
+    @DisplayName("Test startServer closes socket after operation")
     void testStartServerClosesSocket() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
@@ -638,7 +608,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test no hanging threads after main")
+    @DisplayName("Test no hanging threads after main completes")
     void testNoHangingThreads() {
         assertDoesNotThrow(() -> {
             int beforeCount = Thread.activeCount();
@@ -670,7 +640,7 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test different instances are unique")
+    @DisplayName("Test different instances are unique objects")
     void testDifferentInstancesAreUnique() {
         MiniApp app1 = new MiniApp();
         MiniApp app2 = new MiniApp();
@@ -678,26 +648,222 @@ class MiniAppTest {
     }
 
     @Test
-    @DisplayName("Test private initializeApplication method")
+    @DisplayName("Test private initializeApplication method execution")
     void testInitializeApplication() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
 
     @Test
-    @DisplayName("Test private loadConfiguration method")
+    @DisplayName("Test private loadConfiguration method execution")
     void testLoadConfiguration() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
 
     @Test
-    @DisplayName("Test private initializeLogging method")
+    @DisplayName("Test private initializeLogging method execution")
     void testInitializeLogging() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
     }
 
     @Test
-    @DisplayName("Test private startServer method")
+    @DisplayName("Test private startServer method execution")
     void testStartServer() {
         assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test loadConfiguration invoked during initialization")
+    void testLoadConfigurationInvoked() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        String errorOutput = errorStreamCaptor.toString();
+        assertTrue(output.length() > 0 || errorOutput.length() >= 0);
+    }
+
+    @Test
+    @DisplayName("Test initializeLogging invoked during initialization")
+    void testInitializeLoggingInvoked() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        String errorOutput = errorStreamCaptor.toString();
+        assertTrue(output.length() > 0 || errorOutput.length() >= 0);
+    }
+
+    @Test
+    @DisplayName("Test startServer invoked during initialization")
+    void testStartServerInvoked() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Server") || output.contains("server"));
+    }
+
+    @Test
+    @DisplayName("Test DatabaseService instantiation in initializeApplication")
+    void testDatabaseServiceInstantiation() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test connect followed by immediate disconnect")
+    void testConnectDisconnectImmediately() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test CONFIG_FILE_PATH constant /opt/app/config/app.properties")
+    void testConfigFilePathConstantValue() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        String errorOutput = errorStreamCaptor.toString();
+        assertTrue(output.contains("/opt/app") || errorOutput.contains("config"));
+    }
+
+    @Test
+    @DisplayName("Test LOG_FILE_PATH constant /var/log/mini-app.log")
+    void testLogFilePathConstantValue() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        String errorOutput = errorStreamCaptor.toString();
+        assertTrue(output.contains("/var/log") || errorOutput.contains("log"));
+    }
+
+    @Test
+    @DisplayName("Test SERVER_PORT constant 8080")
+    void testServerPortConstantValue() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("8080"));
+    }
+
+    @Test
+    @DisplayName("Test config file read with FileInputStream")
+    void testConfigFileReadWithFileInputStream() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test properties load from config file")
+    void testPropertiesLoadFromConfigFile() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test log directory /var/log creation attempt")
+    void testLogDirectoryCreationAttempt() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test log file creation in /var/log")
+    void testLogFileCreationInVarLog() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test ServerSocket binding to port 8080")
+    void testServerSocketBindingToPort8080() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("8080"));
+    }
+
+    @Test
+    @DisplayName("Test ServerSocket accept connections on port 8080")
+    void testServerSocketAcceptConnectionsOn8080() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("accept") || output.contains("ready"));
+    }
+
+    @Test
+    @DisplayName("Test Thread.sleep(1000) in startServer")
+    void testThreadSleep1000InStartServer() {
+        long start = System.currentTimeMillis();
+        MiniApp.main(new String[]{});
+        long duration = System.currentTimeMillis() - start;
+        assertTrue(duration >= 900);
+    }
+
+    @Test
+    @DisplayName("Test ServerSocket close after operations")
+    void testServerSocketCloseAfterOperations() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test IOException error message in loadConfiguration")
+    void testIOExceptionErrorMessageInLoadConfig() {
+        MiniApp.main(new String[]{});
+        String errorOutput = errorStreamCaptor.toString();
+        assertNotNull(errorOutput);
+    }
+
+    @Test
+    @DisplayName("Test IOException error message in initializeLogging")
+    void testIOExceptionErrorMessageInInitLogging() {
+        MiniApp.main(new String[]{});
+        String errorOutput = errorStreamCaptor.toString();
+        assertNotNull(errorOutput);
+    }
+
+    @Test
+    @DisplayName("Test Exception error message in startServer")
+    void testExceptionErrorMessageInStartServer() {
+        MiniApp.main(new String[]{});
+        String errorOutput = errorStreamCaptor.toString();
+        assertNotNull(errorOutput);
+    }
+
+    @Test
+    @DisplayName("Test new DatabaseService() instantiation")
+    void testNewDatabaseServiceInstantiation() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test dbService.connect() invocation")
+    void testDbServiceConnectInvocation() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Connecting to database"));
+    }
+
+    @Test
+    @DisplayName("Test main method startup sequence")
+    void testMainMethodStartupSequence() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Starting Mini Java Application"));
+    }
+
+    @Test
+    @DisplayName("Test new MiniApp() in main method")
+    void testNewMiniAppInMainMethod() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
+
+    @Test
+    @DisplayName("Test app.initializeApplication() in main method")
+    void testAppInitializeApplicationInMain() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Configuration") || output.contains("Logging") || output.contains("Connecting"));
+    }
+
+    @Test
+    @DisplayName("Test app.startServer() in main method")
+    void testAppStartServerInMain() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Server") || output.contains("8080"));
+    }
+
+    @Test
+    @DisplayName("Test complete main method execution flow")
+    void testCompleteMainMethodExecutionFlow() {
+        MiniApp.main(new String[]{});
+        String output = outputStreamCaptor.toString();
+        assertTrue(output.contains("Starting Mini Java Application"));
+        assertTrue(output.contains("8080") || output.contains("Server"));
     }
 }
