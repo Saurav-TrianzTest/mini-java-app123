@@ -866,4 +866,21 @@ class MiniAppTest {
         assertTrue(output.contains("Starting Mini Java Application"));
         assertTrue(output.contains("8080") || output.contains("Server"));
     }
+
+    @Test
+    @DisplayName("Test memory usage is reasonable")
+    void testMemoryUsage() {
+        Runtime runtime = Runtime.getRuntime();
+        long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        MiniApp.main(new String[]{});
+        long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        long memoryUsed = memoryAfter - memoryBefore;
+        assertTrue(memoryUsed < 100000000);
+    }
+
+    @Test
+    @DisplayName("Test application resilience to null pointer exceptions")
+    void testNullPointerResilience() {
+        assertDoesNotThrow(() -> MiniApp.main(new String[]{}));
+    }
 }

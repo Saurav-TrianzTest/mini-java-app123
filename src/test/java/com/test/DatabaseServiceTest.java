@@ -583,6 +583,24 @@ class DatabaseServiceTest {
     }
 
     @Test
+    @DisplayName("Test executeQuery with EXISTS operator")
+    void testExecuteQueryWithExists() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE EXISTS (SELECT 1 FROM orders WHERE orders.user_id = users.id)";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle EXISTS operator");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with NOT EXISTS operator")
+    void testExecuteQueryWithNotExists() {
+        databaseService.connect();
+        String sql = "SELECT * FROM users WHERE NOT EXISTS (SELECT 1 FROM orders WHERE orders.user_id = users.id)";
+        assertDoesNotThrow(() -> databaseService.executeQuery(sql),
+                "executeQuery() should handle NOT EXISTS operator");
+    }
+
+    @Test
     @DisplayName("Test connect-execute-disconnect workflow")
     void testFullWorkflow() {
         assertDoesNotThrow(() -> {
