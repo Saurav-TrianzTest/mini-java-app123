@@ -572,4 +572,55 @@ public class MiniAppTest {
                    output.contains("accept") || output.contains("Server"),
                    "Should indicate server is ready");
     }
+
+    @Test
+    @DisplayName("Test main method with args containing path separators")
+    public void testMainWithArgsContainingPathSeparators() {
+        assertDoesNotThrow(() -> {
+            String[] args = {"/path/to/file", "C:\\Windows\\Path", "./relative/path"};
+            MiniApp.main(args);
+        }, "Main should handle args with path separators");
+    }
+
+    @Test
+    @DisplayName("Test main method with args containing numbers")
+    public void testMainWithArgsContainingNumbers() {
+        assertDoesNotThrow(() -> {
+            String[] args = {"123", "456.789", "-999", "0"};
+            MiniApp.main(args);
+        }, "Main should handle numeric args");
+    }
+
+    @Test
+    @DisplayName("Test main method with mixed content args")
+    public void testMainWithMixedContentArgs() {
+        assertDoesNotThrow(() -> {
+            String[] args = {"test123", "user@email.com", "http://example.com", "data:value"};
+            MiniApp.main(args);
+        }, "Main should handle mixed content args");
+    }
+
+    @Test
+    @DisplayName("Test application handles multiple initialization calls")
+    public void testMultipleInitializationCalls() {
+        assertDoesNotThrow(() -> {
+            MiniApp.main(new String[]{});
+            Thread.sleep(100);
+            MiniApp.main(new String[]{});
+        }, "Multiple initialization calls should be handled");
+    }
+
+    @Test
+    @DisplayName("Test application startup prints expected sequence")
+    public void testApplicationStartupSequence() {
+        ByteArrayOutputStream localOutputStreamCaptor = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(localOutputStreamCaptor));
+
+        MiniApp.main(new String[]{});
+
+        String output = localOutputStreamCaptor.toString();
+        assertTrue(output.contains("Starting"), "Should contain startup message");
+        assertTrue(output.contains("Server") || output.contains("Connecting"),
+                   "Should contain server or connection message");
+    }
 }

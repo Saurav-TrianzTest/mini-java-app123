@@ -493,7 +493,6 @@ public class DatabaseServiceTest {
         databaseService.executeQuery("SELECT 1");
 
         String output = outputStreamCaptor.toString();
-        // Query might execute or fail, but should not crash
         assertNotNull(output, "Output should not be null");
     }
 
@@ -616,5 +615,45 @@ public class DatabaseServiceTest {
             databaseService.executeQuery("");
             databaseService.executeQuery("");
         }, "Empty query executions should be handled");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with complex WHERE clause")
+    public void testExecuteQueryWithComplexWhereClause() {
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery("SELECT * FROM users WHERE age > 18 AND (city = 'NYC' OR city = 'LA') AND status = 'active'");
+        }, "executeQuery should handle complex WHERE clauses");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with HAVING clause")
+    public void testExecuteQueryWithHavingClause() {
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery("SELECT COUNT(*), city FROM users GROUP BY city HAVING COUNT(*) > 5");
+        }, "executeQuery should handle HAVING clause");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with UNION operator")
+    public void testExecuteQueryWithUnionOperator() {
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery("SELECT name FROM users UNION SELECT name FROM admins");
+        }, "executeQuery should handle UNION operator");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with CASE statement")
+    public void testExecuteQueryWithCaseStatement() {
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery("SELECT name, CASE WHEN age < 18 THEN 'minor' ELSE 'adult' END AS status FROM users");
+        }, "executeQuery should handle CASE statements");
+    }
+
+    @Test
+    @DisplayName("Test executeQuery with EXISTS clause")
+    public void testExecuteQueryWithExistsClause() {
+        assertDoesNotThrow(() -> {
+            databaseService.executeQuery("SELECT * FROM users WHERE EXISTS (SELECT 1 FROM orders WHERE orders.user_id = users.id)");
+        }, "executeQuery should handle EXISTS clause");
     }
 }

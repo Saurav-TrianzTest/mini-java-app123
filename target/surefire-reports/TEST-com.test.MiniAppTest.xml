@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.test.MiniAppTest" time="40.095" tests="41" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.test.MiniAppTest" time="46.206" tests="46" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-21-openjdk-amd64/lib"/>
-    <property name="sun.java.command" value="/modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/surefire/surefirebooter2605128475386467156.jar /modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/surefire 2025-12-09T20-26-44_818-jvmRun1 surefire11344434719340363673tmp surefire_04091159805384110307tmp"/>
+    <property name="sun.java.command" value="/modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/surefire/surefirebooter3348203653899258036.jar /modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/surefire 2025-12-10T07-31-45_986-jvmRun1 surefire14080776520535337588tmp surefire_02538023224177175021tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/test-classes:/modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/classes:/home/studioai/.m2/repository/org/postgresql/postgresql/42.7.1/postgresql-42.7.1.jar:/home/studioai/.m2/repository/org/checkerframework/checker-qual/3.41.0/checker-qual-3.41.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.2.0/spring-boot-starter-web-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter/3.2.0/spring-boot-starter-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot/3.2.0/spring-boot-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.2.0/spring-boot-autoconfigure-3.2.0.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.2.0/spring-boot-starter-logging-3.2.0.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-classic/1.4.11/logback-classic-1.4.11.jar:/home/studioai/.m2/repository/ch/qos/logback/logback-core/1.4.11/logback-core-1.4.11.jar:/home/studioai/.m2/repository/org/slf4j/slf4j-api/2.0.7/slf4j-api-2.0.7.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.21.1/log4j-to-slf4j-2.21.1.jar:/home/studioai/.m2/repository/org/apache/logging/log4j/log4j-api/2.21.1/log4j-api-2.21.1.jar:/home/studioai/.m2/repository/org/slf4j/jul-to-slf4j/2.0.9/jul-to-slf4j-2.0.9.jar:/home/studioai/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-core/6.1.1/spring-core-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-jcl/6.1.1/spring-jcl-6.1.1.jar:/home/studioai/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.2.0/spring-boot-starter-json-3.2.0.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.3/jackson-databind-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.3/jackson-annotations-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.3/jackson-core-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.15.3/jackson-datatype-jdk8-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.3/jackson-datatype-jsr310-2.15.3.jar:/home/studioai/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.15.3/jackson-module-parameter-names-2.15.3.jar:/home/studioai/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.2.0/spring-boot-starter-tomcat-3.2.0.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.16/tomcat-embed-core-10.1.16.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.16/tomcat-embed-el-10.1.16.jar:/home/studioai/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.16/tomcat-embed-websocket-10.1.16.jar:/home/studioai/.m2/repository/org/springframework/spring-web/6.1.1/spring-web-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-beans/6.1.1/spring-beans-6.1.1.jar:/home/studioai/.m2/repository/io/micrometer/micrometer-observation/1.12.0/micrometer-observation-1.12.0.jar:/home/studioai/.m2/repository/io/micrometer/micrometer-commons/1.12.0/micrometer-commons-1.12.0.jar:/home/studioai/.m2/repository/org/springframework/spring-webmvc/6.1.1/spring-webmvc-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-aop/6.1.1/spring-aop-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-context/6.1.1/spring-context-6.1.1.jar:/home/studioai/.m2/repository/org/springframework/spring-expression/6.1.1/spring-expression-6.1.1.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/home/studioai/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/home/studioai/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/studioai/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/home/studioai/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:/home/studioai/.m2/repository/org/mockito/mockito-core/5.3.1/mockito-core-5.3.1.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy/1.14.4/byte-buddy-1.14.4.jar:/home/studioai/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.4/byte-buddy-agent-1.14.4.jar:/home/studioai/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/home/studioai/.m2/repository/org/mockito/mockito-junit-jupiter/5.3.1/mockito-junit-jupiter-5.3.1.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/surefire/surefirebooter2605128475386467156.jar"/>
+    <property name="surefire.real.class.path" value="/modernize-data/studio-data/TNT1001/APP1779/transformed-code/443/studio-workspace/AryanPandey-007/target/surefire/surefirebooter3348203653899258036.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.9+10-Ubuntu-124.04"/>
     <property name="user.name" value="studioai"/>
@@ -54,45 +54,50 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testApplicationPrintsAllStages" classname="com.test.MiniAppTest" time="0.99"/>
-  <testcase name="testMainWithMaxIntegerArgs" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testApplicationPrintsAllStages" classname="com.test.MiniAppTest" time="0.986"/>
+  <testcase name="testMainWithArgsContainingPathSeparators" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainWithMaxIntegerArgs" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testIOExceptionHandlingDuringConfigLoad" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testMainWithVeryLongStringArgs" classname="com.test.MiniAppTest" time="1.003"/>
-  <testcase name="testMainMethodInitializesApplication" classname="com.test.MiniAppTest" time="1.003"/>
-  <testcase name="testMainMethodLoadsConfiguration" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testMainWithVeryLongStringArgs" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainMethodInitializesApplication" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainMethodLoadsConfiguration" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testMainWithEmptyStringArgs" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testConfigurationFileNotFound" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testConfigurationFileNotFound" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationStartupSequence" classname="com.test.MiniAppTest" time="1.003"/>
   <testcase name="testRapidExecution" classname="com.test.MiniAppTest" time="3.005"/>
   <testcase name="testIOExceptionHandlingDuringLoggingInit" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testServerStartupFailureHandling" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testMainMethodWithLongArgsArray" classname="com.test.MiniAppTest" time="1.004"/>
+  <testcase name="testMainMethodWithLongArgsArray" classname="com.test.MiniAppTest" time="1.005"/>
   <testcase name="testConcurrentInstantiation" classname="com.test.MiniAppTest" time="0.001"/>
-  <testcase name="testConstructorInitializationIsClean" classname="com.test.MiniAppTest" time="0"/>
+  <testcase name="testConstructorInitializationIsClean" classname="com.test.MiniAppTest" time="0.001"/>
+  <testcase name="testMainWithMixedContentArgs" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testMainMethodInitializesLogging" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testMainWithUnicodeCharactersInArgs" classname="com.test.MiniAppTest" time="1.003"/>
-  <testcase name="testApplicationPrintsConfigurationWarnings" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testMultipleSequentialMainCalls" classname="com.test.MiniAppTest" time="2.004"/>
+  <testcase name="testApplicationPrintsConfigurationWarnings" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testMultipleSequentialMainCalls" classname="com.test.MiniAppTest" time="2.003"/>
   <testcase name="testApplicationLifecycleCompletes" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testLoggingInitialization" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testMainMethodExecutesSuccessfully" classname="com.test.MiniAppTest" time="1.003"/>
-  <testcase name="testMainMethodWithSingleArg" classname="com.test.MiniAppTest" time="1.001"/>
+  <testcase name="testMultipleInitializationCalls" classname="com.test.MiniAppTest" time="2.104"/>
+  <testcase name="testMainMethodExecutesSuccessfully" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainMethodWithSingleArg" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testMainMethodWithEmptyArgs" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testApplicationCreatesComponents" classname="com.test.MiniAppTest" time="1.003"/>
-  <testcase name="testApplicationOutputNotEmpty" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testServerStartMessage" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationOutputNotEmpty" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testServerStartMessage" classname="com.test.MiniAppTest" time="1.001"/>
   <testcase name="testMainMethodStartsServer" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testMainMethodWithMultipleArgs" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testDatabaseConnectionInInitialization" classname="com.test.MiniAppTest" time="1.001"/>
-  <testcase name="testMiniAppConstructor" classname="com.test.MiniAppTest" time="0"/>
+  <testcase name="testDatabaseConnectionInInitialization" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMiniAppConstructor" classname="com.test.MiniAppTest" time="0.004"/>
   <testcase name="testServerAcceptsConnectionsMessage" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testMainWithSpecialCharactersInArgs" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testDatabaseServiceCreation" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testMiniAppConstructorMultipleInstances" classname="com.test.MiniAppTest" time="0.001"/>
   <testcase name="testMainMethodWithNullArgs" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainWithArgsContainingNumbers" classname="com.test.MiniAppTest" time="1.002"/>
   <testcase name="testApplicationHandlesMissingDirectories" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testApplicationCompletesInitialization" classname="com.test.MiniAppTest" time="1.001"/>
-  <testcase name="testMainMethodPrintsStartupMessage" classname="com.test.MiniAppTest" time="1.002"/>
-  <testcase name="testApplicationRunsWithinReasonableTime" classname="com.test.MiniAppTest" time="1.004"/>
-  <testcase name="testServerPortConfiguration" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testApplicationCompletesInitialization" classname="com.test.MiniAppTest" time="1.002"/>
+  <testcase name="testMainMethodPrintsStartupMessage" classname="com.test.MiniAppTest" time="1.001"/>
+  <testcase name="testApplicationRunsWithinReasonableTime" classname="com.test.MiniAppTest" time="1.003"/>
+  <testcase name="testServerPortConfiguration" classname="com.test.MiniAppTest" time="1.001"/>
   <testcase name="testMainWithWhitespaceArgs" classname="com.test.MiniAppTest" time="1.002"/>
 </testsuite>
