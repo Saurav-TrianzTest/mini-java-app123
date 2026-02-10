@@ -1,0 +1,64 @@
+# Maven build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# Maven wrapper (CRITICAL: excluded)
+mvnw
+mvnw.cmd
+.mvn/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Documentation
+*.md
+README*
+LICENSE*
+CHANGELOG*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Test files
+test/
+tests/
+*.test.java
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Docker files
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Scripts
+scripts/
+*.sh
+*.bat
+
+# Generated artifacts directory
+generated/
