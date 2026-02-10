@@ -1,95 +1,176 @@
 package com.test;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
+ * Database service - Cloud-Ready Version
+ * Uses HikariCP connection pooling and environment-based configuration
  */
 public class DatabaseService {
-    
-    // BLOCKER: Hardcoded database connection details
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "password123";
-    
-    // BLOCKER: Hardcoded cache server details
-    private static final String REDIS_HOST = "127.0.0.1";
-    private static final int REDIS_PORT = 6379;
-    
-    // BLOCKER: Hardcoded API endpoints
-    private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
-    private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
-    
-    private Connection connection;
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
+
+    // Cloud-ready: All configuration from environment variables
+    private static final String DB_HOST = System.getenv().getOrDefault("DB_HOST", "localhost");
+    private static final String DB_PORT = System.getenv().getOrDefault("DB_PORT", "3306");
+    private static final String DB_NAME = System.getenv().getOrDefault("DB_NAME", "mini_app_db");
+    private static final String DB_URL = String.format("jdbc:mysql://%s:%s/%s?useSSL=true&requireSSL=false",
+                                                       DB_HOST, DB_PORT, DB_NAME);
+    private static final String DB_USERNAME = System.getenv().getOrDefault("DB_USERNAME", "root");
+    private static final String DB_PASSWORD = System.getenv().getOrDefault("DB_PASSWORD", "");
+
+    // Cloud-ready: Cache server from environment
+    private static final String REDIS_HOST = System.getenv().getOrDefault("REDIS_HOST", "localhost");
+    private static final int REDIS_PORT = Integer.parseInt(System.getenv().getOrDefault("REDIS_PORT", "6379"));
+
+    // Cloud-ready: External service URLs from environment
+    private static final String EXTERNAL_API_URL = System.getenv().getOrDefault(
+        "EXTERNAL_API_URL",
+        "http://api.example.com:8080/v1"
+    );
+    private static final String PAYMENT_SERVICE_URL = System.getenv().getOrDefault(
+        "PAYMENT_SERVICE_URL",
+        "https://payment.internal.company.com/process"
+    );
+
+    // Cloud-ready: HikariCP connection pool
+    private HikariDataSource dataSource;
+
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
-            
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            
-            // BLOCKER: Hardcoded connection string and credentials
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-            
-            System.out.println("Connected to database: " + DB_URL);
-            System.out.println("Using username: " + DB_USERNAME);
-            
-            // BLOCKER: Hardcoded cache connection
+            logger.info("Initializing database connection pool");
+
+            // Cloud-ready: HikariCP connection pooling configuration
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(DB_URL);
+            config.setUsername(DB_USERNAME);
+            config.setPassword(DB_PASSWORD);
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+
+            // Cloud-ready: Connection pool settings for cloud environments
+            config.setMaximumPoolSize(Integer.parseInt(
+                System.getenv().getOrDefault("DB_POOL_MAX_SIZE", "20")
+            ));
+            config.setMinimumIdle(Integer.parseInt(
+                System.getenv().getOrDefault("DB_POOL_MIN_IDLE", "5")
+            ));
+            config.setConnectionTimeout(Long.parseLong(
+                System.getenv().getOrDefault("DB_CONNECTION_TIMEOUT", "30000")
+            ));
+            config.setIdleTimeout(Long.parseLong(
+                System.getenv().getOrDefault("DB_IDLE_TIMEOUT", "600000")
+            ));
+            config.setMaxLifetime(Long.parseLong(
+                System.getenv().getOrDefault("DB_MAX_LIFETIME", "1800000")
+            ));
+
+            // Cloud-ready: Health check query
+            config.setConnectionTestQuery("SELECT 1");
+
+            // Cloud-ready: Pool name for monitoring
+            config.setPoolName("MiniAppHikariPool");
+
+            // Initialize the data source
+            dataSource = new HikariDataSource(config);
+
+            logger.info("Database connection pool initialized successfully",
+                       "host", DB_HOST,
+                       "port", DB_PORT,
+                       "database", DB_NAME,
+                       "poolSize", config.getMaximumPoolSize());
+
+            // Cloud-ready: Initialize other services with environment configuration
             connectToCache();
-            
-            // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
-            
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
-        } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+
+        } catch (Exception e) {
+            logger.error("Database connection pool initialization failed", e);
+            throw new RuntimeException("Failed to initialize database connection pool", e);
         }
     }
-    
+
     private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
-        System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
-        // Simulate cache connection
+        // Cloud-ready: Cache connection with environment variables
+        logger.info("Connecting to Redis cache",
+                   "host", REDIS_HOST,
+                   "port", REDIS_PORT);
+        // Note: In production, implement actual Redis connection with Jedis or Lettuce
     }
-    
+
     private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
-        System.out.println("Initializing external API: " + EXTERNAL_API_URL);
-        System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
+        // Cloud-ready: External service initialization with environment variables
+        logger.info("Initializing external services",
+                   "apiUrl", EXTERNAL_API_URL,
+                   "paymentServiceUrl", PAYMENT_SERVICE_URL);
     }
-    
+
     public void executeQuery(String sql) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
         try {
-            if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
-                
-                System.out.println("Executing query: " + sql);
-                stmt.execute();
-                stmt.close();
-            }
+            // Cloud-ready: Get connection from pool
+            connection = dataSource.getConnection();
+            stmt = connection.prepareStatement(sql);
+
+            // Cloud-ready: Query timeout from environment
+            int queryTimeout = Integer.parseInt(
+                System.getenv().getOrDefault("DB_QUERY_TIMEOUT", "30")
+            );
+            stmt.setQueryTimeout(queryTimeout);
+
+            logger.debug("Executing query", "sql", sql);
+            stmt.execute();
+
         } catch (SQLException e) {
-            System.err.println("Query execution failed: " + e.getMessage());
+            logger.error("Query execution failed", "sql", sql, e);
+            throw new RuntimeException("Query execution failed", e);
+        } finally {
+            // Cloud-ready: Proper resource cleanup
+            closeResources(stmt, connection);
         }
     }
-    
-    public void disconnect() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Database connection closed");
+
+    private void closeResources(PreparedStatement stmt, Connection connection) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                logger.error("Failed to close PreparedStatement", e);
             }
+        }
+        if (connection != null) {
+            try {
+                connection.close(); // Returns connection to pool
+            } catch (SQLException e) {
+                logger.error("Failed to close database connection", e);
+            }
+        }
+    }
+
+    public void disconnect() {
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+            logger.info("Database connection pool closed");
+        }
+    }
+
+    // Cloud-ready: Health check method for cloud platform health probes
+    public boolean isHealthy() {
+        if (dataSource == null || dataSource.isClosed()) {
+            return false;
+        }
+        try (Connection connection = dataSource.getConnection()) {
+            return connection.isValid(5);
         } catch (SQLException e) {
-            System.err.println("Failed to close database connection: " + e.getMessage());
+            logger.error("Health check failed", e);
+            return false;
         }
     }
 }

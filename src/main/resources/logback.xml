@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Cloud-ready: Console appender for containerized environments -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Structured JSON logging for CloudWatch and other log aggregators -->
+            <includeMdc>true</includeMdc>
+            <includeContext>true</includeContext>
+            <includeCallerData>false</includeCallerData>
+            <includeTags>true</includeTags>
+
+            <!-- Custom fields for cloud environment -->
+            <customFields>{"application":"mini-java-app","environment":"${ENVIRONMENT:-unknown}"}</customFields>
+
+            <!-- Add correlation ID from MDC -->
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <message>message</message>
+                <logger>logger</logger>
+                <thread>thread</thread>
+                <level>level</level>
+                <mdc>mdc</mdc>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <!-- Cloud-ready: Root logger configuration -->
+    <root level="${LOGGING_LEVEL:-INFO}">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <!-- Application-specific loggers -->
+    <logger name="com.test" level="${LOGGING_LEVEL:-INFO}" />
+
+    <!-- Third-party library logging -->
+    <logger name="com.zaxxer.hikari" level="INFO" />
+    <logger name="org.springframework" level="WARN" />
+</configuration>
