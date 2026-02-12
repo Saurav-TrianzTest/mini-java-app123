@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite tests="24" failures="0" name="com.test.MiniAppTest" time="11.233" errors="0" skipped="0">
+  <properties>
+    <property name="jansi.mode" value="force"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="java.vm.version" value="17.0.17+10-Ubuntu-124.04"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-17-openjdk-amd64/lib"/>
+    <property name="maven.multiModuleProjectDirectory" value="/modernize-data/studio-data/TNT1001/APP1217/transformed-code/398/studio-workspace/mini-java"/>
+    <property name="java.vm.vendor" value="Ubuntu"/>
+    <property name="java.vendor.url" value="https://ubuntu.com/"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/modernize-data/studio-data/TNT1001/APP1217/transformed-code/398/studio-workspace/mini-java"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="java.runtime.version" value="17.0.17+10-Ubuntu-124.04"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Linux"/>
+    <property name="classworlds.conf" value="/usr/share/maven/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="maven.conf" value="/usr/share/maven/conf"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="java.class.version" value="61.0"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="6.12.47-0-virt"/>
+    <property name="library.jansi.path" value="/usr/share/maven/lib/jansi-native"/>
+    <property name="user.home" value="/home/studioai"/>
+    <property name="user.timezone" value="Etc/UTC"/>
+    <property name="testFailureIgnore" value="true"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="17"/>
+    <property name="user.name" value="studioai"/>
+    <property name="java.class.path" value="/usr/share/maven/boot/plexus-classworlds-2.x.jar"/>
+    <property name="java.vm.specification.version" value="17"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher clean test jacoco:report -DtestFailureIgnore=true"/>
+    <property name="java.home" value="/usr/lib/jvm/java-17-openjdk-amd64"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.version" value="17.0.17"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Ubuntu"/>
+    <property name="java.specification.maintenance.version" value="1"/>
+    <property name="maven.home" value="/usr/share/maven"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.version.date" value="2025-10-21"/>
+    <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-17"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.cpu.endian" value="little"/>
+  </properties>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMiniAppConstructor" time="0"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodWithNullArgs" time="0.999"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodWithEmptyArgs" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodWithSingleArg" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodWithMultipleArgs" time="1.001"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodOutputContainsStartupMessage" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodInitializesApplication" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodStartsServer" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMultipleInstanceCreation" time="0"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationHandlesMissingConfigFile" time="1.004"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationHandlesLoggingInitialization" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationConnectsToDatabase" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationHandlesPortBinding" time="1.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMiniAppWithInterruptedExecution" time="0.101"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationInitializationSequence" time="0.002"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationWithSystemProperties" time="0.001"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationHandlesIOException" time="0"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testConcurrentMainInvocations" time="0.001"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMultipleInstantiationsMemory" time="0.003"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodWithLongArguments" time="0.001"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testMainMethodWithSpecialCharacters" time="0.001"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationResourceCleanup" time="0.101"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationErrorMessages" time="0.001"/>
+  <testcase classname="com.test.MiniAppTest" name="com.test.MiniAppTest.testApplicationCompletesInReasonableTime" time="0.001"/>
+</testsuite>
