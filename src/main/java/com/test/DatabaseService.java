@@ -12,10 +12,10 @@ public class DatabaseService {
     
     // BLOCKER: Hardcoded database connection details
     private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
+    private static final String DB_PORT = "5432";
     private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
+    private static final String DB_URL = "jdbc:postgresql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+    private static final String DB_USERNAME = "postgres";
     private static final String DB_PASSWORD = "password123";
     
     // BLOCKER: Hardcoded cache server details
@@ -33,7 +33,7 @@ public class DatabaseService {
             System.out.println("Connecting to database...");
             
             // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("org.postgresql.Driver");
             
             // BLOCKER: Hardcoded connection string and credentials
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
