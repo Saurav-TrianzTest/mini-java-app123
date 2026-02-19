@@ -1,0 +1,86 @@
+{
+  "family": "mini-java-app-task",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "{{IMAGE_URI}}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "SERVER_HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "TZ",
+          "value": "UTC"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "{{DB_HOST}}"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "mini_app_db"
+        },
+        {
+          "name": "DB_USER",
+          "value": "{{DB_USER}}"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "{{DB_PASSWORD}}"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "{{REDIS_HOST}}"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "name": "RABBITMQ_HOST",
+          "value": "{{RABBITMQ_HOST}}"
+        },
+        {
+          "name": "RABBITMQ_PORT",
+          "value": "5672"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "{{AWS_REGION}}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
