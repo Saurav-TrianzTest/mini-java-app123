@@ -1,5 +1,8 @@
 package com.test;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,6 +12,7 @@ import java.util.Properties;
 /**
  * Mini Java Application with intentional containerization blockers for testing
  */
+@SpringBootApplication
 public class MiniApp {
     
     // BLOCKER: Hardcoded port number
@@ -19,6 +23,7 @@ public class MiniApp {
     private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
     
     public static void main(String[] args) {
+        SpringApplication.run(MiniApp.class, args);
         System.out.println("Starting Mini Java Application...");
         
         MiniApp app = new MiniApp();

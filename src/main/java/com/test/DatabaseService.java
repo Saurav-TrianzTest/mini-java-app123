@@ -1,5 +1,7 @@
 package com.test;
 
+import org.springframework.stereotype.Service;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,6 +10,7 @@ import java.sql.SQLException;
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
  */
+@Service
 public class DatabaseService {
     
     // BLOCKER: Hardcoded database connection details
