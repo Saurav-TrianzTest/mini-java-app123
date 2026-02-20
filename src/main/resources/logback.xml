@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    
+    <!-- Cloud-Native: Console appender for cloud log aggregation -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- JSON structured logging for cloud monitoring -->
+            <includeMdc>true</includeMdc>
+            <includeContext>true</includeContext>
+            <includeCallerData>false</includeCallerData>
+            <includeTags>true</includeTags>
+            
+            <!-- Custom fields for cloud environment -->
+            <customFields>{"application":"mini-java-app","environment":"${ENVIRONMENT:-development}"}</customFields>
+            
+            <!-- Field names for cloud log aggregation -->
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <version>version</version>
+                <message>message</message>
+                <logger>logger</logger>
+                <thread>thread</thread>
+                <level>level</level>
+                <levelValue>levelValue</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
+    
+    <!-- Cloud-Native: Async appender for better performance -->
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="CONSOLE" />
+    </appender>
+    
+    <!-- Root logger configuration -->
+    <root level="${LOGGING_LEVEL:-INFO}">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </root>
+    
+    <!-- Application-specific loggers -->
+    <logger name="com.test" level="${LOGGING_LEVEL:-INFO}" />
+    
+    <!-- HikariCP connection pool logging -->
+    <logger name="com.zaxxer.hikari" level="INFO" />
+    
+    <!-- SQL logging (set to DEBUG for query logging) -->
+    <logger name="org.springframework.jdbc" level="INFO" />
+    
+    <!-- AWS SDK logging -->
+    <logger name="com.amazonaws" level="WARN" />
+    
+</configuration>

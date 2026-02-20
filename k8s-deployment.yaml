@@ -1,0 +1,155 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mini-java-app
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mini-java-app-config
+  namespace: mini-java-app
+data:
+  SERVER_PORT: "8080"
+  SERVER_HOST: "0.0.0.0"
+  ENVIRONMENT: "production"
+  AWS_REGION: "us-east-1"
+  APP_STORAGE_TYPE: "s3"
+  LOGGING_LEVEL: "INFO"
+  DATABASE_POOL_MAX_CONNECTIONS: "20"
+  DATABASE_CONNECTION_TIMEOUT: "30000"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mini-java-app-secrets
+  namespace: mini-java-app
+type: Opaque
+stringData:
+  DATABASE_URL: "jdbc:mysql://mysql-service:3306/mini_app_db"
+  DATABASE_USERNAME: "appuser"
+  DATABASE_PASSWORD: "changeme"
+  REDIS_HOST: "redis-service"
+  REDIS_PASSWORD: ""
+  S3_BUCKET_NAME: "mini-app-bucket"
+  JWT_SECRET: "your-jwt-secret"
+  ENCRYPTION_KEY: "your-encryption-key"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mini-java-app
+  namespace: mini-java-app
+  labels:
+    app: mini-java-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mini-java-app
+  template:
+    metadata:
+      labels:
+        app: mini-java-app
+    spec:
+      containers:
+      - name: mini-java-app
+        image: <account-id>.dkr.ecr.us-east-1.amazonaws.com/mini-java-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: mini-java-app-config
+        - secretRef:
+            name: mini-java-app-secrets
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mini-java-app-service
+  namespace: mini-java-app
+  labels:
+    app: mini-java-app
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: mini-java-app
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mini-java-app-hpa
+  namespace: mini-java-app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mini-java-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: mini-java-app-pdb
+  namespace: mini-java-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: mini-java-app

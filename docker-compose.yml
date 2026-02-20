@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # Application service
+  app:
+    build: .
+    container_name: mini-java-app
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    environment:
+      # Server configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      - ENVIRONMENT=development
+      
+      # Database configuration
+      - DATABASE_URL=jdbc:mysql://mysql:3306/mini_app_db
+      - DATABASE_USERNAME=appuser
+      - DATABASE_PASSWORD=apppassword
+      - DATABASE_POOL_MAX_CONNECTIONS=20
+      - DATABASE_CONNECTION_TIMEOUT=30000
+      
+      # Redis cache configuration
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      
+      # Logging configuration
+      - LOGGING_LEVEL=INFO
+      
+      # AWS configuration (for local testing with LocalStack)
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - S3_BUCKET_NAME=mini-app-bucket
+      - APP_STORAGE_TYPE=s3
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # MySQL database
+  mysql:
+    image: mysql:8.0
+    container_name: mini-app-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mini_app_db
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: mini-app-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # LocalStack for AWS services (S3, Secrets Manager, etc.)
+  localstack:
+    image: localstack/localstack:latest
+    container_name: mini-app-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,secretsmanager
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - localstack-data:/tmp/localstack
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
+  localstack-data:
