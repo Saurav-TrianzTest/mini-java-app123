@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mini-java-app</a> &gt; <a href="index.source.html" class="el_package">com.test</a> &gt; <span class="el_source">DatabaseService.java</span></div><h1>DatabaseService.java</h1><pre class="source lang-java linenums">package com.test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+/**
+ * Database service with hardcoded connection details - intentional containerization blockers
+ * MIGRATED TO POSTGRESQL
+ */
+<span class="fc" id="L12">public class DatabaseService {</span>
+    
+    // BLOCKER: Hardcoded database connection details - MIGRATED TO POSTGRESQL
+    private static final String DB_HOST = &quot;localhost&quot;;
+    private static final String DB_PORT = &quot;5432&quot;;
+    private static final String DB_NAME = &quot;mini_app_db&quot;;
+    private static final String DB_URL = &quot;jdbc:postgresql://&quot; + DB_HOST + &quot;:&quot; + DB_PORT + &quot;/&quot; + DB_NAME;
+    private static final String DB_USERNAME = &quot;postgres&quot;;
+    private static final String DB_PASSWORD = &quot;password123&quot;;
+    
+    // BLOCKER: Hardcoded cache server details
+    private static final String REDIS_HOST = &quot;127.0.0.1&quot;;
+    private static final int REDIS_PORT = 6379;
+    
+    // BLOCKER: Hardcoded API endpoints
+    private static final String EXTERNAL_API_URL = &quot;http://api.example.com:8080/v1&quot;;
+    private static final String PAYMENT_SERVICE_URL = &quot;https://payment.internal.company.com/process&quot;;
+    
+    private Connection connection;
+    
+    public void connect() {
+        try {
+<span class="fc" id="L34">            System.out.println(&quot;Connecting to PostgreSQL database...&quot;);</span>
+            
+            // BLOCKER: Hardcoded JDBC driver - MIGRATED TO POSTGRESQL
+<span class="fc" id="L37">            Class.forName(&quot;org.postgresql.Driver&quot;);</span>
+            
+            // BLOCKER: Hardcoded connection string and credentials
+<span class="nc" id="L40">            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);</span>
+            
+<span class="nc" id="L42">            System.out.println(&quot;Connected to PostgreSQL database: &quot; + DB_URL);</span>
+<span class="nc" id="L43">            System.out.println(&quot;Using username: &quot; + DB_USERNAME);</span>
+            
+            // BLOCKER: Hardcoded cache connection
+<span class="nc" id="L46">            connectToCache();</span>
+            
+            // BLOCKER: Hardcoded external service URLs
+<span class="nc" id="L49">            initializeExternalServices();</span>
+            
+<span class="nc" id="L51">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L52">            System.err.println(&quot;PostgreSQL driver not found: &quot; + e.getMessage());</span>
+<span class="fc" id="L53">        } catch (SQLException e) {</span>
+<span class="fc" id="L54">            System.err.println(&quot;Database connection failed: &quot; + e.getMessage());</span>
+<span class="nc" id="L55">        }</span>
+<span class="fc" id="L56">    }</span>
+    
+    private void connectToCache() {
+        // BLOCKER: Hardcoded Redis connection details
+<span class="nc" id="L60">        System.out.println(&quot;Connecting to Redis cache at: &quot; + REDIS_HOST + &quot;:&quot; + REDIS_PORT);</span>
+        // Simulate cache connection
+<span class="nc" id="L62">    }</span>
+    
+    private void initializeExternalServices() {
+        // BLOCKER: Hardcoded external service URLs
+<span class="nc" id="L66">        System.out.println(&quot;Initializing external API: &quot; + EXTERNAL_API_URL);</span>
+<span class="nc" id="L67">        System.out.println(&quot;Initializing payment service: &quot; + PAYMENT_SERVICE_URL);</span>
+<span class="nc" id="L68">    }</span>
+    
+    public void executeQuery(String sql) {
+        try {
+<span class="pc bpc" id="L72" title="3 of 4 branches missed.">            if (connection != null &amp;&amp; !connection.isClosed()) {</span>
+<span class="nc" id="L73">                PreparedStatement stmt = connection.prepareStatement(sql);</span>
+                // BLOCKER: Hardcoded query timeout
+<span class="nc" id="L75">                stmt.setQueryTimeout(30);</span>
+                
+<span class="nc" id="L77">                System.out.println(&quot;Executing query: &quot; + sql);</span>
+<span class="nc" id="L78">                stmt.execute();</span>
+<span class="nc" id="L79">                stmt.close();</span>
+            }
+<span class="nc" id="L81">        } catch (SQLException e) {</span>
+<span class="nc" id="L82">            System.err.println(&quot;Query execution failed: &quot; + e.getMessage());</span>
+<span class="fc" id="L83">        }</span>
+<span class="fc" id="L84">    }</span>
+    
+    public void disconnect() {
+        try {
+<span class="pc bpc" id="L88" title="3 of 4 branches missed.">            if (connection != null &amp;&amp; !connection.isClosed()) {</span>
+<span class="nc" id="L89">                connection.close();</span>
+<span class="nc" id="L90">                System.out.println(&quot;Database connection closed&quot;);</span>
+            }
+<span class="nc" id="L92">        } catch (SQLException e) {</span>
+<span class="nc" id="L93">            System.err.println(&quot;Failed to close database connection: &quot; + e.getMessage());</span>
+<span class="fc" id="L94">        }</span>
+<span class="fc" id="L95">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
