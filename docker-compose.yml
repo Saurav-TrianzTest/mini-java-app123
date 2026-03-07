@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Server configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      
+      # Database configuration (connect to external MySQL)
+      - DB_HOST=${DB_HOST:-mysql.external.com}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-mini_app_db}
+      - DB_USER=${DB_USER:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-password123}
+      
+      # Redis configuration (connect to external Redis)
+      - REDIS_HOST=${REDIS_HOST:-redis.external.com}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      
+      # External API configuration
+      - EXTERNAL_API_URL=${EXTERNAL_API_URL:-http://api.example.com:8080/v1}
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL:-https://payment.internal.company.com/process}
+      
+      # RabbitMQ configuration (connect to external RabbitMQ)
+      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq.external.com}
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      
+      # Monitoring configuration
+      - MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://monitoring.internal.company.com:9090/metrics}
+      
+      # JVM options
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
