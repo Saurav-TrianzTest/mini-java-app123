@@ -1,26 +1,36 @@
 package com.test;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.util.Properties;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.Instant;
+import java.util.UUID;
 
 /**
- * Mini Java Application with intentional containerization blockers for testing
+ * Mini Java Application - Cloud-ready version for AWS deployment
  */
 public class MiniApp {
-    
-    // BLOCKER: Hardcoded port number
-    private static final int SERVER_PORT = 8080;
-    
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final String CORRELATION_ID = UUID.randomUUID().toString();
+
+    // Cloud-ready: Port from environment variable
+    private static final int SERVER_PORT = Integer.parseInt(
+        System.getenv().getOrDefault("SERVER_PORT", "8080")
+    );
+
+    // Cloud-ready: Use classpath resources instead of absolute file paths
+    private static final String CONFIG_FILE_PATH = System.getenv()
+        .getOrDefault("CONFIG_FILE_PATH", "application.properties");
+    private static final String LOG_FILE_PATH = System.getenv()
+        .getOrDefault("LOG_FILE_PATH", "stdout");
     
     public static void main(String[] args) {
-        System.out.println("Starting Mini Java Application...");
-        
+        logStructured("INFO", "Starting Mini Java Application", "Application startup initiated");
+
         MiniApp app = new MiniApp();
         app.initializeApplication();
         app.startServer();
@@ -40,52 +50,71 @@ public class MiniApp {
     
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
-            File configFile = new File(CONFIG_FILE_PATH);
-            if (configFile.exists()) {
+            // Cloud-ready: Load from classpath resources
+            InputStream configStream = getClass().getClassLoader()
+                .getResourceAsStream(CONFIG_FILE_PATH);
+
+            if (configStream != null) {
                 Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
-                System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
+                props.load(configStream);
+                logStructured("INFO", "Configuration loaded from classpath",
+                    "Configuration loaded successfully from: " + CONFIG_FILE_PATH);
+                configStream.close();
             } else {
-                System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
+                logStructured("WARN", "Configuration file not found in classpath",
+                    "Configuration file not found: " + CONFIG_FILE_PATH);
             }
         } catch (IOException e) {
-            System.err.println("Failed to load configuration: " + e.getMessage());
+            logStructured("ERROR", "Failed to load configuration",
+                "Error: " + e.getMessage());
         }
     }
     
     private void initializeLogging() {
-        try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
-            if (!logDir.exists()) {
-                logDir.mkdirs();
-            }
-            
-            File logFile = new File(LOG_FILE_PATH);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
-            
-            System.out.println("Logging initialized at: " + LOG_FILE_PATH);
-        } catch (IOException e) {
-            System.err.println("Failed to initialize logging: " + e.getMessage());
-        }
+        // Cloud-ready: Use console/stdout logging for cloud environments
+        // Cloud platforms (AWS CloudWatch, etc.) will capture stdout/stderr
+        logStructured("INFO", "Logging initialized",
+            "Using structured JSON logging to stdout for cloud monitoring");
     }
     
     private void startServer() {
         try {
-            // BLOCKER: Hardcoded port number
+            // Cloud-ready: Port from environment variable
             ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
-            System.out.println("Server started on port: " + SERVER_PORT);
-            System.out.println("Server ready to accept connections...");
-            
+            logStructured("INFO", "Server started",
+                "Server listening on port: " + SERVER_PORT);
+            logStructured("INFO", "Server ready",
+                "Server ready to accept connections");
+
             // Simulate server running
             Thread.sleep(1000);
             serverSocket.close();
-            
+
         } catch (Exception e) {
-            System.err.println("Failed to start server: " + e.getMessage());
+            logStructured("ERROR", "Failed to start server",
+                "Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cloud-ready structured logging with JSON format for cloud monitoring
+     */
+    private static void logStructured(String level, String message, String details) {
+        try {
+            ObjectNode logEntry = JSON_MAPPER.createObjectNode();
+            logEntry.put("timestamp", Instant.now().toString());
+            logEntry.put("level", level);
+            logEntry.put("message", message);
+            logEntry.put("details", details);
+            logEntry.put("correlationId", CORRELATION_ID);
+            logEntry.put("application", "mini-app");
+            logEntry.put("environment", System.getenv().getOrDefault("ENVIRONMENT", "unknown"));
+
+            System.out.println(JSON_MAPPER.writeValueAsString(logEntry));
+        } catch (Exception e) {
+            // Fallback to simple logging if JSON serialization fails
+            System.out.println(String.format("[%s] %s - %s - %s",
+                Instant.now(), level, message, details));
         }
     }
 }
