@@ -1,0 +1,170 @@
+{
+  "family": "mini-java-app",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/mini-java-app:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "SERVER_HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "DATABASE_HOST",
+          "value": "your-rds-endpoint.rds.amazonaws.com"
+        },
+        {
+          "name": "DATABASE_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "DATABASE_NAME",
+          "value": "mini_app_db"
+        },
+        {
+          "name": "DATABASE_USERNAME",
+          "value": "admin"
+        },
+        {
+          "name": "DB_POOL_MAX_SIZE",
+          "value": "10"
+        },
+        {
+          "name": "DB_POOL_MIN_IDLE",
+          "value": "2"
+        },
+        {
+          "name": "DB_CONNECTION_TIMEOUT",
+          "value": "30000"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "your-elasticache-endpoint.cache.amazonaws.com"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "name": "EXTERNAL_API_URL",
+          "value": "https://api.example.com/v1"
+        },
+        {
+          "name": "PAYMENT_SERVICE_URL",
+          "value": "https://payment.example.com/process"
+        },
+        {
+          "name": "SPRING_PROFILE",
+          "value": "production"
+        },
+        {
+          "name": "APP_ENVIRONMENT",
+          "value": "production"
+        },
+        {
+          "name": "LOG_LEVEL_ROOT",
+          "value": "INFO"
+        },
+        {
+          "name": "LOG_LEVEL_APP",
+          "value": "INFO"
+        },
+        {
+          "name": "CLOUD_STORAGE_BUCKET",
+          "value": "mini-app-storage-bucket"
+        },
+        {
+          "name": "CLOUD_STORAGE_REGION",
+          "value": "us-east-1"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-1"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/database/password-XXXXX"
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/redis/password-XXXXX"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/jwt/secret-XXXXX"
+        },
+        {
+          "name": "EXTERNAL_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/external-api/key-XXXXX"
+        },
+        {
+          "name": "PAYMENT_SERVICE_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/payment/username-XXXXX"
+        },
+        {
+          "name": "PAYMENT_SERVICE_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/payment/password-XXXXX"
+        },
+        {
+          "name": "ADMIN_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/admin/username-XXXXX"
+        },
+        {
+          "name": "ADMIN_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/admin/password-XXXXX"
+        },
+        {
+          "name": "ENCRYPTION_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:mini-app/encryption/key-XXXXX"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "ulimits": [
+        {
+          "name": "nofile",
+          "softLimit": 65536,
+          "hardLimit": 65536
+        }
+      ],
+      "mountPoints": [],
+      "volumesFrom": []
+    }
+  ],
+  "volumes": []
+}

@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # Mini Java Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Server Configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      
+      # Database Configuration (using MySQL service below)
+      - DATABASE_URL=jdbc:mysql://mysql:3306/mini_app_db
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=rootpassword
+      - DATABASE_HOST=mysql
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=mini_app_db
+      
+      # HikariCP Configuration
+      - DB_POOL_MAX_SIZE=10
+      - DB_POOL_MIN_IDLE=2
+      - DB_CONNECTION_TIMEOUT=30000
+      
+      # Redis Configuration (using Redis service below)
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      
+      # External API Configuration (mock values for testing)
+      - EXTERNAL_API_URL=http://api.example.com/v1
+      - EXTERNAL_API_KEY=test_api_key
+      
+      # Payment Service Configuration (mock values for testing)
+      - PAYMENT_SERVICE_URL=https://payment.example.com/process
+      - PAYMENT_SERVICE_USERNAME=test_user
+      - PAYMENT_SERVICE_PASSWORD=test_password
+      
+      # Security Configuration (test values - DO NOT use in production)
+      - JWT_SECRET=test_jwt_secret_key_for_development_only
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin123
+      - ENCRYPTION_KEY=test_encryption_key
+      
+      # Application Configuration
+      - SPRING_PROFILE=development
+      - APP_ENVIRONMENT=development
+      - LOG_LEVEL_ROOT=INFO
+      - LOG_LEVEL_APP=DEBUG
+      
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: mini-app-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mini_app_db
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: mini-app-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
