@@ -1,0 +1,6 @@
+#surefire_1
+#Wed Mar 25 14:05:57 UTC 2026
+basedir=/modernize-data/studio-data/TNT1001/APP1701/transformed-code/142/studio-workspace/rahul-container
+localRepository=/app/.m2/repository
+maven.test.failure.ignore=true
+testFailureIgnore=true

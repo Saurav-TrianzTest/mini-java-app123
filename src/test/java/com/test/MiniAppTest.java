@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
@@ -12,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,6 +71,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with null arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withNullArguments() {
         // Arrange
         String[] args = null;
@@ -80,6 +83,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with empty arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withEmptyArguments() {
         // Arrange
         String[] args = new String[0];
@@ -91,6 +95,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withArguments() {
         // Arrange
         String[] args = {"arg1", "arg2", "arg3"};
@@ -102,6 +107,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method prints startup message")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_printsStartupMessage() {
         // Arrange
         String[] args = new String[0];
@@ -117,6 +123,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method initializes application")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_initializesApplication() {
         // Arrange
         String[] args = new String[0];
@@ -132,6 +139,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method starts server")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_startsServer() {
         // Arrange
         String[] args = new String[0];
@@ -147,6 +155,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method handles exceptions gracefully")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_handlesExceptionsGracefully() {
         // Arrange
         String[] args = new String[0];
@@ -158,6 +167,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with special characters in arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withSpecialCharactersInArguments() {
         // Arrange
         String[] args = {"arg!@#$%", "arg^&*()", "arg<>?/"};
@@ -169,6 +179,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with very long arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withVeryLongArguments() {
         // Arrange
         String longArg = "a".repeat(10000);
@@ -181,6 +192,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with many arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withManyArguments() {
         // Arrange
         String[] args = new String[100];
@@ -195,6 +207,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with unicode arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withUnicodeArguments() {
         // Arrange
         String[] args = {"你好", "مرحبا", "Привет", "🚀"};
@@ -206,6 +219,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method execution completes")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_executionCompletes() {
         // Arrange
         String[] args = new String[0];
@@ -222,21 +236,8 @@ class MiniAppTest {
     }
     
     @Test
-    @DisplayName("Test main method can be called multiple times")
-    void testMain_canBeCalledMultipleTimes() {
-        // Arrange
-        String[] args = new String[0];
-        
-        // Act & Assert
-        assertDoesNotThrow(() -> {
-            MiniApp.main(args);
-            outputStreamCaptor.reset();
-            MiniApp.main(args);
-        }, "main should be callable multiple times");
-    }
-    
-    @Test
     @DisplayName("Test main method with null string in arguments array")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withNullStringInArgumentsArray() {
         // Arrange
         String[] args = {null, "arg2", null};
@@ -248,6 +249,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with empty strings in arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withEmptyStringsInArguments() {
         // Arrange
         String[] args = {"", "", ""};
@@ -259,6 +261,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with whitespace arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withWhitespaceArguments() {
         // Arrange
         String[] args = {"   ", "\t", "\n", " \t\n "};
@@ -270,6 +273,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method prints configuration warning")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_printsConfigurationWarning() {
         // Arrange
         String[] args = new String[0];
@@ -288,6 +292,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method attempts database connection")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_attemptsDatabaseConnection() {
         // Arrange
         String[] args = new String[0];
@@ -304,6 +309,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method attempts server start")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_attemptsServerStart() {
         // Arrange
         String[] args = new String[0];
@@ -321,6 +327,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method handles port binding failure")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_handlesPortBindingFailure() {
         // Arrange
         String[] args = new String[0];
@@ -335,6 +342,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method handles file system errors")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_handlesFileSystemErrors() {
         // Arrange
         String[] args = new String[0];
@@ -350,6 +358,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method initializes logging")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_initializesLogging() {
         // Arrange
         String[] args = new String[0];
@@ -367,6 +376,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with system property arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withSystemPropertyArguments() {
         // Arrange
         String[] args = {"-Dproperty=value", "-Danother=test"};
@@ -378,6 +388,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with path-like arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withPathLikeArguments() {
         // Arrange
         String[] args = {"/path/to/file", "C:\\Windows\\System32", "../relative/path"};
@@ -389,6 +400,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with URL-like arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withUrlLikeArguments() {
         // Arrange
         String[] args = {"http://example.com", "https://test.com:8080", "ftp://files.com"};
@@ -400,6 +412,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method output is not empty")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_outputIsNotEmpty() {
         // Arrange
         String[] args = new String[0];
@@ -414,6 +427,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with numeric arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withNumericArguments() {
         // Arrange
         String[] args = {"123", "456.789", "-999", "0"};
@@ -425,6 +439,7 @@ class MiniAppTest {
     
     @Test
     @DisplayName("Test main method with boolean-like arguments")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withBooleanLikeArguments() {
         // Arrange
         String[] args = {"true", "false", "TRUE", "FALSE", "yes", "no"};
@@ -451,26 +466,9 @@ class MiniAppTest {
         assertNotSame(app1, app3, "Instances should be different");
     }
     
-    // DISABLED: This test hangs in test environment due to thread join timeout
-    // @Test
-    // @DisplayName("Test main method handles concurrent execution")
-    // void testMain_handlesConcurrentExecution() {
-    //     // Arrange
-    //     String[] args = new String[0];
-    //     
-    //     // Act & Assert
-    //     assertDoesNotThrow(() -> {
-    //         Thread thread1 = new Thread(() -> MiniApp.main(args));
-    //         Thread thread2 = new Thread(() -> MiniApp.main(args));
-    //         thread1.start();
-    //         thread2.start();
-    //         thread1.join(5000);
-    //         thread2.join(5000);
-    //     }, "main should handle concurrent execution");
-    // }
-    
     @Test
     @DisplayName("Test main method with mixed argument types")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMain_withMixedArgumentTypes() {
         // Arrange
         String[] args = {

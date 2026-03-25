@@ -1,8 +1,34 @@
--------------------------------------------------------------------------------
-Test set: com.test.DatabaseServiceTest
--------------------------------------------------------------------------------
-Tests run: 25, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 0.169 s <<< FAILURE! - in com.test.DatabaseServiceTest
-com.test.DatabaseServiceTest.testConnect_initializesExternalServices  Time elapsed: 0.003 s  <<< FAILURE!
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------------< [0;36mcom.test:mini-java-app[0;1m >-----------------------[m
+[[1;34mINFO[m] [1mBuilding mini-java-app 1.0.0[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mjacoco:0.8.11:prepare-agent[m [1m(default)[m @ [36mmini-java-app[0;1m ---[m
+[[1;34mINFO[m] argLine set to -javaagent:/app/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/modernize-data/studio-data/TNT1001/APP1701/transformed-code/142/studio-workspace/rahul-container/target/jacoco.exec
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36mmini-java-app[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:compile[m [1m(default-compile)[m @ [36mmini-java-app[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:testResources[m [1m(default-testResources)[m @ [36mmini-java-app[0;1m ---[m
+[[1;34mINFO[m] skip non existing resourceDirectory /modernize-data/studio-data/TNT1001/APP1701/transformed-code/142/studio-workspace/rahul-container/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:testCompile[m [1m(default-testCompile)[m @ [36mmini-java-app[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32msurefire:3.0.0:test[m [1m(default-test)[m @ [36mmini-java-app[0;1m ---[m
+[[1;34mINFO[m] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[[1;34mINFO[m] 
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m]  T E S T S
+[[1;34mINFO[m] -------------------------------------------------------
+[[1;34mINFO[m] Running com.test.[1mDatabaseServiceTest[m
+[[1;31mERROR[m] [1;31mTests [0;1mrun: [0;1m25[m, [1;31mFailures: [0;1;31m4[m, Errors: 0, Skipped: 0, Time elapsed: 0.169 s[1;31m <<< FAILURE![m - in com.test.[1mDatabaseServiceTest[m
+[[1;31mERROR[m] com.test.DatabaseServiceTest.testConnect_initializesExternalServices  Time elapsed: 0.003 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should contain external API initialization ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -81,7 +107,7 @@ org.opentest4j.AssertionFailedError: Output should contain external API initiali
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 
-com.test.DatabaseServiceTest.testConnect_printsUsername  Time elapsed: 0.002 s  <<< FAILURE!
+[[1;31mERROR[m] com.test.DatabaseServiceTest.testConnect_printsUsername  Time elapsed: 0.002 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should contain username ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -160,7 +186,7 @@ org.opentest4j.AssertionFailedError: Output should contain username ==> expected
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 
-com.test.DatabaseServiceTest.testConnect_initializesCacheConnection  Time elapsed: 0.001 s  <<< FAILURE!
+[[1;31mERROR[m] com.test.DatabaseServiceTest.testConnect_initializesCacheConnection  Time elapsed: 0.001 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should contain Redis connection message ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -239,7 +265,7 @@ org.opentest4j.AssertionFailedError: Output should contain Redis connection mess
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 
-com.test.DatabaseServiceTest.testConnect_printsDatabaseUrl  Time elapsed: 0.002 s  <<< FAILURE!
+[[1;31mERROR[m] com.test.DatabaseServiceTest.testConnect_printsDatabaseUrl  Time elapsed: 0.002 s  <<< FAILURE!
 org.opentest4j.AssertionFailedError: Output should contain database URL ==> expected: <true> but was: <false>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -318,3 +344,4 @@ org.opentest4j.AssertionFailedError: Output should contain database URL ==> expe
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 
+[[1;34mINFO[m] Running com.test.[1mMiniAppTest[m

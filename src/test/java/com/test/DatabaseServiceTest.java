@@ -4,11 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Timeout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,6 +68,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test connect method prints connection message")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testConnect_printsConnectionMessage() {
         // Arrange & Act
         databaseService.connect();
@@ -78,6 +81,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test connect method prints database URL")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testConnect_printsDatabaseUrl() {
         // Arrange & Act
         databaseService.connect();
@@ -90,6 +94,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test connect method prints username")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testConnect_printsUsername() {
         // Arrange & Act
         databaseService.connect();
@@ -102,6 +107,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test connect method initializes cache connection")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testConnect_initializesCacheConnection() {
         // Arrange & Act
         databaseService.connect();
@@ -114,6 +120,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test connect method initializes external services")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testConnect_initializesExternalServices() {
         // Arrange & Act
         databaseService.connect();
@@ -128,6 +135,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test connect method handles connection failure gracefully")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testConnect_handlesConnectionFailureGracefully() {
         // Arrange & Act
         databaseService.connect();
@@ -140,6 +148,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with null connection does not throw exception")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withNullConnection_doesNotThrowException() {
         // Arrange
         String sql = "SELECT * FROM users";
@@ -151,6 +160,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with valid SQL string")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withValidSql() {
         // Arrange
         String sql = "SELECT * FROM users WHERE id = 1";
@@ -165,6 +175,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with empty SQL string")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withEmptySql() {
         // Arrange
         String sql = "";
@@ -176,6 +187,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with null SQL string")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withNullSql() {
         // Arrange
         String sql = null;
@@ -187,6 +199,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with complex SQL statement")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withComplexSql() {
         // Arrange
         String sql = "INSERT INTO users (name, email, age) VALUES ('John Doe', 'john@example.com', 30)";
@@ -198,6 +211,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with SQL injection attempt")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withSqlInjectionAttempt() {
         // Arrange
         String sql = "SELECT * FROM users WHERE id = 1; DROP TABLE users;--";
@@ -209,6 +223,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test disconnect with null connection does not throw exception")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testDisconnect_withNullConnection_doesNotThrowException() {
         // Arrange - No connection established
         
@@ -219,6 +234,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test disconnect prints closure message")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testDisconnect_printsClosureMessage() {
         // Arrange
         databaseService.connect();
@@ -235,6 +251,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test disconnect can be called multiple times safely")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testDisconnect_canBeCalledMultipleTimes() {
         // Arrange
         databaseService.connect();
@@ -249,6 +266,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test connect and disconnect sequence")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testConnectAndDisconnectSequence() {
         // Arrange & Act
         databaseService.connect();
@@ -262,6 +280,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test multiple connect calls")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testMultipleConnectCalls() {
         // Arrange & Act
         databaseService.connect();
@@ -274,6 +293,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery after disconnect")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_afterDisconnect() {
         // Arrange
         databaseService.connect();
@@ -287,6 +307,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test service lifecycle - connect, execute, disconnect")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testServiceLifecycle() {
         // Arrange
         String sql = "SELECT COUNT(*) FROM users";
@@ -301,6 +322,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with various SQL types")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withVariousSqlTypes() {
         // Arrange
         String[] sqlStatements = {
@@ -321,6 +343,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test DatabaseService instance isolation")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testDatabaseServiceInstanceIsolation() {
         // Arrange
         DatabaseService service1 = new DatabaseService();
@@ -338,6 +361,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with special characters in SQL")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withSpecialCharacters() {
         // Arrange
         String sql = "SELECT * FROM users WHERE name = 'O''Brien' AND email LIKE '%@example.com'";
@@ -349,6 +373,7 @@ class DatabaseServiceTest {
     
     @Test
     @DisplayName("Test executeQuery with very long SQL statement")
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testExecuteQuery_withLongSql() {
         // Arrange
         StringBuilder longSql = new StringBuilder("SELECT * FROM users WHERE id IN (");
