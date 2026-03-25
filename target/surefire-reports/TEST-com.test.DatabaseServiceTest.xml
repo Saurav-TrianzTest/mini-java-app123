@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.test.DatabaseServiceTest" time="0.297" tests="27" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1/target/test-classes:/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1/target/classes:/app/.m2/repository/com/mysql/mysql-connector-j/8.2.0/mysql-connector-j-8.2.0.jar:/app/.m2/repository/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.2.0/spring-boot-starter-web-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter/3.2.0/spring-boot-starter-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot/3.2.0/spring-boot-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.2.0/spring-boot-autoconfigure-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.2.0/spring-boot-starter-logging-3.2.0.jar:/app/.m2/repository/ch/qos/logback/logback-classic/1.4.11/logback-classic-1.4.11.jar:/app/.m2/repository/ch/qos/logback/logback-core/1.4.11/logback-core-1.4.11.jar:/app/.m2/repository/org/slf4j/slf4j-api/2.0.7/slf4j-api-2.0.7.jar:/app/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.21.1/log4j-to-slf4j-2.21.1.jar:/app/.m2/repository/org/apache/logging/log4j/log4j-api/2.21.1/log4j-api-2.21.1.jar:/app/.m2/repository/org/slf4j/jul-to-slf4j/2.0.9/jul-to-slf4j-2.0.9.jar:/app/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar:/app/.m2/repository/org/springframework/spring-core/6.1.1/spring-core-6.1.1.jar:/app/.m2/repository/org/springframework/spring-jcl/6.1.1/spring-jcl-6.1.1.jar:/app/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.2.0/spring-boot-starter-json-3.2.0.jar:/app/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.3/jackson-databind-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.3/jackson-annotations-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.3/jackson-core-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.15.3/jackson-datatype-jdk8-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.3/jackson-datatype-jsr310-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.15.3/jackson-module-parameter-names-2.15.3.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.2.0/spring-boot-starter-tomcat-3.2.0.jar:/app/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.16/tomcat-embed-core-10.1.16.jar:/app/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.16/tomcat-embed-el-10.1.16.jar:/app/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.16/tomcat-embed-websocket-10.1.16.jar:/app/.m2/repository/org/springframework/spring-web/6.1.1/spring-web-6.1.1.jar:/app/.m2/repository/org/springframework/spring-beans/6.1.1/spring-beans-6.1.1.jar:/app/.m2/repository/io/micrometer/micrometer-observation/1.12.0/micrometer-observation-1.12.0.jar:/app/.m2/repository/io/micrometer/micrometer-commons/1.12.0/micrometer-commons-1.12.0.jar:/app/.m2/repository/org/springframework/spring-webmvc/6.1.1/spring-webmvc-6.1.1.jar:/app/.m2/repository/org/springframework/spring-aop/6.1.1/spring-aop-6.1.1.jar:/app/.m2/repository/org/springframework/spring-context/6.1.1/spring-context-6.1.1.jar:/app/.m2/repository/org/springframework/spring-expression/6.1.1/spring-expression-6.1.1.jar:/app/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/app/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/app/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/app/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/app/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/app/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:/app/.m2/repository/org/mockito/mockito-core/5.3.1/mockito-core-5.3.1.jar:/app/.m2/repository/net/bytebuddy/byte-buddy/1.14.4/byte-buddy-1.14.4.jar:/app/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.4/byte-buddy-agent-1.14.4.jar:/app/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:"/>
+    <property name="java.vm.vendor" value="Debian"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://tracker.debian.org/openjdk-21"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-21-openjdk-amd64/lib"/>
+    <property name="sun.java.command" value="/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1/target/surefire/surefirebooter-20260325110202450_3.jar /modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1/target/surefire 2026-03-25T11-02-02_397-jvmRun1 surefire-20260325110202450_1tmp surefire_0-20260325110202450_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1/target/test-classes:/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1/target/classes:/app/.m2/repository/com/mysql/mysql-connector-j/8.2.0/mysql-connector-j-8.2.0.jar:/app/.m2/repository/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.2.0/spring-boot-starter-web-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter/3.2.0/spring-boot-starter-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot/3.2.0/spring-boot-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.2.0/spring-boot-autoconfigure-3.2.0.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.2.0/spring-boot-starter-logging-3.2.0.jar:/app/.m2/repository/ch/qos/logback/logback-classic/1.4.11/logback-classic-1.4.11.jar:/app/.m2/repository/ch/qos/logback/logback-core/1.4.11/logback-core-1.4.11.jar:/app/.m2/repository/org/slf4j/slf4j-api/2.0.7/slf4j-api-2.0.7.jar:/app/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.21.1/log4j-to-slf4j-2.21.1.jar:/app/.m2/repository/org/apache/logging/log4j/log4j-api/2.21.1/log4j-api-2.21.1.jar:/app/.m2/repository/org/slf4j/jul-to-slf4j/2.0.9/jul-to-slf4j-2.0.9.jar:/app/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar:/app/.m2/repository/org/springframework/spring-core/6.1.1/spring-core-6.1.1.jar:/app/.m2/repository/org/springframework/spring-jcl/6.1.1/spring-jcl-6.1.1.jar:/app/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.2.0/spring-boot-starter-json-3.2.0.jar:/app/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.3/jackson-databind-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.3/jackson-annotations-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.3/jackson-core-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.15.3/jackson-datatype-jdk8-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.15.3/jackson-datatype-jsr310-2.15.3.jar:/app/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.15.3/jackson-module-parameter-names-2.15.3.jar:/app/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.2.0/spring-boot-starter-tomcat-3.2.0.jar:/app/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.16/tomcat-embed-core-10.1.16.jar:/app/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.16/tomcat-embed-el-10.1.16.jar:/app/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.16/tomcat-embed-websocket-10.1.16.jar:/app/.m2/repository/org/springframework/spring-web/6.1.1/spring-web-6.1.1.jar:/app/.m2/repository/org/springframework/spring-beans/6.1.1/spring-beans-6.1.1.jar:/app/.m2/repository/io/micrometer/micrometer-observation/1.12.0/micrometer-observation-1.12.0.jar:/app/.m2/repository/io/micrometer/micrometer-commons/1.12.0/micrometer-commons-1.12.0.jar:/app/.m2/repository/org/springframework/spring-webmvc/6.1.1/spring-webmvc-6.1.1.jar:/app/.m2/repository/org/springframework/spring-aop/6.1.1/spring-aop-6.1.1.jar:/app/.m2/repository/org/springframework/spring-context/6.1.1/spring-context-6.1.1.jar:/app/.m2/repository/org/springframework/spring-expression/6.1.1/spring-expression-6.1.1.jar:/app/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/app/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/app/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/app/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/app/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/app/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:/app/.m2/repository/org/mockito/mockito-core/5.3.1/mockito-core-5.3.1.jar:/app/.m2/repository/net/bytebuddy/byte-buddy/1.14.4/byte-buddy-1.14.4.jar:/app/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.4/byte-buddy-agent-1.14.4.jar:/app/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/app"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2026-01-20"/>
+    <property name="java.home" value="/usr/lib/jvm/java-21-openjdk-amd64"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="surefire.real.class.path" value="/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1/target/surefire/surefirebooter-20260325110202450_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.10+7-Debian-1deb13u1"/>
+    <property name="user.name" value="studioai"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="6.12.47-0-virt"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="testFailureIgnore" value="true"/>
+    <property name="localRepository" value="/app/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugs.debian.org/openjdk-21"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="21.0.10"/>
+    <property name="user.dir" value="/modernize-data/studio-data/TNT1001/APP1681/transformed-code/134/studio-workspace/Test_Comp1"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Debian"/>
+    <property name="java.vm.version" value="21.0.10+7-Debian-1deb13u1"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="testDisconnect_afterConnect" classname="com.test.DatabaseServiceTest" time="0.224">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQuery_withValidUpdateStatement" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testConnectDisconnectConnectSequence" classname="com.test.DatabaseServiceTest" time="0.005">
+    <system-out><![CDATA[Connecting to database...
+Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQuery_withNullSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testHardcodedCacheConfiguration" classname="com.test.DatabaseServiceTest" time="0.003">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testMultipleDisconnectCalls" classname="com.test.DatabaseServiceTest" time="0.002"/>
+  <testcase name="testExecuteQuery_withValidInsertStatement" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQuery_afterDisconnect" classname="com.test.DatabaseServiceTest" time="0.002">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQuery_withSQLInjectionAttempt" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQuery_withMalformedSQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testHardcodedDatabaseConfiguration" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConstructor_createsNonNullInstance" classname="com.test.DatabaseServiceTest" time="0"/>
+  <testcase name="testDisconnect_withoutPriorConnection" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnect_handlesSQLException" classname="com.test.DatabaseServiceTest" time="0.002">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testConnect_executesWithoutException" classname="com.test.DatabaseServiceTest" time="0.002">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQuery_withValidSelectStatement" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQuery_withSpecialCharacters" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testHardcodedExternalServiceURLs" classname="com.test.DatabaseServiceTest" time="0.002">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testServiceInstance_isReusable" classname="com.test.DatabaseServiceTest" time="0.003">
+    <system-out><![CDATA[Connecting to database...
+Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testDisconnect_executesWithoutException" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQuery_withoutPriorConnection" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testConnect_handlesClassNotFoundException" classname="com.test.DatabaseServiceTest" time="0.002">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQuery_withEmptySQL" classname="com.test.DatabaseServiceTest" time="0.001"/>
+  <testcase name="testExecuteQuery_withVeryLongSQL" classname="com.test.DatabaseServiceTest" time="0.003"/>
+  <testcase name="testMultipleConnectCalls" classname="com.test.DatabaseServiceTest" time="0.003">
+    <system-out><![CDATA[Connecting to database...
+Connecting to database...
+Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testConnect_withValidConfiguration" classname="com.test.DatabaseServiceTest" time="0.001">
+    <system-out><![CDATA[Connecting to database...
+]]></system-out>
+    <system-err><![CDATA[Database connection failed: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+]]></system-err>
+  </testcase>
+  <testcase name="testExecuteQuery_withValidDeleteStatement" classname="com.test.DatabaseServiceTest" time="0"/>
+</testsuite>
