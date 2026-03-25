@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Java JVM Options
+      JAVA_OPTS: "-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+      
+      # Application Configuration
+      SERVER_PORT: "8080"
+      CONFIG_FILE_PATH: "/app/config/app.properties"
+      LOG_FILE_PATH: "/app/logs/mini-app.log"
+      LOG_DIR: "/app/logs"
+      
+      # Database Configuration (connect to external database)
+      DATABASE_URL: "${DATABASE_URL:-jdbc:mysql://host.docker.internal:3306/mini_app_db}"
+      DATABASE_USERNAME: "${DATABASE_USERNAME:-root}"
+      DATABASE_PASSWORD: "${DATABASE_PASSWORD:-password123}"
+      DATABASE_DRIVER: "com.mysql.cj.jdbc.Driver"
+      DATABASE_POOL_MAX_CONNECTIONS: "20"
+      DATABASE_POOL_TIMEOUT: "5000"
+      
+      # Cache Configuration (connect to external Redis)
+      CACHE_REDIS_HOST: "${CACHE_REDIS_HOST:-host.docker.internal}"
+      CACHE_REDIS_PORT: "${CACHE_REDIS_PORT:-6379}"
+      CACHE_REDIS_PASSWORD: "${CACHE_REDIS_PASSWORD:-}"
+      CACHE_REDIS_DATABASE: "0"
+      
+      # External Service URLs
+      EXTERNAL_API_BASE_URL: "${EXTERNAL_API_BASE_URL:-http://api.example.com:8080/v1}"
+      EXTERNAL_API_TIMEOUT: "30000"
+      EXTERNAL_API_KEY: "${EXTERNAL_API_KEY:-}"
+      
+      PAYMENT_SERVICE_URL: "${PAYMENT_SERVICE_URL:-https://payment.internal.company.com/process}"
+      PAYMENT_SERVICE_USERNAME: "${PAYMENT_SERVICE_USERNAME:-}"
+      PAYMENT_SERVICE_PASSWORD: "${PAYMENT_SERVICE_PASSWORD:-}"
+      
+      # Security Configuration
+      SECURITY_JWT_SECRET: "${SECURITY_JWT_SECRET:-}"
+      SECURITY_ADMIN_USERNAME: "${SECURITY_ADMIN_USERNAME:-admin}"
+      SECURITY_ADMIN_PASSWORD: "${SECURITY_ADMIN_PASSWORD:-}"
+      SECURITY_ENCRYPTION_KEY: "${SECURITY_ENCRYPTION_KEY:-}"
+      
+      # Monitoring Configuration
+      MONITORING_ENDPOINT: "${MONITORING_ENDPOINT:-}"
+      MONITORING_USERNAME: "${MONITORING_USERNAME:-}"
+      MONITORING_PASSWORD: "${MONITORING_PASSWORD:-}"
+      
+      # Messaging Configuration (connect to external RabbitMQ)
+      MESSAGING_RABBITMQ_HOST: "${MESSAGING_RABBITMQ_HOST:-}"
+      MESSAGING_RABBITMQ_PORT: "${MESSAGING_RABBITMQ_PORT:-5672}"
+      MESSAGING_RABBITMQ_USERNAME: "${MESSAGING_RABBITMQ_USERNAME:-}"
+      MESSAGING_RABBITMQ_PASSWORD: "${MESSAGING_RABBITMQ_PASSWORD:-}"
+      
+      # Environment Settings
+      ENVIRONMENT: "${ENVIRONMENT:-development}"
+      DEBUG_ENABLED: "${DEBUG_ENABLED:-true}"
+      LOGGING_LEVEL: "${LOGGING_LEVEL:-INFO}"
+      
+      # Timezone
+      TZ: "UTC"
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+      - ./temp:/app/temp
+    
+    networks:
+      - app-network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'java.*app.jar' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  app-network:
+    driver: bridge
