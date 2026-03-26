@@ -1,0 +1,118 @@
+{
+  "family": "mini-java-app-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "{{IMAGE_URI}}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+        },
+        {
+          "name": "APP_BASE_PATH",
+          "value": "/app"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "SERVER_HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "SERVER_CONTEXT_PATH",
+          "value": "/mini-app"
+        },
+        {
+          "name": "DATABASE_DRIVER",
+          "value": "com.mysql.cj.jdbc.Driver"
+        },
+        {
+          "name": "DATABASE_POOL_MAX_CONNECTIONS",
+          "value": "20"
+        },
+        {
+          "name": "DATABASE_POOL_TIMEOUT",
+          "value": "5000"
+        },
+        {
+          "name": "CACHE_REDIS_DATABASE",
+          "value": "0"
+        },
+        {
+          "name": "EXTERNAL_API_TIMEOUT",
+          "value": "30000"
+        },
+        {
+          "name": "MESSAGING_RABBITMQ_PORT",
+          "value": "5672"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "value": "production"
+        },
+        {
+          "name": "DEBUG_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "LOGGING_LEVEL",
+          "value": "INFO"
+        },
+        {
+          "name": "TZ",
+          "value": "UTC"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:{{AWS_REGION}}:{{ACCOUNT_ID}}:secret:mini-java-app/database-url"
+        },
+        {
+          "name": "DATABASE_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:{{AWS_REGION}}:{{ACCOUNT_ID}}:secret:mini-java-app/database-username"
+        },
+        {
+          "name": "DATABASE_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:{{AWS_REGION}}:{{ACCOUNT_ID}}:secret:mini-java-app/database-password"
+        },
+        {
+          "name": "CACHE_REDIS_HOST",
+          "valueFrom": "arn:aws:secretsmanager:{{AWS_REGION}}:{{ACCOUNT_ID}}:secret:mini-java-app/redis-host"
+        },
+        {
+          "name": "CACHE_REDIS_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:{{AWS_REGION}}:{{ACCOUNT_ID}}:secret:mini-java-app/redis-password"
+        },
+        {
+          "name": "SECURITY_JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:{{AWS_REGION}}:{{ACCOUNT_ID}}:secret:mini-java-app/jwt-secret"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "{{AWS_REGION}}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
