@@ -1,0 +1,65 @@
+# Dockerfile ignore patterns for Java Maven project
+# Exclude build artifacts
+target/
+build/
+out/
+
+# Exclude Maven wrapper files (use system Maven)
+mvnw
+mvnw.cmd
+.mvn/
+
+# Exclude Gradle wrapper files (use system Gradle)
+gradlew
+gradlew.bat
+gradle/wrapper/
+
+# Exclude IDE files
+.idea/
+.vscode/
+.eclipse/
+.settings/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+
+# Exclude version control
+.git/
+.gitignore
+.gitattributes
+
+# Exclude documentation
+*.md
+docs/
+README*
+LICENSE*
+
+# Exclude test files
+src/test/
+**/test/
+
+# Exclude logs
+*.log
+logs/
+
+# Exclude temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Exclude Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Exclude deployment scripts
+scripts/
+ecs/
+
+# Exclude configuration that shouldn't be in image
+.env
+*.env
+.env.*

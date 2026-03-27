@@ -14,9 +14,13 @@ public class MiniApp {
     // BLOCKER: Hardcoded port number
     private static final int SERVER_PORT = 8080;
     
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+    // FIXED: Use environment variables for file paths to support containerization
+    private static final String CONFIG_FILE_PATH = System.getenv("CONFIG_FILE_PATH") != null 
+        ? System.getenv("CONFIG_FILE_PATH") 
+        : "/opt/app/config/app.properties";
+    private static final String LOG_FILE_PATH = System.getenv("LOG_FILE_PATH") != null 
+        ? System.getenv("LOG_FILE_PATH") 
+        : "/var/log/mini-app.log";
     
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
@@ -40,7 +44,7 @@ public class MiniApp {
     
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
+            // FIXED: Now uses environment variable for config file path
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
@@ -56,8 +60,11 @@ public class MiniApp {
     
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
+            // FIXED: Use environment variable for log directory
+            String logDirPath = System.getenv("LOG_DIR_PATH") != null 
+                ? System.getenv("LOG_DIR_PATH") 
+                : "/var/log";
+            File logDir = new File(logDirPath);
             if (!logDir.exists()) {
                 logDir.mkdirs();
             }
