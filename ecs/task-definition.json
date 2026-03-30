@@ -1,0 +1,172 @@
+{
+  "family": "mini-java-app-task",
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "{{IMAGE_URI}}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "SERVER_HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "SERVER_CONTEXT_PATH",
+          "value": "/mini-app"
+        },
+        {
+          "name": "DATABASE_URL",
+          "value": "jdbc:mysql://{{DB_HOST}}:3306/mini_app_db"
+        },
+        {
+          "name": "DATABASE_USERNAME",
+          "value": "{{DB_USERNAME}}"
+        },
+        {
+          "name": "DATABASE_PASSWORD",
+          "value": "{{DB_PASSWORD}}"
+        },
+        {
+          "name": "DATABASE_DRIVER",
+          "value": "com.mysql.cj.jdbc.Driver"
+        },
+        {
+          "name": "DATABASE_POOL_MAX_CONNECTIONS",
+          "value": "20"
+        },
+        {
+          "name": "DATABASE_POOL_TIMEOUT",
+          "value": "5000"
+        },
+        {
+          "name": "CACHE_REDIS_HOST",
+          "value": "{{REDIS_HOST}}"
+        },
+        {
+          "name": "CACHE_REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "name": "CACHE_REDIS_PASSWORD",
+          "value": "{{REDIS_PASSWORD}}"
+        },
+        {
+          "name": "CACHE_REDIS_DATABASE",
+          "value": "0"
+        },
+        {
+          "name": "EXTERNAL_API_BASE_URL",
+          "value": "{{EXTERNAL_API_BASE_URL}}"
+        },
+        {
+          "name": "EXTERNAL_API_TIMEOUT",
+          "value": "30000"
+        },
+        {
+          "name": "EXTERNAL_API_KEY",
+          "value": "{{EXTERNAL_API_KEY}}"
+        },
+        {
+          "name": "PAYMENT_SERVICE_URL",
+          "value": "{{PAYMENT_SERVICE_URL}}"
+        },
+        {
+          "name": "PAYMENT_SERVICE_USERNAME",
+          "value": "{{PAYMENT_SERVICE_USERNAME}}"
+        },
+        {
+          "name": "PAYMENT_SERVICE_PASSWORD",
+          "value": "{{PAYMENT_SERVICE_PASSWORD}}"
+        },
+        {
+          "name": "SECURITY_JWT_SECRET",
+          "value": "{{SECURITY_JWT_SECRET}}"
+        },
+        {
+          "name": "SECURITY_ADMIN_USERNAME",
+          "value": "{{SECURITY_ADMIN_USERNAME}}"
+        },
+        {
+          "name": "SECURITY_ADMIN_PASSWORD",
+          "value": "{{SECURITY_ADMIN_PASSWORD}}"
+        },
+        {
+          "name": "SECURITY_ENCRYPTION_KEY",
+          "value": "{{SECURITY_ENCRYPTION_KEY}}"
+        },
+        {
+          "name": "MONITORING_ENDPOINT",
+          "value": "{{MONITORING_ENDPOINT}}"
+        },
+        {
+          "name": "MONITORING_USERNAME",
+          "value": "{{MONITORING_USERNAME}}"
+        },
+        {
+          "name": "MONITORING_PASSWORD",
+          "value": "{{MONITORING_PASSWORD}}"
+        },
+        {
+          "name": "MESSAGING_RABBITMQ_HOST",
+          "value": "{{MESSAGING_RABBITMQ_HOST}}"
+        },
+        {
+          "name": "MESSAGING_RABBITMQ_PORT",
+          "value": "5672"
+        },
+        {
+          "name": "MESSAGING_RABBITMQ_USERNAME",
+          "value": "{{MESSAGING_RABBITMQ_USERNAME}}"
+        },
+        {
+          "name": "MESSAGING_RABBITMQ_PASSWORD",
+          "value": "{{MESSAGING_RABBITMQ_PASSWORD}}"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "value": "production"
+        },
+        {
+          "name": "DEBUG_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "LOGGING_LEVEL",
+          "value": "INFO"
+        },
+        {
+          "name": "TZ",
+          "value": "UTC"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "{{AWS_REGION}}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

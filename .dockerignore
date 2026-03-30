@@ -1,0 +1,45 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Maven files
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+README*
+LICENSE
+CHANGELOG
+
+# Test files
+src/test/
+
+# Build artifacts
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore

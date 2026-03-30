@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Java runtime options
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+      
+      # Application configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      - SERVER_CONTEXT_PATH=/mini-app
+      
+      # Database configuration (externalized)
+      - DATABASE_URL=${DATABASE_URL:-jdbc:mysql://host.docker.internal:3306/mini_app_db}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:-root}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-password123}
+      - DATABASE_DRIVER=com.mysql.cj.jdbc.Driver
+      - DATABASE_POOL_MAX_CONNECTIONS=20
+      - DATABASE_POOL_TIMEOUT=5000
+      
+      # Cache configuration (externalized)
+      - CACHE_REDIS_HOST=${CACHE_REDIS_HOST:-host.docker.internal}
+      - CACHE_REDIS_PORT=${CACHE_REDIS_PORT:-6379}
+      - CACHE_REDIS_PASSWORD=${CACHE_REDIS_PASSWORD:-redis_secret_123}
+      - CACHE_REDIS_DATABASE=0
+      
+      # External service URLs (externalized)
+      - EXTERNAL_API_BASE_URL=${EXTERNAL_API_BASE_URL:-http://api.example.com:8080/v1}
+      - EXTERNAL_API_TIMEOUT=30000
+      - EXTERNAL_API_KEY=${EXTERNAL_API_KEY:-api_key_placeholder}
+      
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL:-https://payment.internal.company.com/process}
+      - PAYMENT_SERVICE_USERNAME=${PAYMENT_SERVICE_USERNAME:-payment_user}
+      - PAYMENT_SERVICE_PASSWORD=${PAYMENT_SERVICE_PASSWORD:-payment_secret}
+      
+      # Security configuration (externalized)
+      - SECURITY_JWT_SECRET=${SECURITY_JWT_SECRET:-jwt_secret_placeholder}
+      - SECURITY_ADMIN_USERNAME=${SECURITY_ADMIN_USERNAME:-admin}
+      - SECURITY_ADMIN_PASSWORD=${SECURITY_ADMIN_PASSWORD:-admin123}
+      - SECURITY_ENCRYPTION_KEY=${SECURITY_ENCRYPTION_KEY:-encryption_key_placeholder}
+      
+      # Monitoring configuration (externalized)
+      - MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://monitoring.internal.company.com:9090/metrics}
+      - MONITORING_USERNAME=${MONITORING_USERNAME:-monitor_user}
+      - MONITORING_PASSWORD=${MONITORING_PASSWORD:-monitor_pass}
+      
+      # Messaging configuration (externalized)
+      - MESSAGING_RABBITMQ_HOST=${MESSAGING_RABBITMQ_HOST:-rabbitmq.internal.company.com}
+      - MESSAGING_RABBITMQ_PORT=${MESSAGING_RABBITMQ_PORT:-5672}
+      - MESSAGING_RABBITMQ_USERNAME=${MESSAGING_RABBITMQ_USERNAME:-rabbitmq_user}
+      - MESSAGING_RABBITMQ_PASSWORD=${MESSAGING_RABBITMQ_PASSWORD:-rabbitmq_secret}
+      
+      # Environment settings
+      - ENVIRONMENT=${ENVIRONMENT:-docker}
+      - DEBUG_ENABLED=${DEBUG_ENABLED:-false}
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      
+      # Timezone
+      - TZ=UTC
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    
+    networks:
+      - app-network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,9 +1,11 @@
 package com.test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -14,9 +16,9 @@ public class MiniApp {
     // BLOCKER: Hardcoded port number
     private static final int SERVER_PORT = 8080;
     
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+    // FIXED blocker-1 (cz-java-0057): Removed hardcoded absolute file paths
+    // Configuration is now loaded from classpath
+    private static final String CONFIG_FILE_NAME = "application.properties";
     
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
@@ -40,14 +42,17 @@ public class MiniApp {
     
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
-            File configFile = new File(CONFIG_FILE_PATH);
-            if (configFile.exists()) {
+            // FIXED blocker-1 (cz-java-0057): Load resources via classpath instead of filesystem
+            // Using getClass().getResourceAsStream() to load from classpath
+            InputStream configStream = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE_NAME);
+            
+            if (configStream != null) {
                 Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
-                System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
+                props.load(configStream);
+                System.out.println("Configuration loaded from classpath: " + CONFIG_FILE_NAME);
+                configStream.close();
             } else {
-                System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
+                System.out.println("Warning: Configuration file not found in classpath: " + CONFIG_FILE_NAME);
             }
         } catch (IOException e) {
             System.err.println("Failed to load configuration: " + e.getMessage());
@@ -56,18 +61,18 @@ public class MiniApp {
     
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
-            if (!logDir.exists()) {
-                logDir.mkdirs();
+            // FIXED blocker-2 (cz-java-0058): Use Java Temp Directory APIs for ephemeral paths
+            // Using Files.createTempDirectory() and System.getProperty("java.io.tmpdir")
+            String tempDir = System.getProperty("java.io.tmpdir");
+            Path logDir = Files.createTempDirectory("mini-app-logs");
+            
+            Path logFile = logDir.resolve("mini-app.log");
+            if (!Files.exists(logFile)) {
+                Files.createFile(logFile);
             }
             
-            File logFile = new File(LOG_FILE_PATH);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
-            
-            System.out.println("Logging initialized at: " + LOG_FILE_PATH);
+            System.out.println("Logging initialized at: " + logFile.toAbsolutePath());
+            System.out.println("Using system temp directory: " + tempDir);
         } catch (IOException e) {
             System.err.println("Failed to initialize logging: " + e.getMessage());
         }
