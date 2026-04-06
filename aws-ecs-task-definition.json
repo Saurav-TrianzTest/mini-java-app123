@@ -1,0 +1,141 @@
+{
+  "family": "mini-java-app",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/mini-java-app-task-role",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/mini-java-app:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-1"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "value": "production"
+        },
+        {
+          "name": "APP_NAME",
+          "value": "mini-java-app"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "INFO"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "SERVER_HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "AWS_SECRETS_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "AWS_PARAMETER_STORE_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "your-rds-endpoint.amazonaws.com"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "mini_app_db"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "your-elasticache-endpoint.amazonaws.com"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "name": "EXTERNAL_API_URL",
+          "value": "https://api.example.com/v1"
+        },
+        {
+          "name": "PAYMENT_SERVICE_URL",
+          "value": "https://payment.example.com/process"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DB_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/database/credentials:username::"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/database/credentials:password::"
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/redis/credentials:password::"
+        },
+        {
+          "name": "EXTERNAL_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/api/keys:external_api_key::"
+        },
+        {
+          "name": "PAYMENT_SERVICE_TOKEN",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/api/keys:payment_service_token::"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/security/secrets:jwt_secret::"
+        },
+        {
+          "name": "ENCRYPTION_KEY",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/security/secrets:encryption_key::"
+        },
+        {
+          "name": "ADMIN_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/admin/credentials:username::"
+        },
+        {
+          "name": "ADMIN_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:/mini-java-app/admin/credentials:password::"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8080/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}

@@ -13,19 +13,73 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.boot.version>2.7.0</spring.boot.version>
+        <aws.sdk.version>2.20.0</aws.sdk.version>
+        <spring.cloud.aws.version>2.4.4</spring.cloud.aws.version>
     </properties>
 
     <dependencies>
+        <!-- MySQL Database Driver -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
         
+        <!-- Spring Boot Starter Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.0</version>
+            <version>${spring.boot.version}</version>
+        </dependency>
+        
+        <!-- ADDED: AWS SDK for Secrets Manager - for secure credential management -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>secretsmanager</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+        
+        <!-- ADDED: AWS SDK for Systems Manager - for Parameter Store integration -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ssm</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+        
+        <!-- ADDED: Spring Cloud AWS for seamless AWS integration -->
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-starter-aws-secrets-manager-config</artifactId>
+            <version>${spring.cloud.aws.version}</version>
+        </dependency>
+        
+        <!-- ADDED: Spring Cloud AWS Parameter Store -->
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-starter-aws-parameter-store-config</artifactId>
+            <version>${spring.cloud.aws.version}</version>
+        </dependency>
+        
+        <!-- ADDED: HikariCP for connection pooling (cloud-ready database connections) -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+        
+        <!-- ADDED: Logback for structured JSON logging (cloud monitoring) -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.11</version>
+        </dependency>
+        
+        <!-- ADDED: Logstash encoder for JSON logging format -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
         </dependency>
     </dependencies>
 
@@ -39,6 +93,20 @@
                     <source>11</source>
                     <target>11</target>
                 </configuration>
+            </plugin>
+            
+            <!-- ADDED: Spring Boot Maven Plugin for executable JAR packaging -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
