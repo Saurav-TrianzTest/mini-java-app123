@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Cloud-Native Structured JSON Logging Configuration -->
+    <!-- Logs are written to stdout/stderr for cloud log aggregation -->
+    
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="mini-java-app"/>
+    <springProperty scope="context" name="ENVIRONMENT" source="app.environment" defaultValue="production"/>
+    
+    <!-- Console Appender with JSON formatting for cloud environments -->
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Add custom fields for cloud monitoring -->
+            <customFields>{"application":"${APP_NAME}","environment":"${ENVIRONMENT}"}</customFields>
+            <!-- Include caller data for debugging -->
+            <includeCallerData>false</includeCallerData>
+            <!-- Include context for distributed tracing -->
+            <includeContext>true</includeContext>
+            <!-- Include MDC for correlation IDs -->
+            <includeMdc>true</includeMdc>
+            <!-- Timestamp format -->
+            <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSSX</timestampPattern>
+        </encoder>
+    </appender>
+    
+    <!-- Fallback Console Appender with simple pattern -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Use JSON logging in cloud environments, simple pattern for local development -->
+    <springProfile name="cloud,production,staging">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_JSON"/>
+        </root>
+    </springProfile>
+    
+    <springProfile name="local,dev,default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    
+    <!-- Application-specific logging levels -->
+    <logger name="com.test" level="INFO"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+</configuration>

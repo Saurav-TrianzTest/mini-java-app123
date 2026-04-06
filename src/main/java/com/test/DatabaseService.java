@@ -1,95 +1,217 @@
 package com.test;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
+ * Cloud-ready Database Service
+ * Fixed issues:
+ * - Replaced hardcoded database credentials with environment variables and Secret Manager
+ * - Replaced direct JDBC connections with HikariCP connection pool
+ * - Added connection timeouts for cloud resilience
+ * - Moved I/O operations from static blocks to @PostConstruct
+ * - Externalized all configuration using Spring properties
  */
+@Service
 public class DatabaseService {
     
-    // BLOCKER: Hardcoded database connection details
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "password123";
+    // FIXED: Externalized database configuration using environment variables
+    // These can be injected from GCP Secret Manager using ${sm://secret-name} syntax
+    @Value("${spring.datasource.url:jdbc:mysql://localhost:3306/mini_app_db}")
+    private String dbUrl;
     
-    // BLOCKER: Hardcoded cache server details
-    private static final String REDIS_HOST = "127.0.0.1";
-    private static final int REDIS_PORT = 6379;
+    @Value("${spring.datasource.username:${sm://database-username}}")
+    private String dbUsername;
     
-    // BLOCKER: Hardcoded API endpoints
-    private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
-    private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
+    @Value("${spring.datasource.password:${sm://database-password}}")
+    private String dbPassword;
     
-    private Connection connection;
+    // FIXED: Externalized cache configuration
+    @Value("${cache.redis.host:${REDIS_HOST:localhost}}")
+    private String redisHost;
     
+    @Value("${cache.redis.port:${REDIS_PORT:6379}}")
+    private int redisPort;
+    
+    // FIXED: Externalized API endpoints
+    @Value("${external.api.base-url:${EXTERNAL_API_URL:http://api.example.com/v1}}")
+    private String externalApiUrl;
+    
+    @Value("${payment.service.url:${PAYMENT_SERVICE_URL:https://payment.example.com/process}}")
+    private String paymentServiceUrl;
+    
+    // FIXED: Connection pool configuration
+    @Value("${spring.datasource.hikari.maximum-pool-size:10}")
+    private int maxPoolSize;
+    
+    @Value("${spring.datasource.hikari.minimum-idle:2}")
+    private int minIdle;
+    
+    @Value("${spring.datasource.hikari.connection-timeout:30000}")
+    private long connectionTimeout;
+    
+    @Value("${spring.datasource.hikari.idle-timeout:600000}")
+    private long idleTimeout;
+    
+    @Value("${spring.datasource.hikari.max-lifetime:1800000}")
+    private long maxLifetime;
+    
+    // FIXED: Query timeout configuration
+    @Value("${database.query.timeout:30}")
+    private int queryTimeout;
+    
+    // FIXED: Use HikariCP connection pool instead of direct JDBC
+    private HikariDataSource dataSource;
+    
+    /**
+     * FIXED: Moved initialization from constructor/static block to @PostConstruct
+     * This allows proper Spring dependency injection and error handling
+     */
+    @PostConstruct
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
+            System.out.println("Initializing HikariCP connection pool for cloud environment...");
             
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            // FIXED: Configure HikariCP connection pool
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(dbUrl);
+            config.setUsername(dbUsername);
+            config.setPassword(dbPassword);
             
-            // BLOCKER: Hardcoded connection string and credentials
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+            // FIXED: Add connection timeouts for cloud resilience
+            config.setMaximumPoolSize(maxPoolSize);
+            config.setMinimumIdle(minIdle);
+            config.setConnectionTimeout(connectionTimeout);
+            config.setIdleTimeout(idleTimeout);
+            config.setMaxLifetime(maxLifetime);
             
-            System.out.println("Connected to database: " + DB_URL);
-            System.out.println("Using username: " + DB_USERNAME);
+            // Additional cloud-ready configurations
+            config.setConnectionTestQuery("SELECT 1");
+            config.setLeakDetectionThreshold(60000);
+            config.setPoolName("MiniAppHikariPool");
             
-            // BLOCKER: Hardcoded cache connection
+            // FIXED: Create connection pool
+            dataSource = new HikariDataSource(config);
+            
+            System.out.println("Connected to database with HikariCP pool: " + maskUrl(dbUrl));
+            System.out.println("Connection pool configured - Max: " + maxPoolSize + ", Min Idle: " + minIdle);
+            
+            // FIXED: Initialize external services with externalized configuration
             connectToCache();
-            
-            // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
             
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
-        } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Database connection pool initialization failed: " + e.getMessage());
+            throw new RuntimeException("Failed to initialize database connection pool", e);
         }
     }
     
+    /**
+     * FIXED: Externalized cache connection configuration
+     */
     private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
-        System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
-        // Simulate cache connection
+        System.out.println("Connecting to Redis cache at: " + redisHost + ":" + redisPort);
+        System.out.println("Cache configuration loaded from environment variables");
+        // Actual Redis connection would use Spring Data Redis with externalized config
     }
     
+    /**
+     * FIXED: Externalized external service URLs
+     */
     private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
-        System.out.println("Initializing external API: " + EXTERNAL_API_URL);
-        System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
+        System.out.println("Initializing external API: " + maskUrl(externalApiUrl));
+        System.out.println("Initializing payment service: " + maskUrl(paymentServiceUrl));
+        System.out.println("External service URLs loaded from environment variables");
     }
     
+    /**
+     * FIXED: Use connection pool instead of direct JDBC
+     * Added proper timeout configuration
+     */
     public void executeQuery(String sql) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        
         try {
+            // FIXED: Get connection from pool
+            connection = dataSource.getConnection();
+            
             if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
+                stmt = connection.prepareStatement(sql);
                 
-                System.out.println("Executing query: " + sql);
+                // FIXED: Externalized query timeout
+                stmt.setQueryTimeout(queryTimeout);
+                
+                System.out.println("Executing query with timeout: " + queryTimeout + "s");
                 stmt.execute();
-                stmt.close();
             }
         } catch (SQLException e) {
             System.err.println("Query execution failed: " + e.getMessage());
+            throw new RuntimeException("Query execution failed", e);
+        } finally {
+            // FIXED: Proper resource cleanup
+            closeResources(stmt, connection);
         }
     }
     
-    public void disconnect() {
+    /**
+     * FIXED: Proper resource cleanup
+     */
+    private void closeResources(PreparedStatement stmt, Connection connection) {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Database connection closed");
+            if (stmt != null && !stmt.isClosed()) {
+                stmt.close();
             }
         } catch (SQLException e) {
-            System.err.println("Failed to close database connection: " + e.getMessage());
+            System.err.println("Failed to close statement: " + e.getMessage());
         }
+        
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close(); // Returns connection to pool
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to close connection: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * FIXED: Proper connection pool shutdown
+     */
+    @PreDestroy
+    public void disconnect() {
+        try {
+            if (dataSource != null && !dataSource.isClosed()) {
+                dataSource.close();
+                System.out.println("HikariCP connection pool closed");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to close connection pool: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Utility method to mask sensitive URLs for logging
+     */
+    private String maskUrl(String url) {
+        if (url == null) return "null";
+        // Mask credentials in URL if present
+        return url.replaceAll("://([^:]+):([^@]+)@", "://*****:*****@");
+    }
+    
+    /**
+     * Get the underlying DataSource for Spring integration
+     */
+    public DataSource getDataSource() {
+        return dataSource;
     }
 }
