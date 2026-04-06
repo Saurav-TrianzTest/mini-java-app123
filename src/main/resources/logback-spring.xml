@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Cloud-native structured logging configuration -->
+    <!-- All logs go to stdout/stderr for cloud log aggregation -->
+    
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="mini-java-app"/>
+    <springProperty scope="context" name="LOG_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+    
+    <!-- Console appender with JSON format for cloud monitoring -->
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>spanId</includeMdcKeyName>
+            <includeMdcKeyName>userId</includeMdcKeyName>
+            <includeMdcKeyName>requestId</includeMdcKeyName>
+            <customFields>{"application":"${APP_NAME}","environment":"${ENVIRONMENT:-production}"}</customFields>
+        </encoder>
+    </appender>
+    
+    <!-- Console appender with plain text format for local development -->
+    <appender name="CONSOLE_PLAIN" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Use JSON logging in cloud environments, plain text for local -->
+    <springProfile name="default,local,dev">
+        <root level="${LOG_LEVEL}">
+            <appender-ref ref="CONSOLE_PLAIN"/>
+        </root>
+    </springProfile>
+    
+    <springProfile name="prod,production,staging,azure">
+        <root level="${LOG_LEVEL}">
+            <appender-ref ref="CONSOLE_JSON"/>
+        </root>
+    </springProfile>
+    
+    <!-- Application-specific logging -->
+    <logger name="com.test" level="${APP_LOG_LEVEL:-INFO}"/>
+    
+    <!-- Framework logging -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+    <logger name="com.azure" level="INFO"/>
+</configuration>
