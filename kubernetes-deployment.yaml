@@ -1,0 +1,241 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mini-app
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mini-app-config
+  namespace: mini-app
+data:
+  AWS_REGION: "us-east-1"
+  LOG_LEVEL: "INFO"
+  DB_POOL_MAX_SIZE: "20"
+  DB_POOL_MIN_IDLE: "5"
+  DB_CONNECTION_TIMEOUT_MS: "30000"
+  SERVER_PORT: "8080"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mini-app-secrets
+  namespace: mini-app
+type: Opaque
+stringData:
+  DB_SECRET_NAME: "mini-app/database"
+  CONFIG_S3_BUCKET: "mini-app-config-bucket"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mini-app
+  namespace: mini-app
+  labels:
+    app: mini-app
+    version: v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mini-app
+  template:
+    metadata:
+      labels:
+        app: mini-app
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      serviceAccountName: mini-app-sa
+      containers:
+      - name: mini-app
+        image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/mini-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: mini-app-config
+              key: AWS_REGION
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: mini-app-config
+              key: LOG_LEVEL
+        - name: DB_POOL_MAX_SIZE
+          valueFrom:
+            configMapKeyRef:
+              name: mini-app-config
+              key: DB_POOL_MAX_SIZE
+        - name: DB_POOL_MIN_IDLE
+          valueFrom:
+            configMapKeyRef:
+              name: mini-app-config
+              key: DB_POOL_MIN_IDLE
+        - name: DB_CONNECTION_TIMEOUT_MS
+          valueFrom:
+            configMapKeyRef:
+              name: mini-app-config
+              key: DB_CONNECTION_TIMEOUT_MS
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: mini-app-config
+              key: SERVER_PORT
+        - name: DB_SECRET_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mini-app-secrets
+              key: DB_SECRET_NAME
+        - name: CONFIG_S3_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: mini-app-secrets
+              key: CONFIG_S3_BUCKET
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - mini-app
+              topologyKey: kubernetes.io/hostname
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mini-app-service
+  namespace: mini-app
+  labels:
+    app: mini-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: mini-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mini-app-sa
+  namespace: mini-app
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/mini-app-eks-role
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mini-app-hpa
+  namespace: mini-app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mini-app
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: mini-app-pdb
+  namespace: mini-app
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: mini-app
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mini-app-ingress
+  namespace: mini-app
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '30'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '3'
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mini-app-service
+            port:
+              number: 80

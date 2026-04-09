@@ -1,95 +1,266 @@
 package com.test;
 
+import com.test.config.CloudConfigurationManager;
+import com.test.config.CloudConfigurationManager.DatabaseCredentials;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
+ * Cloud-native database service with connection pooling and externalized configuration
+ * Replaces hardcoded credentials with AWS Secrets Manager
+ * Replaces direct JDBC connections with HikariCP connection pool
  */
 public class DatabaseService {
     
-    // BLOCKER: Hardcoded database connection details
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "password123";
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
     
-    // BLOCKER: Hardcoded cache server details
-    private static final String REDIS_HOST = "127.0.0.1";
-    private static final int REDIS_PORT = 6379;
+    private HikariDataSource dataSource;
+    private CloudConfigurationManager configManager;
     
-    // BLOCKER: Hardcoded API endpoints
-    private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
-    private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
+    // Lazy initialization - moved from static initializer to avoid startup failures
+    private volatile boolean initialized = false;
     
-    private Connection connection;
-    
+    /**
+     * Initialize database connection pool with cloud-native configuration
+     */
     public void connect() {
-        try {
-            System.out.println("Connecting to database...");
-            
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            
-            // BLOCKER: Hardcoded connection string and credentials
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-            
-            System.out.println("Connected to database: " + DB_URL);
-            System.out.println("Using username: " + DB_USERNAME);
-            
-            // BLOCKER: Hardcoded cache connection
-            connectToCache();
-            
-            // BLOCKER: Hardcoded external service URLs
-            initializeExternalServices();
-            
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
-        } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+        if (initialized) {
+            logger.info("Database service already initialized");
+            return;
         }
-    }
-    
-    private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
-        System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
-        // Simulate cache connection
-    }
-    
-    private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
-        System.out.println("Initializing external API: " + EXTERNAL_API_URL);
-        System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
-    }
-    
-    public void executeQuery(String sql) {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
-                
-                System.out.println("Executing query: " + sql);
-                stmt.execute();
-                stmt.close();
+        
+        synchronized (this) {
+            if (initialized) {
+                return;
             }
-        } catch (SQLException e) {
-            System.err.println("Query execution failed: " + e.getMessage());
+            
+            try {
+                logger.info("Initializing database service with cloud-native configuration...");
+                
+                // Initialize cloud configuration manager
+                configManager = new CloudConfigurationManager();
+                
+                // Get database credentials from AWS Secrets Manager
+                String secretName = System.getenv().getOrDefault("DB_SECRET_NAME", "mini-app/database");
+                DatabaseCredentials dbCredentials = getDatabaseCredentialsFromSecretsManager(secretName);
+                
+                // Configure HikariCP connection pool
+                HikariConfig config = new HikariConfig();
+                config.setJdbcUrl(dbCredentials.getJdbcUrl());
+                config.setUsername(dbCredentials.getUsername());
+                config.setPassword(dbCredentials.getPassword());
+                config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                
+                // Cloud-optimized connection pool settings
+                config.setMaximumPoolSize(getMaxPoolSize());
+                config.setMinimumIdle(getMinIdleConnections());
+                config.setConnectionTimeout(getConnectionTimeout());
+                config.setIdleTimeout(600000); // 10 minutes
+                config.setMaxLifetime(1800000); // 30 minutes
+                config.setLeakDetectionThreshold(60000); // 1 minute
+                
+                // Connection validation
+                config.setConnectionTestQuery("SELECT 1");
+                config.setValidationTimeout(3000);
+                
+                // Pool name for monitoring
+                config.setPoolName("MiniAppHikariPool");
+                
+                // Initialize data source
+                dataSource = new HikariDataSource(config);
+                
+                initialized = true;
+                logger.info("Database service initialized successfully with connection pool");
+                
+                // Initialize external services with cloud-native configuration
+                initializeExternalServices();
+                
+            } catch (Exception e) {
+                logger.error("Failed to initialize database service", e);
+                throw new RuntimeException("Failed to initialize database service", e);
+            }
         }
     }
     
+    /**
+     * Get database credentials from AWS Secrets Manager with fallback to environment variables
+     */
+    private DatabaseCredentials getDatabaseCredentialsFromSecretsManager(String secretName) {
+        try {
+            // Try to get credentials from AWS Secrets Manager
+            return configManager.getDatabaseCredentials(secretName);
+        } catch (Exception e) {
+            logger.warn("Failed to retrieve credentials from Secrets Manager, falling back to environment variables", e);
+            
+            // Fallback to environment variables for local development
+            String host = System.getenv().getOrDefault("DB_HOST", "localhost");
+            String portStr = System.getenv().getOrDefault("DB_PORT", "3306");
+            String dbname = System.getenv().getOrDefault("DB_NAME", "mini_app_db");
+            String username = System.getenv().getOrDefault("DB_USERNAME", "root");
+            String password = System.getenv().getOrDefault("DB_PASSWORD", "password");
+            
+            int port = Integer.parseInt(portStr);
+            
+            return new DatabaseCredentials(username, password, host, port, dbname);
+        }
+    }
+    
+    /**
+     * Get maximum pool size from environment variable or Parameter Store
+     */
+    private int getMaxPoolSize() {
+        return configManager.getConfigValueAsInt("DB_POOL_MAX_SIZE", 20);
+    }
+    
+    /**
+     * Get minimum idle connections from environment variable or Parameter Store
+     */
+    private int getMinIdleConnections() {
+        return configManager.getConfigValueAsInt("DB_POOL_MIN_IDLE", 5);
+    }
+    
+    /**
+     * Get connection timeout from environment variable or Parameter Store
+     */
+    private long getConnectionTimeout() {
+        return configManager.getConfigValueAsInt("DB_CONNECTION_TIMEOUT_MS", 30000);
+    }
+    
+    /**
+     * Initialize external services with cloud-native configuration
+     */
+    private void initializeExternalServices() {
+        try {
+            // Get external service URLs from Parameter Store or environment variables
+            String externalApiUrl = configManager.getConfigValue("EXTERNAL_API_URL", 
+                    "http://api.example.com/v1");
+            String paymentServiceUrl = configManager.getConfigValue("PAYMENT_SERVICE_URL", 
+                    "https://payment.internal.company.com/process");
+            
+            // Get cache configuration from Parameter Store or environment variables
+            String redisHost = configManager.getConfigValue("REDIS_HOST", "localhost");
+            int redisPort = configManager.getConfigValueAsInt("REDIS_PORT", 6379);
+            
+            logger.info("External API URL configured: {}", externalApiUrl);
+            logger.info("Payment service URL configured: {}", paymentServiceUrl);
+            logger.info("Redis cache configured: {}:{}", redisHost, redisPort);
+            
+        } catch (Exception e) {
+            logger.error("Failed to initialize external services", e);
+            // Don't throw exception - allow application to start even if external services are not configured
+        }
+    }
+    
+    /**
+     * Execute SQL query using connection pool
+     * @param sql The SQL query to execute
+     */
+    public void executeQuery(String sql) {
+        if (!initialized) {
+            logger.error("Database service not initialized. Call connect() first.");
+            throw new IllegalStateException("Database service not initialized");
+        }
+        
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            // Get connection from pool
+            connection = dataSource.getConnection();
+            
+            // Prepare statement with timeout
+            stmt = connection.prepareStatement(sql);
+            stmt.setQueryTimeout(30); // 30 seconds timeout
+            
+            logger.info("Executing query: {}", sql);
+            stmt.execute();
+            
+            logger.info("Query executed successfully");
+            
+        } catch (SQLException e) {
+            logger.error("Query execution failed: {}", sql, e);
+            throw new RuntimeException("Query execution failed", e);
+        } finally {
+            // Close resources (connection returns to pool)
+            closeQuietly(stmt);
+            closeQuietly(connection);
+        }
+    }
+    
+    /**
+     * Get a connection from the pool
+     * @return Database connection
+     */
+    public Connection getConnection() throws SQLException {
+        if (!initialized) {
+            throw new IllegalStateException("Database service not initialized");
+        }
+        return dataSource.getConnection();
+    }
+    
+    /**
+     * Get the data source
+     * @return HikariDataSource
+     */
+    public DataSource getDataSource() {
+        if (!initialized) {
+            throw new IllegalStateException("Database service not initialized");
+        }
+        return dataSource;
+    }
+    
+    /**
+     * Close statement quietly without throwing exception
+     */
+    private void closeQuietly(PreparedStatement stmt) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                logger.warn("Failed to close statement", e);
+            }
+        }
+    }
+    
+    /**
+     * Close connection quietly (returns to pool)
+     */
+    private void closeQuietly(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.warn("Failed to close connection", e);
+            }
+        }
+    }
+    
+    /**
+     * Shutdown database service and close connection pool
+     */
     public void disconnect() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Database connection closed");
+            if (dataSource != null && !dataSource.isClosed()) {
+                dataSource.close();
+                logger.info("Database connection pool closed");
             }
-        } catch (SQLException e) {
-            System.err.println("Failed to close database connection: " + e.getMessage());
+            
+            if (configManager != null) {
+                configManager.close();
+                logger.info("Cloud configuration manager closed");
+            }
+            
+            initialized = false;
+            
+        } catch (Exception e) {
+            logger.error("Failed to close database service", e);
         }
     }
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    
+    <!-- Console appender for cloud environments (stdout) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- Structured JSON logging for cloud monitoring -->
+            <pattern>{"timestamp":"%d{ISO8601}","level":"%level","logger":"%logger{36}","thread":"%thread","message":"%msg","exception":"%ex{full}"}%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Async appender for better performance -->
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="CONSOLE" />
+    </appender>
+    
+    <!-- Root logger configuration -->
+    <root level="${LOG_LEVEL:-INFO}">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </root>
+    
+    <!-- Application-specific loggers -->
+    <logger name="com.test" level="${LOG_LEVEL:-INFO}" additivity="false">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </logger>
+    
+    <!-- AWS SDK logging -->
+    <logger name="software.amazon.awssdk" level="WARN" additivity="false">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </logger>
+    
+    <!-- HikariCP logging -->
+    <logger name="com.zaxxer.hikari" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </logger>
+    
+    <!-- Spring Framework logging -->
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </logger>
+    
+</configuration>
