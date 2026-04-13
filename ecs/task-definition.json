@@ -1,0 +1,184 @@
+{
+  "family": "mini-java-app-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::{{ACCOUNT_ID}}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mini-java-app",
+      "image": "{{IMAGE_URI}}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SERVER_PORT",
+          "value": "8080"
+        },
+        {
+          "name": "SERVER_HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "SERVER_CONTEXT_PATH",
+          "value": "/mini-app"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "{{DB_HOST}}"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "{{DB_PORT}}"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "{{DB_NAME}}"
+        },
+        {
+          "name": "DB_USERNAME",
+          "value": "{{DB_USERNAME}}"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "{{DB_PASSWORD}}"
+        },
+        {
+          "name": "DB_POOL_MAX_CONNECTIONS",
+          "value": "20"
+        },
+        {
+          "name": "DB_POOL_TIMEOUT",
+          "value": "5000"
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": "{{REDIS_HOST}}"
+        },
+        {
+          "name": "REDIS_PORT",
+          "value": "{{REDIS_PORT}}"
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "value": "{{REDIS_PASSWORD}}"
+        },
+        {
+          "name": "REDIS_DATABASE",
+          "value": "0"
+        },
+        {
+          "name": "EXTERNAL_API_URL",
+          "value": "{{EXTERNAL_API_URL}}"
+        },
+        {
+          "name": "EXTERNAL_API_TIMEOUT",
+          "value": "30000"
+        },
+        {
+          "name": "EXTERNAL_API_KEY",
+          "value": "{{EXTERNAL_API_KEY}}"
+        },
+        {
+          "name": "PAYMENT_SERVICE_URL",
+          "value": "{{PAYMENT_SERVICE_URL}}"
+        },
+        {
+          "name": "PAYMENT_SERVICE_USERNAME",
+          "value": "{{PAYMENT_SERVICE_USERNAME}}"
+        },
+        {
+          "name": "PAYMENT_SERVICE_PASSWORD",
+          "value": "{{PAYMENT_SERVICE_PASSWORD}}"
+        },
+        {
+          "name": "CONFIG_S3_BUCKET",
+          "value": "{{CONFIG_S3_BUCKET}}"
+        },
+        {
+          "name": "CONFIG_S3_KEY",
+          "value": "{{CONFIG_S3_KEY}}"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "{{AWS_REGION}}"
+        },
+        {
+          "name": "JWT_SECRET",
+          "value": "{{JWT_SECRET}}"
+        },
+        {
+          "name": "ADMIN_USERNAME",
+          "value": "{{ADMIN_USERNAME}}"
+        },
+        {
+          "name": "ADMIN_PASSWORD",
+          "value": "{{ADMIN_PASSWORD}}"
+        },
+        {
+          "name": "ENCRYPTION_KEY",
+          "value": "{{ENCRYPTION_KEY}}"
+        },
+        {
+          "name": "MONITORING_ENDPOINT",
+          "value": "{{MONITORING_ENDPOINT}}"
+        },
+        {
+          "name": "MONITORING_USERNAME",
+          "value": "{{MONITORING_USERNAME}}"
+        },
+        {
+          "name": "MONITORING_PASSWORD",
+          "value": "{{MONITORING_PASSWORD}}"
+        },
+        {
+          "name": "RABBITMQ_HOST",
+          "value": "{{RABBITMQ_HOST}}"
+        },
+        {
+          "name": "RABBITMQ_PORT",
+          "value": "{{RABBITMQ_PORT}}"
+        },
+        {
+          "name": "RABBITMQ_USERNAME",
+          "value": "{{RABBITMQ_USERNAME}}"
+        },
+        {
+          "name": "RABBITMQ_PASSWORD",
+          "value": "{{RABBITMQ_PASSWORD}}"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "value": "production"
+        },
+        {
+          "name": "DEBUG_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "INFO"
+        },
+        {
+          "name": "JAVA_OPTS",
+          "value": "-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mini-java-app",
+          "awslogs-region": "{{AWS_REGION}}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

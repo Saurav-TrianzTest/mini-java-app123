@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      # Server Configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      - SERVER_CONTEXT_PATH=/mini-app
+      
+      # Database Configuration (externalized - connect to external DB)
+      - DB_HOST=${DB_HOST:-db.example.com}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-mini_app_db}
+      - DB_USERNAME=${DB_USERNAME:-appuser}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_POOL_MAX_CONNECTIONS=20
+      - DB_POOL_TIMEOUT=5000
+      
+      # Redis Cache Configuration (externalized - connect to external Redis)
+      - REDIS_HOST=${REDIS_HOST:-redis.example.com}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_DATABASE=0
+      
+      # External API Configuration
+      - EXTERNAL_API_URL=${EXTERNAL_API_URL:-http://api.example.com:8080/v1}
+      - EXTERNAL_API_TIMEOUT=30000
+      - EXTERNAL_API_KEY=${EXTERNAL_API_KEY:-}
+      
+      # Payment Service Configuration
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL:-https://payment.service.local/process}
+      - PAYMENT_SERVICE_USERNAME=${PAYMENT_SERVICE_USERNAME:-}
+      - PAYMENT_SERVICE_PASSWORD=${PAYMENT_SERVICE_PASSWORD:-}
+      
+      # AWS S3 Configuration
+      - CONFIG_S3_BUCKET=${CONFIG_S3_BUCKET:-app-config-bucket}
+      - CONFIG_S3_KEY=${CONFIG_S3_KEY:-config/app.properties}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      
+      # Security Configuration
+      - JWT_SECRET=${JWT_SECRET:-}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
+      
+      # Monitoring Configuration
+      - MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://monitoring.service.local:9090/metrics}
+      - MONITORING_USERNAME=${MONITORING_USERNAME:-}
+      - MONITORING_PASSWORD=${MONITORING_PASSWORD:-}
+      
+      # Messaging Configuration
+      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq.service.local}
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-}
+      
+      # Application Configuration
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DEBUG_ENABLED=${DEBUG_ENABLED:-false}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      
+      # JVM Configuration
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    
+    networks:
+      - app-network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "java", "-version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  app-network:
+    driver: bridge
