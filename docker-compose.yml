@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Server Configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      - SERVER_CONTEXT_PATH=/mini-app
+      
+      # Database Configuration (external service)
+      - DATABASE_URL=jdbc:mysql://mysql-host:3306/mini_app_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=changeme
+      - DB_DRIVER=com.mysql.cj.jdbc.Driver
+      - DB_POOL_MAX_CONNECTIONS=20
+      - DB_POOL_TIMEOUT=5000
+      
+      # Redis Configuration (external service)
+      - REDIS_HOST=redis-host
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=changeme
+      - REDIS_DATABASE=0
+      
+      # External API Configuration
+      - EXTERNAL_API_URL=http://api-host:8080/v1
+      - EXTERNAL_API_TIMEOUT=30000
+      - EXTERNAL_API_KEY=changeme
+      
+      # Payment Service Configuration
+      - PAYMENT_SERVICE_URL=http://payment-host/process
+      - PAYMENT_SERVICE_USERNAME=changeme
+      - PAYMENT_SERVICE_PASSWORD=changeme
+      
+      # GCS Bucket Configuration
+      - GCS_CONFIG_BUCKET=app-config-bucket
+      - GCS_LOG_BUCKET=app-logs-bucket
+      - GCS_TEMP_BUCKET=app-temp-bucket
+      - GCS_UPLOAD_BUCKET=app-uploads-bucket
+      
+      # Security Configuration
+      - JWT_SECRET=changeme-jwt-secret-key
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=changeme
+      - ENCRYPTION_KEY=changeme-encryption-key
+      
+      # Monitoring Configuration
+      - MONITORING_ENDPOINT=http://monitoring-host:9090/metrics
+      - MONITORING_USERNAME=changeme
+      - MONITORING_PASSWORD=changeme
+      
+      # RabbitMQ Configuration (external service)
+      - RABBITMQ_HOST=rabbitmq-host
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=changeme
+      - RABBITMQ_PASSWORD=changeme
+      
+      # Application Configuration
+      - ENVIRONMENT=production
+      - DEBUG_ENABLED=false
+      - LOGGING_LEVEL=INFO
+      
+      # Spring Boot Configuration
+      - SPRING_PROFILES_ACTIVE=docker
+      
+      # JVM Options
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport
+    
+    volumes:
+      - ./config:/app/config:ro
+    
+    networks:
+      - app-network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge
