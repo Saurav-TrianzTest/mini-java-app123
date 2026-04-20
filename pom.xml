@@ -27,6 +27,20 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.7.0</version>
         </dependency>
+        
+        <!-- Azure Blob Storage SDK for containerization file storage fix -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>12.23.0</version>
+        </dependency>
+        
+        <!-- Spring Boot Actuator for health check endpoint -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>2.7.0</version>
+        </dependency>
     </dependencies>
 
     <build>

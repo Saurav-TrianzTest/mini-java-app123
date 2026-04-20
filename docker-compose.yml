@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      # Server Configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      - SERVER_CONTEXT_PATH=/mini-app
+      
+      # Database Configuration (external service)
+      - DATABASE_URL=jdbc:mysql://mysql-host:3306/mini_app_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=password123
+      - DB_DRIVER=com.mysql.cj.jdbc.Driver
+      - DB_POOL_MAX_CONNECTIONS=20
+      - DB_POOL_TIMEOUT=5000
+      - DB_HOST=mysql-host
+      - DB_PORT=3306
+      - DB_NAME=mini_app_db
+      
+      # Redis Cache Configuration (external service)
+      - REDIS_HOST=redis-host
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - REDIS_DATABASE=0
+      
+      # External API Configuration
+      - EXTERNAL_API_URL=http://api.example.com:8080/v1
+      - EXTERNAL_API_TIMEOUT=30000
+      - EXTERNAL_API_KEY=
+      
+      # Payment Service Configuration
+      - PAYMENT_SERVICE_URL=https://payment.internal.company.com/process
+      - PAYMENT_SERVICE_USERNAME=
+      - PAYMENT_SERVICE_PASSWORD=
+      
+      # Azure Blob Storage Configuration
+      - AZURE_STORAGE_CONNECTION_STRING=
+      - AZURE_STORAGE_CONTAINER=mini-app-storage
+      - CONFIG_BLOB_NAME=config/app.properties
+      - LOG_BLOB_NAME=logs/mini-app.log
+      - TEMP_BLOB_PREFIX=temp/
+      - UPLOAD_BLOB_PREFIX=uploads/
+      
+      # Security Configuration
+      - JWT_SECRET=
+      - ADMIN_USERNAME=
+      - ADMIN_PASSWORD=
+      - ENCRYPTION_KEY=
+      
+      # Monitoring Configuration
+      - MONITORING_ENDPOINT=http://monitoring-service:9090/metrics
+      - MONITORING_USERNAME=
+      - MONITORING_PASSWORD=
+      
+      # Messaging Configuration
+      - RABBITMQ_HOST=rabbitmq-host
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=
+      - RABBITMQ_PASSWORD=
+      
+      # Application Configuration
+      - ENVIRONMENT=production
+      - DEBUG_ENABLED=false
+      - LOGGING_LEVEL=INFO
+      - DB_QUERY_TIMEOUT=30
+      
+      # Spring Boot Configuration
+      - SPRING_PROFILES_ACTIVE=docker
+      
+      # JVM Configuration
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+    volumes:
+      - ./config:/app/config
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge
