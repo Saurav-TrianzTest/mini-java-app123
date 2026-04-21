@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mini-java-app-ingress
+  namespace: mini-java-app
+  labels:
+    app: mini-java-app
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "mini-java-app-ip"
+    networking.gke.io/managed-certificates: "mini-java-app-cert"
+spec:
+  rules:
+  - host: mini-java-app.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mini-java-app-service
+            port:
+              number: 80

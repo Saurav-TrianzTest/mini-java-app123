@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      # Server configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      
+      # Database configuration (externalized - connect to external MySQL)
+      - DB_HOST=${DB_HOST:-mysql-service}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-mini_app_db}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - DB_URL=${DB_URL:-jdbc:mysql://mysql-service:3306/mini_app_db}
+      - DB_DRIVER=com.mysql.cj.jdbc.Driver
+      - DB_POOL_MAX_CONNECTIONS=${DB_POOL_MAX_CONNECTIONS:-20}
+      - DB_POOL_TIMEOUT=${DB_POOL_TIMEOUT:-5000}
+      - DB_QUERY_TIMEOUT=${DB_QUERY_TIMEOUT:-30}
+      
+      # Redis cache configuration (externalized - connect to external Redis)
+      - REDIS_HOST=${REDIS_HOST:-redis-service}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_DATABASE=${REDIS_DATABASE:-0}
+      
+      # External API configuration
+      - EXTERNAL_API_URL=${EXTERNAL_API_URL:-http://api-service:8080/v1}
+      - EXTERNAL_API_TIMEOUT=${EXTERNAL_API_TIMEOUT:-30000}
+      - EXTERNAL_API_KEY=${EXTERNAL_API_KEY:-}
+      
+      # Payment service configuration
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL:-http://payment-service/process}
+      - PAYMENT_SERVICE_USERNAME=${PAYMENT_SERVICE_USERNAME:-}
+      - PAYMENT_SERVICE_PASSWORD=${PAYMENT_SERVICE_PASSWORD:-}
+      
+      # Google Cloud Storage buckets
+      - GCS_CONFIG_BUCKET=${GCS_CONFIG_BUCKET:-gs://app-config-bucket}
+      - GCS_LOG_BUCKET=${GCS_LOG_BUCKET:-gs://app-logs-bucket}
+      - GCS_TEMP_BUCKET=${GCS_TEMP_BUCKET:-gs://app-temp-bucket}
+      - GCS_UPLOAD_BUCKET=${GCS_UPLOAD_BUCKET:-gs://app-uploads-bucket}
+      
+      # Security configuration
+      - JWT_SECRET=${JWT_SECRET:-}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
+      
+      # Monitoring configuration
+      - MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://monitoring-service:9090/metrics}
+      - MONITORING_USERNAME=${MONITORING_USERNAME:-}
+      - MONITORING_PASSWORD=${MONITORING_PASSWORD:-}
+      
+      # RabbitMQ messaging configuration
+      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq-service}
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-}
+      
+      # Application configuration
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DEBUG_ENABLED=${DEBUG_ENABLED:-false}
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+      
+      # JVM options
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+    
+    volumes:
+      - ./config:/app/config:ro
+    
+    networks:
+      - app-network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge
