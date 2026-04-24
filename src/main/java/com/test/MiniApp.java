@@ -7,16 +7,19 @@ import java.net.ServerSocket;
 import java.util.Properties;
 
 /**
- * Mini Java Application with intentional containerization blockers for testing
+ * Mini Java Application - Cloud-ready version with S3 integration
+ * Replaced hard-coded file paths with Amazon S3 object storage
  */
 public class MiniApp {
     
     // BLOCKER: Hardcoded port number
     private static final int SERVER_PORT = 8080;
     
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+    // Cloud-native: S3 object keys instead of absolute file paths
+    private static final String CONFIG_S3_KEY = System.getenv().getOrDefault("CONFIG_S3_KEY", "config/app.properties");
+    private static final String LOG_S3_KEY = System.getenv().getOrDefault("LOG_S3_KEY", "logs/mini-app.log");
+    
+    private S3Service s3Service;
     
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
@@ -27,10 +30,13 @@ public class MiniApp {
     }
     
     private void initializeApplication() {
-        // BLOCKER: Reading from hardcoded absolute path
+        // Initialize S3 service for cloud-native file operations
+        s3Service = new S3Service();
+        
+        // Cloud-native: Reading from S3 instead of hardcoded absolute path
         loadConfiguration();
         
-        // BLOCKER: Writing to hardcoded absolute path
+        // Cloud-native: Writing to S3 instead of hardcoded absolute path
         initializeLogging();
         
         // Initialize database connection with hardcoded values
@@ -40,35 +46,32 @@ public class MiniApp {
     
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
-            File configFile = new File(CONFIG_FILE_PATH);
-            if (configFile.exists()) {
-                Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
-                System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
+            // FIXED BLOCKER-1 (Line 44): Replaced hard-coded file path with S3 object storage
+            // Original: File configFile = new File(CONFIG_FILE_PATH);
+            // Now using S3Service to read configuration from S3
+            if (s3Service.objectExists(CONFIG_S3_KEY)) {
+                Properties props = s3Service.readPropertiesFromS3(CONFIG_S3_KEY);
+                System.out.println("Configuration loaded from S3: " + CONFIG_S3_KEY);
             } else {
-                System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
+                System.out.println("Warning: Configuration file not found in S3: " + CONFIG_S3_KEY);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Failed to load configuration: " + e.getMessage());
         }
     }
     
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
-            if (!logDir.exists()) {
-                logDir.mkdirs();
-            }
+            // FIXED BLOCKER-2 (Line 60) and BLOCKER-3 (Line 65): Replaced hard-coded file paths with S3 object storage
+            // Original: File logDir = new File("/var/log");
+            // Original: File logFile = new File(LOG_FILE_PATH);
+            // Now using S3Service to create log file in S3
             
-            File logFile = new File(LOG_FILE_PATH);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
+            String initialLogMessage = "Application started at " + java.time.Instant.now();
+            s3Service.createLogInS3(LOG_S3_KEY, initialLogMessage);
             
-            System.out.println("Logging initialized at: " + LOG_FILE_PATH);
-        } catch (IOException e) {
+            System.out.println("Logging initialized in S3: " + LOG_S3_KEY);
+        } catch (Exception e) {
             System.err.println("Failed to initialize logging: " + e.getMessage());
         }
     }
@@ -83,6 +86,11 @@ public class MiniApp {
             // Simulate server running
             Thread.sleep(1000);
             serverSocket.close();
+            
+            // Clean up S3 service
+            if (s3Service != null) {
+                s3Service.close();
+            }
             
         } catch (Exception e) {
             System.err.println("Failed to start server: " + e.getMessage());
