@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.util.Properties;
 
 /**
- * Mini Java Application with intentional containerization blockers for testing
+ * Mini Java Application with intentional containerization blockers for testing - Java 17 compatible
  */
 public class MiniApp {
     

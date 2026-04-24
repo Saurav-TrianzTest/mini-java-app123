@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
+ * Updated for Java 17 compatibility with mysql-connector-j
  */
 public class DatabaseService {
     
