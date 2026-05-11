@@ -1,95 +1,178 @@
 package com.test;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
+ * Database service with cloud-native configuration using HikariCP connection pooling,
+ * AWS Secrets Manager for credentials, and AWS Parameter Store for configuration
  */
 public class DatabaseService {
     
-    // BLOCKER: Hardcoded database connection details
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "password123";
+    private HikariDataSource dataSource;
+    private AwsConfigurationManager configManager;
     
-    // BLOCKER: Hardcoded cache server details
-    private static final String REDIS_HOST = "127.0.0.1";
-    private static final int REDIS_PORT = 6379;
+    // Cloud-native configuration using environment variables and AWS services
+    private String dbHost;
+    private String dbPort;
+    private String dbName;
+    private String dbUrl;
+    private String dbUsername;
+    private String dbPassword;
     
-    // BLOCKER: Hardcoded API endpoints
-    private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
-    private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
+    // External service URLs from Parameter Store
+    private String redisHost;
+    private int redisPort;
+    private String externalApiUrl;
+    private String paymentServiceUrl;
     
-    private Connection connection;
+    public DatabaseService() {
+        this.configManager = new AwsConfigurationManager();
+        loadConfiguration();
+    }
     
+    /**
+     * Load configuration from AWS Secrets Manager and Parameter Store
+     */
+    private void loadConfiguration() {
+        // Retrieve database credentials from AWS Secrets Manager
+        // Secret name from environment variable or default
+        String dbSecretName = System.getenv().getOrDefault("DB_SECRET_NAME", "mini-app/database");
+        Map<String, String> dbSecret = configManager.getDatabaseSecret(dbSecretName);
+        
+        this.dbUsername = dbSecret.get("username");
+        this.dbPassword = dbSecret.get("password");
+        this.dbHost = dbSecret.get("host");
+        this.dbPort = dbSecret.get("port");
+        this.dbName = dbSecret.get("dbname");
+        this.dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName;
+        
+        // Retrieve other configuration from AWS Parameter Store
+        this.redisHost = configManager.getParameter("/mini-app/redis/host", "localhost");
+        this.redisPort = Integer.parseInt(configManager.getParameter("/mini-app/redis/port", "6379"));
+        this.externalApiUrl = configManager.getParameter("/mini-app/external-api/url", "http://api.example.com:8080/v1");
+        this.paymentServiceUrl = configManager.getParameter("/mini-app/payment-service/url", "https://payment.internal.company.com/process");
+    }
+    
+    /**
+     * Initialize HikariCP connection pool with cloud-optimized settings
+     */
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
+            System.out.println("Initializing HikariCP connection pool...");
             
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(dbUrl);
+            config.setUsername(dbUsername);
+            config.setPassword(dbPassword);
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
             
-            // BLOCKER: Hardcoded connection string and credentials
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+            // Cloud-optimized connection pool settings
+            config.setMaximumPoolSize(Integer.parseInt(
+                    configManager.getParameter("/mini-app/db/pool-size", "20")));
+            config.setMinimumIdle(Integer.parseInt(
+                    configManager.getParameter("/mini-app/db/min-idle", "5")));
+            config.setConnectionTimeout(Long.parseLong(
+                    configManager.getParameter("/mini-app/db/connection-timeout", "30000")));
+            config.setIdleTimeout(Long.parseLong(
+                    configManager.getParameter("/mini-app/db/idle-timeout", "600000")));
+            config.setMaxLifetime(Long.parseLong(
+                    configManager.getParameter("/mini-app/db/max-lifetime", "1800000")));
             
-            System.out.println("Connected to database: " + DB_URL);
-            System.out.println("Using username: " + DB_USERNAME);
+            // Connection test query
+            config.setConnectionTestQuery("SELECT 1");
             
-            // BLOCKER: Hardcoded cache connection
+            // Pool name for monitoring
+            config.setPoolName("MiniAppHikariPool");
+            
+            // Initialize the data source
+            this.dataSource = new HikariDataSource(config);
+            
+            System.out.println("Connected to database using HikariCP: " + dbUrl);
+            System.out.println("Connection pool initialized with max size: " + config.getMaximumPoolSize());
+            
+            // Initialize other cloud services
             connectToCache();
-            
-            // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
             
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
-        } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Database connection pool initialization failed: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
-        System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
-        // Simulate cache connection
+        // Cloud-native cache connection using environment variables
+        System.out.println("Connecting to Redis cache at: " + redisHost + ":" + redisPort);
+        // In production, use AWS ElastiCache for Redis with proper client library
     }
     
     private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
-        System.out.println("Initializing external API: " + EXTERNAL_API_URL);
-        System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
+        // Cloud-native external service URLs from Parameter Store
+        System.out.println("Initializing external API: " + externalApiUrl);
+        System.out.println("Initializing payment service: " + paymentServiceUrl);
     }
     
+    /**
+     * Execute query with connection from pool and proper timeout configuration
+     */
     public void executeQuery(String sql) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        
         try {
+            // Get connection from HikariCP pool
+            connection = dataSource.getConnection();
+            
             if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
+                stmt = connection.prepareStatement(sql);
+                
+                // Query timeout from Parameter Store or environment variable
+                int queryTimeout = Integer.parseInt(
+                        configManager.getParameter("/mini-app/db/query-timeout", "30"));
+                stmt.setQueryTimeout(queryTimeout);
                 
                 System.out.println("Executing query: " + sql);
                 stmt.execute();
-                stmt.close();
             }
         } catch (SQLException e) {
             System.err.println("Query execution failed: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            // Properly close resources
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (connection != null) {
+                    connection.close(); // Returns connection to pool
+                }
+            } catch (SQLException e) {
+                System.err.println("Failed to close resources: " + e.getMessage());
+            }
         }
     }
     
+    /**
+     * Shutdown the connection pool
+     */
     public void disconnect() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Database connection closed");
+            if (dataSource != null && !dataSource.isClosed()) {
+                dataSource.close();
+                System.out.println("HikariCP connection pool closed");
             }
-        } catch (SQLException e) {
-            System.err.println("Failed to close database connection: " + e.getMessage());
+            
+            if (configManager != null) {
+                configManager.close();
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to close connection pool: " + e.getMessage());
         }
     }
 }
