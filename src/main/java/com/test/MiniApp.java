@@ -7,7 +7,10 @@ import java.net.ServerSocket;
 import java.util.Properties;
 
 /**
- * Mini Java Application with intentional containerization blockers for testing
+ * Mini Java Application with intentional containerization blockers for testing (Java 17).
+ * Updated for Java 17 compatibility:
+ * - SecurityManager is deprecated for removal in Java 17; not used here.
+ * - All APIs verified compatible with Java 17.
  */
 public class MiniApp {
     
@@ -44,7 +47,9 @@ public class MiniApp {
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
+                try (FileInputStream fis = new FileInputStream(configFile)) {
+                    props.load(fis);
+                }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
             } else {
                 System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
@@ -74,16 +79,18 @@ public class MiniApp {
     }
     
     private void startServer() {
-        try {
+        // Java 17 compatible: ServerSocket usage unchanged; SecurityManager not used.
+        try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             // BLOCKER: Hardcoded port number
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
             System.out.println("Server started on port: " + SERVER_PORT);
             System.out.println("Server ready to accept connections...");
             
             // Simulate server running
             Thread.sleep(1000);
-            serverSocket.close();
             
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Server interrupted: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Failed to start server: " + e.getMessage());
         }
