@@ -1,13 +1,15 @@
 package com.test;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
  * Mini Java Application with intentional containerization blockers for testing
+ * Updated for Java 21 compatibility with modern Java features
  */
 public class MiniApp {
     
@@ -21,7 +23,7 @@ public class MiniApp {
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
         
-        MiniApp app = new MiniApp();
+        var app = new MiniApp();
         app.initializeApplication();
         app.startServer();
     }
@@ -34,18 +36,21 @@ public class MiniApp {
         initializeLogging();
         
         // Initialize database connection with hardcoded values
-        DatabaseService dbService = new DatabaseService();
+        var dbService = new DatabaseService();
         dbService.connect();
     }
     
     private void loadConfiguration() {
         try {
             // BLOCKER: Hardcoded absolute file path
-            File configFile = new File(CONFIG_FILE_PATH);
-            if (configFile.exists()) {
-                Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
-                System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
+            // Using modern Path API instead of File
+            Path configPath = Paths.get(CONFIG_FILE_PATH);
+            if (Files.exists(configPath)) {
+                var props = new Properties();
+                try (var inputStream = Files.newInputStream(configPath)) {
+                    props.load(inputStream);
+                    System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
+                }
             } else {
                 System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
             }
@@ -57,14 +62,15 @@ public class MiniApp {
     private void initializeLogging() {
         try {
             // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
-            if (!logDir.exists()) {
-                logDir.mkdirs();
+            // Using modern Path API
+            Path logDir = Paths.get("/var/log");
+            if (!Files.exists(logDir)) {
+                Files.createDirectories(logDir);
             }
             
-            File logFile = new File(LOG_FILE_PATH);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
+            Path logFile = Paths.get(LOG_FILE_PATH);
+            if (!Files.exists(logFile)) {
+                Files.createFile(logFile);
             }
             
             System.out.println("Logging initialized at: " + LOG_FILE_PATH);
@@ -76,13 +82,14 @@ public class MiniApp {
     private void startServer() {
         try {
             // BLOCKER: Hardcoded port number
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
-            System.out.println("Server started on port: " + SERVER_PORT);
-            System.out.println("Server ready to accept connections...");
-            
-            // Simulate server running
-            Thread.sleep(1000);
-            serverSocket.close();
+            // Using try-with-resources for automatic resource management
+            try (var serverSocket = new ServerSocket(SERVER_PORT)) {
+                System.out.println("Server started on port: " + SERVER_PORT);
+                System.out.println("Server ready to accept connections...");
+                
+                // Simulate server running
+                Thread.sleep(1000);
+            }
             
         } catch (Exception e) {
             System.err.println("Failed to start server: " + e.getMessage());

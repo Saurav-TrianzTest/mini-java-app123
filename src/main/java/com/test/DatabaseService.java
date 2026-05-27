@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Duration;
 
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
+ * Updated for Java 21 compatibility with modern Java features
  */
 public class DatabaseService {
     
@@ -26,14 +28,17 @@ public class DatabaseService {
     private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
     private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
     
+    // Using modern Java Duration API instead of hardcoded timeout values
+    private static final Duration QUERY_TIMEOUT = Duration.ofSeconds(30);
+    
     private Connection connection;
     
     public void connect() {
         try {
             System.out.println("Connecting to database...");
             
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            // Note: No need to explicitly load JDBC driver in modern Java (JDBC 4.0+)
+            // The driver is automatically loaded via ServiceLoader mechanism
             
             // BLOCKER: Hardcoded connection string and credentials
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
@@ -47,8 +52,6 @@ public class DatabaseService {
             // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
             
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
         } catch (SQLException e) {
             System.err.println("Database connection failed: " + e.getMessage());
         }
@@ -70,8 +73,8 @@ public class DatabaseService {
         try {
             if (connection != null && !connection.isClosed()) {
                 PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
+                // Using modern Duration API for timeout configuration
+                stmt.setQueryTimeout((int) QUERY_TIMEOUT.getSeconds());
                 
                 System.out.println("Executing query: " + sql);
                 stmt.execute();
