@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
+ * Updated for Java 17 and MySQL Connector/J 8.2.0 compatibility
  */
 public class DatabaseService {
     
@@ -32,8 +33,8 @@ public class DatabaseService {
         try {
             System.out.println("Connecting to database...");
             
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            // MySQL Connector/J 8.2.0+ automatically registers the driver via JDBC 4.0 Service Provider mechanism
+            // No need to explicitly call Class.forName("com.mysql.cj.jdbc.Driver")
             
             // BLOCKER: Hardcoded connection string and credentials
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
@@ -47,8 +48,6 @@ public class DatabaseService {
             // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
             
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
         } catch (SQLException e) {
             System.err.println("Database connection failed: " + e.getMessage());
         }
