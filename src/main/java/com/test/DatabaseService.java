@@ -7,16 +7,18 @@ import java.sql.SQLException;
 
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
- * Updated for Java 17 and MySQL Connector/J 8.2.0 compatibility
+ * Updated for Java 17 and PostgreSQL JDBC Driver compatibility
+ * Migrated from MySQL to PostgreSQL
  */
 public class DatabaseService {
     
-    // BLOCKER: Hardcoded database connection details
+    // BLOCKER: Hardcoded database connection details - Updated for PostgreSQL
     private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
+    private static final String DB_PORT = "5432"; // PostgreSQL default port
     private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
+    // PostgreSQL JDBC URL format: jdbc:postgresql://host:port/database
+    private static final String DB_URL = "jdbc:postgresql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+    private static final String DB_USERNAME = "postgres"; // PostgreSQL default user
     private static final String DB_PASSWORD = "password123";
     
     // BLOCKER: Hardcoded cache server details
@@ -31,15 +33,15 @@ public class DatabaseService {
     
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
+            System.out.println("Connecting to PostgreSQL database...");
             
-            // MySQL Connector/J 8.2.0+ automatically registers the driver via JDBC 4.0 Service Provider mechanism
-            // No need to explicitly call Class.forName("com.mysql.cj.jdbc.Driver")
+            // PostgreSQL JDBC Driver automatically registers via JDBC 4.0 Service Provider mechanism
+            // No need to explicitly call Class.forName("org.postgresql.Driver")
             
             // BLOCKER: Hardcoded connection string and credentials
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
             
-            System.out.println("Connected to database: " + DB_URL);
+            System.out.println("Connected to PostgreSQL database: " + DB_URL);
             System.out.println("Using username: " + DB_USERNAME);
             
             // BLOCKER: Hardcoded cache connection
@@ -49,7 +51,7 @@ public class DatabaseService {
             initializeExternalServices();
             
         } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+            System.err.println("PostgreSQL database connection failed: " + e.getMessage());
         }
     }
     
@@ -85,10 +87,10 @@ public class DatabaseService {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Database connection closed");
+                System.out.println("PostgreSQL database connection closed");
             }
         } catch (SQLException e) {
-            System.err.println("Failed to close database connection: " + e.getMessage());
+            System.err.println("Failed to close PostgreSQL database connection: " + e.getMessage());
         }
     }
 }
