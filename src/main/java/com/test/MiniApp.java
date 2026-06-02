@@ -1,89 +1,102 @@
 package com.test;
 
-import java.io.File;
-import java.io.FileInputStream;
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobClientBuilder;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.util.Properties;
 
 /**
- * Mini Java Application with intentional containerization blockers for testing
+ * Mini Java Application updated for Azure cloud readiness.
  */
 public class MiniApp {
-    
-    // BLOCKER: Hardcoded port number
-    private static final int SERVER_PORT = 8080;
-    
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
-    
+
+    // Server port is externalized via environment variable / Azure App Configuration
+    private static final int SERVER_PORT = Integer.parseInt(
+            System.getenv().getOrDefault("APP_SERVER_PORT", "8080")
+    );
+
+    // Azure Blob Storage configuration for configuration and logging
+    private static final String BLOB_CONNECTION_STRING = System.getenv().getOrDefault(
+            "AZURE_STORAGE_CONNECTION_STRING",
+            "DefaultEndpointsProtocol=https;AccountName=youraccount;AccountKey=yourkey;EndpointSuffix=core.windows.net"
+    );
+    private static final String CONFIG_CONTAINER = System.getenv().getOrDefault("APP_CONFIG_CONTAINER", "app-config");
+    private static final String CONFIG_BLOB_NAME = System.getenv().getOrDefault("APP_CONFIG_BLOB", "app.properties");
+    private static final String LOG_CONTAINER = System.getenv().getOrDefault("APP_LOG_CONTAINER", "app-logs");
+    private static final String LOG_BLOB_NAME = System.getenv().getOrDefault("APP_LOG_BLOB", "mini-app.log");
+
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
-        
+
         MiniApp app = new MiniApp();
         app.initializeApplication();
         app.startServer();
     }
-    
+
     private void initializeApplication() {
-        // BLOCKER: Reading from hardcoded absolute path
         loadConfiguration();
-        
-        // BLOCKER: Writing to hardcoded absolute path
         initializeLogging();
-        
-        // Initialize database connection with hardcoded values
+
         DatabaseService dbService = new DatabaseService();
         dbService.connect();
     }
-    
+
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
-            File configFile = new File(CONFIG_FILE_PATH);
-            if (configFile.exists()) {
+            BlobClient configBlobClient = new BlobClientBuilder()
+                    .connectionString(BLOB_CONNECTION_STRING)
+                    .containerName(CONFIG_CONTAINER)
+                    .blobName(CONFIG_BLOB_NAME)
+                    .buildClient();
+
+            if (configBlobClient.exists()) {
                 Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
-                System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
+                try (InputStream is = configBlobClient.openInputStream()) {
+                    props.load(is);
+                }
+                System.out.println("Configuration loaded from Azure Blob Storage: " + CONFIG_CONTAINER + "/" + CONFIG_BLOB_NAME);
             } else {
-                System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
+                System.out.println("Warning: Configuration blob not found in container: " + CONFIG_CONTAINER);
             }
-        } catch (IOException e) {
-            System.err.println("Failed to load configuration: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Failed to load configuration from Azure Blob Storage: " + e.getMessage());
         }
     }
-    
+
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
-            if (!logDir.exists()) {
-                logDir.mkdirs();
+            BlobClient logBlobClient = new BlobClientBuilder()
+                    .connectionString(BLOB_CONNECTION_STRING)
+                    .containerName(LOG_CONTAINER)
+                    .blobName(LOG_BLOB_NAME)
+                    .buildClient();
+
+            if (!logBlobClient.exists()) {
+                logBlobClient.uploadFromFile(createEmptyTempLogFile());
             }
-            
-            File logFile = new File(LOG_FILE_PATH);
-            if (!logFile.exists()) {
-                logFile.createNewFile();
-            }
-            
-            System.out.println("Logging initialized at: " + LOG_FILE_PATH);
-        } catch (IOException e) {
-            System.err.println("Failed to initialize logging: " + e.getMessage());
+
+            System.out.println("Logging initialized in Azure Blob Storage at: " + LOG_CONTAINER + "/" + LOG_BLOB_NAME);
+        } catch (Exception e) {
+            System.err.println("Failed to initialize logging in Azure Blob Storage: " + e.getMessage());
         }
     }
-    
+
+    private String createEmptyTempLogFile() throws IOException {
+        java.nio.file.Path tempFile = java.nio.file.Files.createTempFile("mini-app-log", ".log");
+        return tempFile.toString();
+    }
+
     private void startServer() {
-        try {
-            // BLOCKER: Hardcoded port number
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+        try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             System.out.println("Server started on port: " + SERVER_PORT);
             System.out.println("Server ready to accept connections...");
-            
+
             // Simulate server running
             Thread.sleep(1000);
-            serverSocket.close();
-            
         } catch (Exception e) {
             System.err.println("Failed to start server: " + e.getMessage());
         }
