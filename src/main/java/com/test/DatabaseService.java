@@ -8,6 +8,13 @@ import java.sql.SQLException;
 /**
  * Database Service for handling database connections
  * Updated for Java 17 compatibility
+ */
+public class DatabaseService {
+    
+    // BLOCKER: Hardcoded database connection details
+    private static final String DB_HOST = "localhost";
+    private static final String DB_USERNAME = "admin";
+    private static final String DB_NAME = "testdb";
     private static final String DB_PORT = "5432";
     private static final String DB_URL = "jdbc:postgresql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
     private static final String DB_PASSWORD = "password123";
