@@ -8,6 +8,7 @@ import java.util.Properties;
 
 /**
  * Mini Java Application with intentional containerization blockers for testing
+ * Updated for Java 17 compatibility
  */
 public class MiniApp {
     
@@ -39,18 +40,19 @@ public class MiniApp {
     }
     
     private void loadConfiguration() {
-        try {
-            // BLOCKER: Hardcoded absolute file path
-            File configFile = new File(CONFIG_FILE_PATH);
-            if (configFile.exists()) {
-                Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
+        // BLOCKER: Hardcoded absolute file path
+        File configFile = new File(CONFIG_FILE_PATH);
+        if (configFile.exists()) {
+            Properties props = new Properties();
+            // Using try-with-resources for automatic resource management
+            try (FileInputStream fis = new FileInputStream(configFile)) {
+                props.load(fis);
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
-            } else {
-                System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
+            } catch (IOException e) {
+                System.err.println("Failed to load configuration: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println("Failed to load configuration: " + e.getMessage());
+        } else {
+            System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
         }
     }
     
@@ -74,15 +76,14 @@ public class MiniApp {
     }
     
     private void startServer() {
-        try {
-            // BLOCKER: Hardcoded port number
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+        // BLOCKER: Hardcoded port number
+        // Using try-with-resources for automatic resource management
+        try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             System.out.println("Server started on port: " + SERVER_PORT);
             System.out.println("Server ready to accept connections...");
             
             // Simulate server running
             Thread.sleep(1000);
-            serverSocket.close();
             
         } catch (Exception e) {
             System.err.println("Failed to start server: " + e.getMessage());

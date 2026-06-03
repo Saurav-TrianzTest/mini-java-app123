@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
+ * Updated for Java 17 compatibility
  */
 public class DatabaseService {
     
@@ -32,8 +33,8 @@ public class DatabaseService {
         try {
             System.out.println("Connecting to database...");
             
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            // BLOCKER: Hardcoded JDBC driver - Note: Class.forName() no longer needed for JDBC 4.0+
+            // Modern JDBC drivers auto-register via ServiceLoader
             
             // BLOCKER: Hardcoded connection string and credentials
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
@@ -47,8 +48,6 @@ public class DatabaseService {
             // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
             
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
         } catch (SQLException e) {
             System.err.println("Database connection failed: " + e.getMessage());
         }
@@ -69,13 +68,14 @@ public class DatabaseService {
     public void executeQuery(String sql) {
         try {
             if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
-                stmt.setQueryTimeout(30);
-                
-                System.out.println("Executing query: " + sql);
-                stmt.execute();
-                stmt.close();
+                // Using try-with-resources for automatic resource management (Java 7+, enhanced in Java 17)
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    // BLOCKER: Hardcoded query timeout
+                    stmt.setQueryTimeout(30);
+                    
+                    System.out.println("Executing query: " + sql);
+                    stmt.execute();
+                }
             }
         } catch (SQLException e) {
             System.err.println("Query execution failed: " + e.getMessage());
