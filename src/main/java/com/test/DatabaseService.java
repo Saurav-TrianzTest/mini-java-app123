@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
+ * Updated for Java 21 compatibility
  */
 public class DatabaseService {
     
@@ -32,7 +33,7 @@ public class DatabaseService {
         try {
             System.out.println("Connecting to database...");
             
-            // BLOCKER: Hardcoded JDBC driver
+            // BLOCKER: Hardcoded JDBC driver - Updated for mysql-connector-j
             Class.forName("com.mysql.cj.jdbc.Driver");
             
             // BLOCKER: Hardcoded connection string and credentials

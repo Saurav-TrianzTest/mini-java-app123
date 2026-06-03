@@ -8,6 +8,7 @@ import java.util.Properties;
 
 /**
  * Mini Java Application with intentional containerization blockers for testing
+ * Updated for Java 21 compatibility
  */
 public class MiniApp {
     
