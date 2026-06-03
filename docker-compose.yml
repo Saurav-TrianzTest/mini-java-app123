@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  mini-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mini-java-app:latest
+    container_name: mini-java-app
+    ports:
+      - "8080:8080"
+    environment:
+      # Server configuration
+      - SERVER_PORT=8080
+      - SERVER_HOST=0.0.0.0
+      
+      # JVM configuration
+      - JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport
+      
+      # Spring Boot configuration
+      - SPRING_PROFILES_ACTIVE=docker
+      
+      # Database configuration (external service)
+      - DB_HOST=${DB_HOST:-mysql-host}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-mini_app_db}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-password123}
+      - DB_POOL_MAX_CONNECTIONS=20
+      - DB_POOL_TIMEOUT=5000
+      
+      # Redis configuration (external service)
+      - REDIS_HOST=${REDIS_HOST:-redis-host}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_secret}
+      - REDIS_DATABASE=0
+      
+      # External API configuration
+      - EXTERNAL_API_URL=${EXTERNAL_API_URL:-http://api.example.com:8080/v1}
+      - EXTERNAL_API_TIMEOUT=30000
+      - EXTERNAL_API_KEY=${EXTERNAL_API_KEY:-api_key}
+      
+      # Payment service configuration
+      - PAYMENT_SERVICE_URL=${PAYMENT_SERVICE_URL:-https://payment.internal.company.com/process}
+      - PAYMENT_SERVICE_USERNAME=${PAYMENT_SERVICE_USERNAME:-payment_user}
+      - PAYMENT_SERVICE_PASSWORD=${PAYMENT_SERVICE_PASSWORD:-payment_secret}
+      
+      # S3 configuration
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-mini-app-config-bucket}
+      - CONFIG_S3_KEY=config/app.properties
+      - LOG_S3_KEY=logs/mini-app.log
+      - S3_TEMP_PREFIX=temp/
+      - S3_UPLOAD_PREFIX=uploads/
+      
+      # AWS configuration
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      
+      # Security configuration
+      - JWT_SECRET=${JWT_SECRET:-my_super_secret_jwt_key}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-encryption_key}
+      
+      # Monitoring configuration
+      - MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://monitoring.internal.company.com:9090/metrics}
+      - MONITORING_USERNAME=${MONITORING_USERNAME:-monitor_user}
+      - MONITORING_PASSWORD=${MONITORING_PASSWORD:-monitor_pass}
+      
+      # RabbitMQ configuration (external service)
+      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq-host}
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME:-rabbitmq_user}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-rabbitmq_secret}
+      
+      # Environment configuration
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DEBUG_ENABLED=${DEBUG_ENABLED:-false}
+      - LOGGING_LEVEL=${LOGGING_LEVEL:-INFO}
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config
+    
+    networks:
+      - app-network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "java", "-cp", "app.jar", "org.springframework.boot.loader.JarLauncher", "--spring.main.web-environment=false", "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  logs:
+  config:
