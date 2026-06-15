@@ -18,6 +18,10 @@
         <spring.boot.version>3.2.0</spring.boot.version>
         <!-- Issue-5 fixed: mysql-connector-j updated to 8.2.0 for better Java 17 support -->
         <mysql.connector.version>8.2.0</mysql.connector.version>
+        <!-- JUnit 5 version -->
+        <junit.jupiter.version>5.9.3</junit.jupiter.version>
+        <!-- Mockito version -->
+        <mockito.version>5.4.0</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -60,17 +64,57 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- JUnit 5 Jupiter API for writing tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 Jupiter Engine for running tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 Jupiter Params for parameterized tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito Core for mocking -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito JUnit 5 Extension -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <!--
-                Issue-1 + Issue-2 fixed: maven-compiler-plugin updated to 3.11.0.
-                - Source and target explicitly set to Java 17 (was 11).
-                - Plugin version updated from 3.8.1 to 3.11.0 which has full
-                  support for Java 17 language features and the module system.
-                - release flag added as the modern replacement for source/target pair,
-                  ensuring consistent cross-compilation behaviour on Java 17.
+                Issue-1 and Issue-2 fixed: maven-compiler-plugin updated to 3.11.0.
+                Source and target explicitly set to Java 17 (was 11).
+                Plugin version updated from 3.8.1 to 3.11.0 which has full
+                support for Java 17 language features and the module system.
+                Release flag added as the modern replacement for source/target pair,
+                ensuring consistent cross-compilation behaviour on Java 17.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -86,7 +130,7 @@
             <!--
                 Issue-3 fixed: maven-surefire-plugin 3.1.2 explicitly declared.
                 Java 17 enforces strong encapsulation by default. Surefire 3.x
-                automatically adds the required --add-opens JVM arguments so that
+                automatically adds the required JVM arguments (add-opens) so that
                 test frameworks (JUnit 5, Mockito, etc.) can access internal JDK
                 APIs without causing InaccessibleObjectException at runtime.
             -->
@@ -95,12 +139,36 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <argLine>
+                    <argLine>@{argLine}
                         --add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.util=ALL-UNNAMED
                         --add-opens java.base/java.io=ALL-UNNAMED
                     </argLine>
                 </configuration>
+            </plugin>
+
+            <!--
+                JaCoCo plugin added for code coverage reporting.
+                Generates coverage reports after test execution.
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
