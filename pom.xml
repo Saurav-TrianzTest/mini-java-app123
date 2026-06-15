@@ -10,34 +10,96 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <!-- Issue-1 fixed: Updated from Java 11 to Java 17 -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Issue-4 fixed: Spring Boot upgraded to 3.2.0 for full Java 17 + Jakarta EE support -->
+        <spring.boot.version>3.2.0</spring.boot.version>
+        <!-- Issue-5 fixed: mysql-connector-j updated to 8.2.0 for better Java 17 support -->
+        <mysql.connector.version>8.2.0</mysql.connector.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <!--
+                Issue-4 fixed: Spring Boot 3.2.0 BOM imported for dependency management.
+                Spring Boot 3.x provides full Java 17 compatibility and Jakarta EE 10 support.
+                This replaces the previous Spring Boot 2.7.x dependency which was only
+                partially compatible with Java 17 and did not support Jakarta EE namespaces.
+            -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!--
+            Issue-5 fixed: mysql-connector-java (deprecated artifact) replaced with
+            mysql-connector-j 8.2.0 which is the current artifact name and provides
+            better Java 17 support. The old groupId 'mysql' / artifactId
+            'mysql-connector-java' is superseded by 'com.mysql' / 'mysql-connector-j'.
+        -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql.connector.version}</version>
         </dependency>
-        
+
+        <!--
+            Issue-4 fixed: Spring Boot Starter Web managed by Spring Boot 3.2.0 BOM.
+            Spring Boot 3.x uses Jakarta EE 10 (jakarta.* namespaces) instead of
+            javax.* namespaces, providing full Java 17 long-term support.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.0</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!--
+                Issue-1 + Issue-2 fixed: maven-compiler-plugin updated to 3.11.0.
+                - Source and target explicitly set to Java 17 (was 11).
+                - Plugin version updated from 3.8.1 to 3.11.0 which has full
+                  support for Java 17 language features and the module system.
+                - release flag added as the modern replacement for source/target pair,
+                  ensuring consistent cross-compilation behaviour on Java 17.
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+            <!--
+                Issue-3 fixed: maven-surefire-plugin 3.1.2 explicitly declared.
+                Java 17 enforces strong encapsulation by default. Surefire 3.x
+                automatically adds the required --add-opens JVM arguments so that
+                test frameworks (JUnit 5, Mockito, etc.) can access internal JDK
+                APIs without causing InaccessibleObjectException at runtime.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.io=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>
