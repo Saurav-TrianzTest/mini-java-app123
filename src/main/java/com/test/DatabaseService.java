@@ -32,10 +32,8 @@ public class DatabaseService {
         try {
             System.out.println("Connecting to database...");
             
-            // BLOCKER: Hardcoded JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            
-            // BLOCKER: Hardcoded connection string and credentials
+            // Modern JDBC drivers are automatically loaded via ServiceLoader mechanism
+            // No need for Class.forName() in Java 17
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
             
             System.out.println("Connected to database: " + DB_URL);
@@ -47,8 +45,6 @@ public class DatabaseService {
             // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
             
-        } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
         } catch (SQLException e) {
             System.err.println("Database connection failed: " + e.getMessage());
         }
