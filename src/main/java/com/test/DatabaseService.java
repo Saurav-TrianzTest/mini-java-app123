@@ -7,15 +7,16 @@ import java.sql.SQLException;
 
 /**
  * Database service with hardcoded connection details - intentional containerization blockers
+ * MIGRATED TO POSTGRESQL
  */
 public class DatabaseService {
     
-    // BLOCKER: Hardcoded database connection details
+    // BLOCKER: Hardcoded database connection details - MIGRATED TO POSTGRESQL
     private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
+    private static final String DB_PORT = "5432";
     private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
+    private static final String DB_URL = "jdbc:postgresql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+    private static final String DB_USERNAME = "postgres";
     private static final String DB_PASSWORD = "password123";
     
     // BLOCKER: Hardcoded cache server details
@@ -30,13 +31,13 @@ public class DatabaseService {
     
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
+            System.out.println("Connecting to PostgreSQL database...");
             
             // Modern JDBC drivers are automatically loaded via ServiceLoader mechanism
             // No need for Class.forName() in Java 17
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
             
-            System.out.println("Connected to database: " + DB_URL);
+            System.out.println("Connected to PostgreSQL database: " + DB_URL);
             System.out.println("Using username: " + DB_USERNAME);
             
             // BLOCKER: Hardcoded cache connection
