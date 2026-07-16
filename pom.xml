@@ -10,36 +10,44 @@
     <packaging>jar</packaging>
 
     <properties>
-        <!-- Updated from Java 11 to Java 17 (Issue: Maven Compiler Source/Target Set to Java 11) -->
+        <!-- Updated from Java 11 to Java 17 -->
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Spring Boot version property for easy management -->
         <spring.boot.version>3.2.0</spring.boot.version>
+        <!-- PostgreSQL JDBC driver version -->
+        <postgresql.version>42.7.3</postgresql.version>
     </properties>
 
     <dependencies>
-        <!-- Updated mysql-connector-j to 8.2.0 for Java 17 compatibility -->
-        <!-- Note: groupId changed from 'mysql' to 'com.mysql' for connector-j 8.2.0+ -->
+        <!-- Replaced MySQL connector (mysql-connector-j 8.2.0) with PostgreSQL JDBC driver
+             for PostgreSQL 16 compatibility.
+             Migration: com.mysql:mysql-connector-j -> org.postgresql:postgresql -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>8.2.0</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
 
-        <!-- Updated Spring Boot to 3.2.0 for full Java 17 compatibility and Jakarta EE support
-             (Issue: Spring Boot 2.7.0 Should Be Updated to Latest 2.7.x for Java 17) -->
+        <!-- Spring Boot 3.2.0 for full Java 17 compatibility and Jakarta EE support -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+
+        <!-- Spring Boot Data JPA for PostgreSQL ORM support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Updated maven-compiler-plugin to 3.11.0 for Java 17 compatibility
-                 (Issue: Maven Compiler Plugin Version 3.8.1 Incompatible with Java 17) -->
+            <!-- Updated maven-compiler-plugin to 3.11.0 for Java 17 compatibility -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -50,8 +58,7 @@
                     <release>17</release>
                 </configuration>
             </plugin>
-            <!-- Added maven-surefire-plugin for Java 17 test execution compatibility
-                 (Issue: Missing maven-surefire-plugin for Java 17 Test Execution) -->
+            <!-- Added maven-surefire-plugin for Java 17 test execution compatibility -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

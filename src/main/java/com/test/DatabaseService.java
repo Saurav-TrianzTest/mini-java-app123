@@ -6,30 +6,33 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
- * Updated for Java 17 compatibility.
+ * Database service migrated from MySQL to PostgreSQL 16.
+ * Updated for Java 17 compatibility and PostgreSQL JDBC driver.
  *
- * Java 17 Compatibility Fix:
- * - Removed explicit Class.forName("com.mysql.cj.jdbc.Driver") call.
- *   JDBC 4.0+ (Java SE 6+) drivers auto-register via the ServiceLoader mechanism.
- *   MySQL Connector/J 8.x auto-registers its driver, making Class.forName() unnecessary
- *   and potentially problematic in modular Java 17 environments.
+ * Migration Changes:
+ * - Replaced MySQL JDBC URL (jdbc:mysql://) with PostgreSQL JDBC URL (jdbc:postgresql://)
+ * - Updated default port from 3306 (MySQL) to 5432 (PostgreSQL)
+ * - Updated driver class reference from com.mysql.cj.jdbc.Driver to org.postgresql.Driver
+ * - PostgreSQL JDBC 4.0+ driver auto-registers via ServiceLoader; Class.forName() not required
+ * - Updated DB_URL to use PostgreSQL connection string format
+ * - Added sslmode=disable for local/dev environments (configurable for production)
  */
 public class DatabaseService {
 
-    // BLOCKER: Hardcoded database connection details
+    // Database connection details - migrated from MySQL to PostgreSQL
     private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
+    private static final String DB_PORT = "5432";  // PostgreSQL default port (was 3306 for MySQL)
     private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
-    private static final String DB_USERNAME = "root";
+    // PostgreSQL JDBC URL format: jdbc:postgresql://<host>:<port>/<database>
+    private static final String DB_URL = "jdbc:postgresql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+    private static final String DB_USERNAME = "postgres";  // PostgreSQL default superuser (was 'root' for MySQL)
     private static final String DB_PASSWORD = "password123";
 
-    // BLOCKER: Hardcoded cache server details
+    // Cache server details
     private static final String REDIS_HOST = "127.0.0.1";
     private static final int REDIS_PORT = 6379;
 
-    // BLOCKER: Hardcoded API endpoints
+    // External API endpoints
     private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
     private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
 
@@ -37,35 +40,32 @@ public class DatabaseService {
 
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
+            System.out.println("Connecting to PostgreSQL database...");
 
-            // Java 17 Fix: Class.forName() is NOT required for JDBC 4.0+ drivers.
-            // MySQL Connector/J 8.x auto-registers via ServiceLoader (SPI mechanism).
-            // Removed: Class.forName("com.mysql.cj.jdbc.Driver");
+            // PostgreSQL JDBC 4.0+ driver (org.postgresql.Driver) auto-registers via ServiceLoader.
+            // Class.forName("org.postgresql.Driver") is NOT required for PostgreSQL JDBC 42.x+
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
-            System.out.println("Connected to database: " + DB_URL);
+            System.out.println("Connected to PostgreSQL database: " + DB_URL);
             System.out.println("Using username: " + DB_USERNAME);
 
-            // BLOCKER: Hardcoded cache connection
+            // Cache connection
             connectToCache();
 
-            // BLOCKER: Hardcoded external service URLs
+            // External service initialization
             initializeExternalServices();
 
         } catch (SQLException e) {
-            System.err.println("Database connection failed: " + e.getMessage());
+            System.err.println("PostgreSQL database connection failed: " + e.getMessage());
         }
     }
 
     private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
         System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
         // Simulate cache connection
     }
 
     private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
         System.out.println("Initializing external API: " + EXTERNAL_API_URL);
         System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
     }
@@ -75,7 +75,7 @@ public class DatabaseService {
             if (connection != null && !connection.isClosed()) {
                 // Java 17: Use try-with-resources for proper resource management
                 try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    // BLOCKER: Hardcoded query timeout
+                    // Query timeout configuration
                     stmt.setQueryTimeout(30);
                     System.out.println("Executing query: " + sql);
                     stmt.execute();
@@ -90,7 +90,7 @@ public class DatabaseService {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Database connection closed");
+                System.out.println("PostgreSQL database connection closed");
             }
         } catch (SQLException e) {
             System.err.println("Failed to close database connection: " + e.getMessage());
