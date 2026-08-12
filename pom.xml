@@ -13,7 +13,25 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- AWS SDK v2 BOM version — added for cr-java-0063 S3 migration and cr-java-0069 Secrets Manager -->
+        <aws.sdk.version>2.25.11</aws.sdk.version>
+        <jackson.version>2.15.2</jackson.version>
+        <!-- FIX cr-java-0073: HikariCP version for connection pooling -->
+        <hikaricp.version>5.1.0</hikaricp.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- AWS SDK v2 Bill of Materials: manages versions for all AWS SDK v2 modules -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -21,11 +39,81 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
-        
+
+        <!--
+            FIX cr-java-0073: HikariCP connection pool replaces raw DriverManager.getConnection()
+            calls (lines 17 and 39 in DatabaseService.java). HikariCP manages connection lifecycle,
+            pooling, and health checks, and is fully compatible with Amazon RDS Proxy for optimized
+            cloud database connections in AWS environments.
+        -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikaricp.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.7.0</version>
+        </dependency>
+
+        <!--
+            FIX cr-java-0063: Amazon S3 client (AWS SDK for Java v2).
+            Replaces all java.io.File-based persistent storage operations:
+              - new File(CONFIG_FILE_PATH) / FileInputStream  → S3 GetObjectRequest
+              - new File("/var/log") / mkdirs()               → S3 PutObjectRequest (key prefix)
+              - new File(LOG_FILE_PATH) / createNewFile()     → S3 PutObjectRequest (timestamped key)
+            Version managed by the AWS SDK v2 BOM above.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+
+        <!--
+            FIX cr-java-0063: Lightweight synchronous HTTP client for AWS SDK v2.
+            Required by the S3 client; avoids pulling in Apache HttpClient or Netty.
+            Version managed by the AWS SDK v2 BOM above.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>url-connection-client</artifactId>
+        </dependency>
+
+        <!--
+            FIX cr-java-0069: AWS Secrets Manager client (AWS SDK for Java v2).
+            Replaces hard-coded database credentials (DB_USERNAME, DB_PASSWORD, DB_URL)
+            in DatabaseService.java with runtime lookups against AWS Secrets Manager,
+            enabling encrypted storage and automatic credential rotation.
+            Version managed by the AWS SDK v2 BOM above.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>secretsmanager</artifactId>
+        </dependency>
+
+        <!--
+            FIX cr-java-0070: AWS Systems Manager (SSM) client (AWS SDK for Java v2).
+            Replaces classpath-bundled application.properties loading with runtime
+            lookups against AWS SSM Parameter Store, enabling environment-specific
+            configuration changes without redeployment and following cloud-native
+            externalized configuration principles (12-factor app Config).
+            Version managed by the AWS SDK v2 BOM above.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ssm</artifactId>
+        </dependency>
+
+        <!--
+            FIX cr-java-0069: Jackson Databind for parsing the JSON secret payload
+            returned by AWS Secrets Manager (e.g. {"username":…,"password":…,"host":…}).
+        -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
     </dependencies>
 
