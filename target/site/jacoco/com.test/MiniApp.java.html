@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MiniApp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mini-java-app</a> &gt; <a href="index.source.html" class="el_package">com.test</a> &gt; <span class="el_source">MiniApp.java</span></div><h1>MiniApp.java</h1><pre class="source lang-java linenums">package com.test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Properties;
+
+/**
+ * Mini Java Application.
+ *
+ * Java 17 Upgrade Notes:
+ * - Removed any SecurityManager usage (deprecated in Java 17, removed in Java 18).
+ * - FileInputStream now uses try-with-resources for proper resource management.
+ * - ServerSocket now uses try-with-resources for proper resource management.
+ * - Server port and file paths are externalised via environment variables
+ *   or application.properties for containerisation readiness.
+ */
+<span class="fc" id="L19">public class MiniApp {</span>
+
+    // Reads port from environment variable; falls back to 8080 for local dev.
+    private static final int SERVER_PORT =
+<span class="fc" id="L23">            Integer.parseInt(System.getenv().getOrDefault(&quot;SERVER_PORT&quot;, &quot;8080&quot;));</span>
+
+    // Reads config/log paths from environment variables; falls back to defaults.
+    private static final String CONFIG_FILE_PATH =
+<span class="fc" id="L27">            System.getenv().getOrDefault(&quot;CONFIG_FILE_PATH&quot;, &quot;/opt/app/config/app.properties&quot;);</span>
+<span class="fc" id="L28">    private static final String LOG_FILE_PATH =</span>
+<span class="fc" id="L29">            System.getenv().getOrDefault(&quot;LOG_FILE_PATH&quot;, &quot;/var/log/mini-app.log&quot;);</span>
+
+    public static void main(String[] args) {
+<span class="fc" id="L32">        System.out.println(&quot;Starting Mini Java Application...&quot;);</span>
+
+<span class="fc" id="L34">        MiniApp app = new MiniApp();</span>
+<span class="fc" id="L35">        app.initializeApplication();</span>
+<span class="fc" id="L36">        app.startServer();</span>
+<span class="fc" id="L37">    }</span>
+
+    private void initializeApplication() {
+<span class="fc" id="L40">        loadConfiguration();</span>
+<span class="fc" id="L41">        initializeLogging();</span>
+
+        // Initialize database connection
+<span class="fc" id="L44">        DatabaseService dbService = new DatabaseService();</span>
+<span class="fc" id="L45">        dbService.connect();</span>
+<span class="fc" id="L46">    }</span>
+
+    private void loadConfiguration() {
+        try {
+<span class="fc" id="L50">            File configFile = new File(CONFIG_FILE_PATH);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            if (configFile.exists()) {</span>
+<span class="nc" id="L52">                Properties props = new Properties();</span>
+                // Java 17: use try-with-resources for FileInputStream
+<span class="nc" id="L54">                try (FileInputStream fis = new FileInputStream(configFile)) {</span>
+<span class="nc" id="L55">                    props.load(fis);</span>
+                }
+<span class="nc" id="L57">                System.out.println(&quot;Configuration loaded from: &quot; + CONFIG_FILE_PATH);</span>
+<span class="nc" id="L58">            } else {</span>
+<span class="fc" id="L59">                System.out.println(&quot;Warning: Configuration file not found at: &quot; + CONFIG_FILE_PATH);</span>
+            }
+<span class="nc" id="L61">        } catch (IOException e) {</span>
+<span class="nc" id="L62">            System.err.println(&quot;Failed to load configuration: &quot; + e.getMessage());</span>
+<span class="fc" id="L63">        }</span>
+<span class="fc" id="L64">    }</span>
+
+    private void initializeLogging() {
+        try {
+<span class="fc" id="L68">            File logDir = new File(LOG_FILE_PATH).getParentFile();</span>
+<span class="pc bpc" id="L69" title="2 of 4 branches missed.">            if (logDir != null &amp;&amp; !logDir.exists()) {</span>
+<span class="nc" id="L70">                logDir.mkdirs();</span>
+            }
+
+<span class="fc" id="L73">            File logFile = new File(LOG_FILE_PATH);</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if (!logFile.exists()) {</span>
+<span class="nc" id="L75">                logFile.createNewFile();</span>
+            }
+
+<span class="nc" id="L78">            System.out.println(&quot;Logging initialized at: &quot; + LOG_FILE_PATH);</span>
+<span class="fc" id="L79">        } catch (IOException e) {</span>
+<span class="fc" id="L80">            System.err.println(&quot;Failed to initialize logging: &quot; + e.getMessage());</span>
+<span class="nc" id="L81">        }</span>
+<span class="fc" id="L82">    }</span>
+
+    private void startServer() {
+        // Java 17: use try-with-resources for ServerSocket
+<span class="fc" id="L86">        try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {</span>
+<span class="fc" id="L87">            System.out.println(&quot;Server started on port: &quot; + SERVER_PORT);</span>
+<span class="fc" id="L88">            System.out.println(&quot;Server ready to accept connections...&quot;);</span>
+
+            // Simulate server running
+<span class="fc" id="L91">            Thread.sleep(1000);</span>
+
+<span class="nc" id="L93">        } catch (Exception e) {</span>
+<span class="nc" id="L94">            System.err.println(&quot;Failed to start server: &quot; + e.getMessage());</span>
+<span class="fc" id="L95">        }</span>
+<span class="fc" id="L96">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
