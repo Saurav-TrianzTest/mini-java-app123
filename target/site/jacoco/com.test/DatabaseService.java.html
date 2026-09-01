@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mini-java-app</a> &gt; <a href="index.source.html" class="el_package">com.test</a> &gt; <span class="el_source">DatabaseService.java</span></div><h1>DatabaseService.java</h1><pre class="source lang-java linenums">package com.test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+/**
+ * Database service updated for PostgreSQL 16 compatibility.
+ * Replaced MySQL JDBC driver and connection URL with PostgreSQL equivalents.
+ * JDBC 4.0+ auto-loads drivers via ServiceLoader, no explicit Class.forName needed.
+ */
+<span class="fc" id="L13">public class DatabaseService {</span>
+
+    // Updated: PostgreSQL connection details replacing MySQL hardcoded values
+<span class="fc" id="L16">    private static final String DB_HOST = System.getenv().getOrDefault(&quot;DB_HOST&quot;, &quot;localhost&quot;);</span>
+<span class="fc" id="L17">    private static final String DB_PORT = System.getenv().getOrDefault(&quot;DB_PORT&quot;, &quot;5432&quot;);</span>
+<span class="fc" id="L18">    private static final String DB_NAME = System.getenv().getOrDefault(&quot;DB_NAME&quot;, &quot;mini_app_db&quot;);</span>
+    // Updated: jdbc:mysql:// replaced with jdbc:postgresql:// for PostgreSQL 16
+<span class="fc" id="L20">    private static final String DB_URL = &quot;jdbc:postgresql://&quot; + DB_HOST + &quot;:&quot; + DB_PORT + &quot;/&quot; + DB_NAME;</span>
+<span class="fc" id="L21">    private static final String DB_USERNAME = System.getenv().getOrDefault(&quot;DB_USERNAME&quot;, &quot;postgres&quot;);</span>
+<span class="fc" id="L22">    private static final String DB_PASSWORD = System.getenv().getOrDefault(&quot;DB_PASSWORD&quot;, &quot;password123&quot;);</span>
+
+    // Cache server details
+<span class="fc" id="L25">    private static final String REDIS_HOST = System.getenv().getOrDefault(&quot;REDIS_HOST&quot;, &quot;127.0.0.1&quot;);</span>
+<span class="fc" id="L26">    private static final int REDIS_PORT = Integer.parseInt(System.getenv().getOrDefault(&quot;REDIS_PORT&quot;, &quot;6379&quot;));</span>
+
+    // External API endpoints
+<span class="fc" id="L29">    private static final String EXTERNAL_API_URL = System.getenv().getOrDefault(&quot;EXTERNAL_API_BASE_URL&quot;, &quot;http://api.example.com:8080/v1&quot;);</span>
+<span class="fc" id="L30">    private static final String PAYMENT_SERVICE_URL = System.getenv().getOrDefault(&quot;PAYMENT_SERVICE_URL&quot;, &quot;https://payment.internal.company.com/process&quot;);</span>
+
+    private Connection connection;
+
+    public void connect() {
+        try {
+<span class="fc" id="L36">            System.out.println(&quot;Connecting to PostgreSQL database...&quot;);</span>
+
+            // Java 17 compatible: JDBC 4.0+ auto-loads the PostgreSQL driver (org.postgresql.Driver)
+            // via ServiceLoader mechanism. Explicit Class.forName() is not required.
+
+            // Updated: Using PostgreSQL JDBC URL (jdbc:postgresql://) with PostgreSQL credentials
+<span class="fc" id="L42">            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);</span>
+
+<span class="fc" id="L44">            System.out.println(&quot;Connected to PostgreSQL database: &quot; + DB_URL);</span>
+<span class="fc" id="L45">            System.out.println(&quot;Using username: &quot; + DB_USERNAME);</span>
+
+            // Cache connection
+<span class="fc" id="L48">            connectToCache();</span>
+
+            // External service initialization
+<span class="fc" id="L51">            initializeExternalServices();</span>
+
+<span class="fc" id="L53">        } catch (SQLException e) {</span>
+<span class="fc" id="L54">            System.err.println(&quot;PostgreSQL database connection failed: &quot; + e.getMessage());</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">    }</span>
+
+    private void connectToCache() {
+        // Redis connection details sourced from environment variables
+<span class="fc" id="L60">        System.out.println(&quot;Connecting to Redis cache at: &quot; + REDIS_HOST + &quot;:&quot; + REDIS_PORT);</span>
+        // Simulate cache connection
+<span class="fc" id="L62">    }</span>
+
+    private void initializeExternalServices() {
+        // External service URLs sourced from environment variables
+<span class="fc" id="L66">        System.out.println(&quot;Initializing external API: &quot; + EXTERNAL_API_URL);</span>
+<span class="fc" id="L67">        System.out.println(&quot;Initializing payment service: &quot; + PAYMENT_SERVICE_URL);</span>
+<span class="fc" id="L68">    }</span>
+
+    public void executeQuery(String sql) {
+        try {
+<span class="fc bfc" id="L72" title="All 4 branches covered.">            if (connection != null &amp;&amp; !connection.isClosed()) {</span>
+<span class="fc" id="L73">                PreparedStatement stmt = connection.prepareStatement(sql);</span>
+                // Query timeout in seconds
+<span class="fc" id="L75">                stmt.setQueryTimeout(30);</span>
+
+<span class="fc" id="L77">                System.out.println(&quot;Executing query: &quot; + sql);</span>
+<span class="fc" id="L78">                stmt.execute();</span>
+<span class="fc" id="L79">                stmt.close();</span>
+            }
+<span class="fc" id="L81">        } catch (SQLException e) {</span>
+<span class="fc" id="L82">            System.err.println(&quot;Query execution failed: &quot; + e.getMessage());</span>
+<span class="fc" id="L83">        }</span>
+<span class="fc" id="L84">    }</span>
+
+    public void disconnect() {
+        try {
+<span class="fc bfc" id="L88" title="All 4 branches covered.">            if (connection != null &amp;&amp; !connection.isClosed()) {</span>
+<span class="fc" id="L89">                connection.close();</span>
+<span class="fc" id="L90">                System.out.println(&quot;PostgreSQL database connection closed&quot;);</span>
+            }
+<span class="fc" id="L92">        } catch (SQLException e) {</span>
+<span class="fc" id="L93">            System.err.println(&quot;Failed to close database connection: &quot; + e.getMessage());</span>
+<span class="fc" id="L94">        }</span>
+<span class="fc" id="L95">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
