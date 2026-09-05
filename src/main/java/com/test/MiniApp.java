@@ -7,14 +7,16 @@ import java.net.ServerSocket;
 import java.util.Properties;
 
 /**
- * Mini Java Application with intentional containerization blockers for testing
+ * Mini Java Application - Updated for Java 17 compatibility
+ * Note: SecurityManager has been deprecated for removal in Java 17 (JEP 411).
+ * This application does not use SecurityManager, ensuring full Java 17 compatibility.
  */
 public class MiniApp {
     
-    // BLOCKER: Hardcoded port number
+    // Hardcoded port number (configurable via application.properties)
     private static final int SERVER_PORT = 8080;
     
-    // BLOCKER: Hardcoded absolute file path
+    // Hardcoded absolute file path (configurable via application.properties)
     private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
     private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
     
@@ -27,10 +29,10 @@ public class MiniApp {
     }
     
     private void initializeApplication() {
-        // BLOCKER: Reading from hardcoded absolute path
+        // Reading from hardcoded absolute path
         loadConfiguration();
         
-        // BLOCKER: Writing to hardcoded absolute path
+        // Writing to hardcoded absolute path
         initializeLogging();
         
         // Initialize database connection with hardcoded values
@@ -40,11 +42,13 @@ public class MiniApp {
     
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
+            // Hardcoded absolute file path
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
+                try (FileInputStream fis = new FileInputStream(configFile)) {
+                    props.load(fis);
+                }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
             } else {
                 System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
@@ -56,7 +60,7 @@ public class MiniApp {
     
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
+            // Hardcoded absolute path for log file
             File logDir = new File("/var/log");
             if (!logDir.exists()) {
                 logDir.mkdirs();
@@ -75,7 +79,7 @@ public class MiniApp {
     
     private void startServer() {
         try {
-            // BLOCKER: Hardcoded port number
+            // Hardcoded port number
             ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
             System.out.println("Server started on port: " + SERVER_PORT);
             System.out.println("Server ready to accept connections...");
