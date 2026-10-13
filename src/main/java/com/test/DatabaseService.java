@@ -6,24 +6,34 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service - updated for Java 25 compatibility.
+ * Database service – updated for Java 25 compatibility.
  *
- * Changes applied:
- *  - FIX JAVA11_TO_25_DEPENDENCY_UPDATES: Uses com.mysql:mysql-connector-j 8.3.0
- *    driver class (com.mysql.cj.jdbc.Driver is still valid; explicit Class.forName
- *    is no longer required with JDBC 4.0+ auto-loading, so it has been removed to
- *    avoid potential module-access issues on Java 25).
- *  - FIX JAVA11_TO_25_STRONG_ENCAPSULATION: Removed explicit Class.forName() for
- *    the JDBC driver; JDBC 4.0 SPI auto-loading is the correct approach and avoids
- *    reflective access warnings under the Java 25 strong-encapsulation model.
- *  - NOTE: No Nashorn, SecurityManager, sun.misc.Unsafe, finalize(), or
- *    javax.* enterprise imports were present, so those critical rules do not apply.
+ * <p>Changes applied:
+ * <ul>
+ *   <li><b>FIX JAVA11_TO_25_STRONG_ENCAPSULATION (reflection)</b>: Removed the
+ *       explicit {@code Class.forName("com.mysql.cj.jdbc.Driver")} call that was
+ *       present in the original Java 11 source.  Under Java 25's strong
+ *       encapsulation model, reflective access to internal JDK and library classes
+ *       triggers warnings (and in future releases, errors).  JDBC 4.0+ (Java 6+)
+ *       uses the {@link java.util.ServiceLoader} SPI to auto-discover drivers on
+ *       the classpath/module-path, so the explicit {@code Class.forName()} call is
+ *       both unnecessary and potentially problematic on Java 25.</li>
+ *   <li><b>FIX JAVA11_TO_25_DEPENDENCY_UPDATES</b>: Switched to
+ *       {@code com.mysql:mysql-connector-j 8.3.0} (the official replacement for
+ *       the deprecated {@code mysql:mysql-connector-java} artifact) which ships
+ *       with a proper {@code module-info.class} and full Java 25 / JPMS support.</li>
+ *   <li><b>NOTE</b>: No Nashorn, SecurityManager, {@code sun.misc.Unsafe},
+ *       {@code finalize()}, or {@code javax.*} enterprise imports were present in
+ *       this file, so those critical migration rules do not apply here.</li>
+ * </ul>
  */
 public class DatabaseService {
 
+    // -----------------------------------------------------------------------
     // Connection details are read from environment variables so that the
-    // application is container/cloud friendly and credentials are not
-    // embedded in source code.
+    // application is container/cloud-friendly and credentials are not
+    // embedded in source code (12-factor app principle).
+    // -----------------------------------------------------------------------
     private static final String DB_HOST =
             System.getenv().getOrDefault("DB_HOST", "localhost");
     private static final String DB_PORT =
@@ -50,15 +60,25 @@ public class DatabaseService {
 
     private Connection connection;
 
+    /**
+     * Opens a JDBC connection to the configured MySQL database.
+     *
+     * <p>The JDBC driver is loaded automatically via the ServiceLoader SPI
+     * (JDBC 4.0+), which is the correct and module-safe approach on Java 25.
+     * No explicit {@code Class.forName()} call is required or used.
+     */
     public void connect() {
         try {
             System.out.println("Connecting to database...");
 
             // FIX JAVA11_TO_25_STRONG_ENCAPSULATION:
-            // Removed explicit Class.forName("com.mysql.cj.jdbc.Driver").
-            // JDBC 4.0+ (Java 6+) uses the ServiceLoader SPI to auto-discover
-            // drivers from the classpath/module-path, which is the correct and
-            // module-safe approach on Java 25.
+            // The original code contained:
+            //   Class.forName("com.mysql.cj.jdbc.Driver");
+            // This has been removed.  JDBC 4.0+ (Java 6+) uses the ServiceLoader
+            // SPI to auto-discover drivers from the classpath/module-path, which
+            // is the correct and module-safe approach on Java 25.  Keeping the
+            // explicit Class.forName() would trigger strong-encapsulation warnings
+            // and is unnecessary with mysql-connector-j 8.3.0.
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
             System.out.println("Connected to database: " + DB_URL);
@@ -82,21 +102,30 @@ public class DatabaseService {
         System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
     }
 
+    /**
+     * Executes a SQL statement using a {@link PreparedStatement}.
+     *
+     * @param sql the SQL string to execute
+     */
     public void executeQuery(String sql) {
         try {
             if (connection != null && !connection.isClosed()) {
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setQueryTimeout(30);
-
-                System.out.println("Executing query: " + sql);
-                stmt.execute();
-                stmt.close();
+                // Use try-with-resources to ensure the PreparedStatement is always closed,
+                // which is the recommended pattern in Java 7+ and required for correctness.
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setQueryTimeout(30);
+                    System.out.println("Executing query: " + sql);
+                    stmt.execute();
+                }
             }
         } catch (SQLException e) {
             System.err.println("Query execution failed: " + e.getMessage());
         }
     }
 
+    /**
+     * Closes the JDBC connection if it is currently open.
+     */
     public void disconnect() {
         try {
             if (connection != null && !connection.isClosed()) {
