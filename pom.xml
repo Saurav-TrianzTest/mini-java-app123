@@ -9,36 +9,90 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
+    <!-- FIX: JAVA11_TO_25_DEPENDENCY_UPDATES / JAVA11_TO_25_MAVEN_PLUGIN_UPDATES
+         Updated compiler source/target from Java 11 to Java 25 -->
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
+        <!-- FIX: JAVA11_TO_25_MISSING_DEPENDENCY_VERSIONS
+             mysql-connector-java retained with explicit version.
+             NOTE: For Java 25 / Spring Boot 3.x, prefer com.mysql:mysql-connector-j -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.3.0</version>
         </dependency>
-        
+
+        <!-- FIX: JAVA11_TO_25_SPRING_BOOT_COMPATIBILITY
+             Updated Spring Boot from 2.7.0 to 3.3.0 which supports Java 25
+             and uses jakarta.* namespace instead of javax.* -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.0</version>
+            <version>3.3.0</version>
+        </dependency>
+
+        <!-- FIX: JAVA11_TO_25_JAKARTA_EE_MIGRATION
+             Spring Boot 3.x transitively brings jakarta.* packages.
+             Explicit jakarta.servlet-api added for clarity. -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- FIX: JAVA11_TO_25_LOMBOK_CONFIGURATION
+             Added Lombok 1.18.32+ with proper annotation processor support -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- FIX: JAVA11_TO_25_MAVEN_PLUGIN_UPDATES / JAVA11_TO_25_LOMBOK_CONFIGURATION
+                 Updated maven-compiler-plugin to 3.13.0 (supports Java 25),
+                 updated source/target to 25, added Lombok annotation processor -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>25</source>
+                    <target>25</target>
+                    <release>25</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <!-- FIX: JAVA11_TO_25_MAVEN_PLUGIN_UPDATES
+                 Added maven-surefire-plugin 3.2.5 for Java 25 test compatibility -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+
+            <!-- Spring Boot Maven plugin updated to match Spring Boot 3.3.0 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.3.0</version>
             </plugin>
         </plugins>
     </build>
