@@ -6,10 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service - Updated for Java 25 compatibility.
+ * Database service - Updated for Java 25 compatibility and migrated to PostgreSQL 16.
  *
  * Java 25 upgrade changes applied:
- * - Removed explicit Class.forName("com.mysql.cj.jdbc.Driver") call; the JDBC 4.0+
+ * - Removed explicit Class.forName("org.postgresql.Driver") call; the JDBC 4.0+
  *   service-loader mechanism (available since Java 6) auto-registers drivers, and
  *   the explicit call is unnecessary and can cause issues with the module system
  *   (JAVA11_TO_25_MODULE_SYSTEM / JAVA11_TO_25_STRONG_ENCAPSULATION).
@@ -17,7 +17,14 @@ import java.sql.SQLException;
  *   are not hard-coded in source (security best-practice; also avoids issues with
  *   JAVA11_TO_25_SECURITY_CHANGES).
  * - No javax.* enterprise imports; no SecurityManager, Nashorn, or sun.misc.Unsafe usage.
- * - No deprecated mysql-connector-java groupId; pom.xml now uses com.mysql:mysql-connector-j.
+ *
+ * PostgreSQL 16 migration changes applied:
+ * - Replaced MySQL JDBC driver (com.mysql:mysql-connector-j) with PostgreSQL JDBC driver
+ *   (org.postgresql:postgresql 42.7.3).
+ * - Updated JDBC URL format from jdbc:mysql:// to jdbc:postgresql://.
+ * - Updated default port from 3306 (MySQL) to 5432 (PostgreSQL).
+ * - Updated default username from "root" (MySQL convention) to "postgres" (PostgreSQL convention).
+ * - DB_URL environment variable default updated to use PostgreSQL connection string format.
  */
 public class DatabaseService {
 
@@ -25,15 +32,18 @@ public class DatabaseService {
     // Defaults are provided only for local development convenience.
     private static final String DB_HOST =
             System.getenv().getOrDefault("DB_HOST", "localhost");
+    // PostgreSQL default port is 5432 (changed from MySQL default 3306)
     private static final String DB_PORT =
-            System.getenv().getOrDefault("DB_PORT", "3306");
+            System.getenv().getOrDefault("DB_PORT", "5432");
     private static final String DB_NAME =
             System.getenv().getOrDefault("DB_NAME", "mini_app_db");
+    // PostgreSQL JDBC URL format: jdbc:postgresql://<host>:<port>/<database>
     private static final String DB_URL =
             System.getenv().getOrDefault("DB_URL",
-                    "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME);
+                    "jdbc:postgresql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME);
+    // PostgreSQL default superuser is "postgres" (changed from MySQL "root")
     private static final String DB_USERNAME =
-            System.getenv().getOrDefault("DB_USERNAME", "root");
+            System.getenv().getOrDefault("DB_USERNAME", "postgres");
     private static final String DB_PASSWORD =
             System.getenv().getOrDefault("DB_PASSWORD", "");
 
@@ -54,14 +64,16 @@ public class DatabaseService {
 
     public void connect() {
         try {
-            System.out.println("Connecting to database...");
+            System.out.println("Connecting to PostgreSQL database...");
 
             // Java 25 / JDBC 4.0+: Driver auto-registration via ServiceLoader.
             // Explicit Class.forName() is no longer needed and has been removed
             // (JAVA11_TO_25_MODULE_SYSTEM – avoids reflective access into driver internals).
+            // PostgreSQL JDBC driver (org.postgresql:postgresql 42.7.3) supports
+            // JDBC 4.2 and is fully compatible with PostgreSQL 16.
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
-            System.out.println("Connected to database: " + DB_URL);
+            System.out.println("Connected to PostgreSQL database: " + DB_URL);
             System.out.println("Using username: " + DB_USERNAME);
 
             connectToCache();

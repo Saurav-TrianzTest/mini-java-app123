@@ -10,14 +10,15 @@
     <packaging>jar</packaging>
 
     <!--
-        Java 25 Upgrade Notes:
-        =====================
-        This project has been upgraded from Java 11 to Java 25.
+        Java 25 + PostgreSQL Migration Notes:
+        ======================================
+        This project has been upgraded from Java 11 to Java 25 and migrated
+        from MySQL to PostgreSQL 16.
         All Java 25 compatibility changes have been applied to the source code:
           - Removed explicit Class.forName() JDBC driver loading (JDBC 4.0+ auto-registration)
           - Added explicit UTF-8 charset to FileInputStream / Properties.load() calls
-          - Updated MySQL connector groupId from mysql:mysql-connector-java to
-            com.mysql:mysql-connector-j (8.3.0) for Java 25 compatibility
+          - Updated database driver from com.mysql:mysql-connector-j to
+            org.postgresql:postgresql (42.7.3) for PostgreSQL 16 compatibility
           - Spring Boot upgraded from 2.7.15 to 3.3.0 (jakarta.* namespace)
           - maven-compiler-plugin updated to 3.13.0
           - maven-surefire-plugin added (3.2.5)
@@ -40,14 +41,14 @@
 
     <dependencies>
         <!--
-            Updated from deprecated mysql:mysql-connector-java to
-            com.mysql:mysql-connector-j for Java 25 compatibility.
-            Version 8.3.0 supports JDBC 4.3 and Java 17+/25.
+            Migrated from com.mysql:mysql-connector-j to org.postgresql:postgresql
+            for PostgreSQL 16 compatibility.
+            Version 42.7.3 supports JDBC 4.2, Java 17+/25, and PostgreSQL 16.
         -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>8.3.0</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
         </dependency>
 
         <!--
