@@ -3,6 +3,7 @@ package com.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -11,8 +12,11 @@ import java.util.Properties;
  * Mini Java Application
  *
  * Java 25 upgrade notes:
- * - Explicit charset (StandardCharsets.UTF_8) used wherever bytes/chars are converted,
- *   because Java 25 mandates UTF-8 as the default charset (JAVA11_TO_25_UTF8_DEFAULT_CHARSET).
+ * - Explicit charset (StandardCharsets.UTF_8) used in Properties.load() via
+ *   InputStreamReader to avoid reliance on the platform default charset
+ *   (issue-5: JAVA11_TO_25_UTF8_DEFAULT_CHARSET).  Java 25 mandates UTF-8 as
+ *   the JVM default, but using an explicit InputStreamReader makes the intent
+ *   clear and portable across all JVM versions.
  * - No SecurityManager usage (removed in Java 24+).
  * - No Nashorn / jdk.nashorn references.
  * - No sun.misc.Unsafe usage.
@@ -45,14 +49,25 @@ public class MiniApp {
         dbService.connect();
     }
 
+    /**
+     * Loads application configuration from a properties file.
+     *
+     * Fix (issue-5): Properties.load(InputStream) uses the platform default
+     * charset in Java 11 and earlier.  In Java 25 the default is UTF-8, but
+     * relying on that implicitly is fragile.  We now pass an explicit
+     * InputStreamReader(fis, StandardCharsets.UTF_8) to Properties.load() so
+     * the behaviour is identical on every JVM version.
+     */
     private void loadConfiguration() {
         try {
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
-                // Java 25: UTF-8 is the default charset; use explicit InputStreamReader for clarity
-                try (FileInputStream fis = new FileInputStream(configFile)) {
-                    props.load(new java.io.InputStreamReader(fis, StandardCharsets.UTF_8));
+                // Issue-5 fix: use explicit UTF-8 InputStreamReader instead of
+                // the raw InputStream overload to avoid platform-charset dependency.
+                try (FileInputStream fis = new FileInputStream(configFile);
+                     InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
+                    props.load(reader);
                 }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
             } else {
@@ -82,14 +97,12 @@ public class MiniApp {
     }
 
     private void startServer() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+        try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             System.out.println("Server started on port: " + SERVER_PORT);
             System.out.println("Server ready to accept connections...");
 
             // Simulate server running
             Thread.sleep(1000);
-            serverSocket.close();
 
         } catch (Exception e) {
             System.err.println("Failed to start server: " + e.getMessage());

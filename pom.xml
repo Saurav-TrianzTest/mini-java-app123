@@ -4,53 +4,85 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Spring Boot 3.3.x parent for Java 25 / Jakarta EE compatibility -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!-- Updated from 2.7.15 to 3.3.0: full Java 25 support + Jakarta EE namespace -->
+        <version>3.3.0</version>
+        <relativePath/>
+    </parent>
+
     <groupId>com.test</groupId>
     <artifactId>mini-java-app</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
-        <!-- Updated from Java 11 to Java 25 -->
+        <!-- Updated from Java 11 to Java 25 (issue-1 & issue-2) -->
+        <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
-        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-        <!-- Updated mysql-connector-java to com.mysql:mysql-connector-j for Java 25 compatibility -->
+        <!-- Spring Boot Web Starter (version managed by parent) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            Updated from deprecated mysql:mysql-connector-java (issue-4)
+            to the new com.mysql:mysql-connector-j artifact (8.3.0+).
+            Version 8.3.0 provides full Java 25 / JDBC 4.3 support and
+            self-registers via ServiceLoader (no Class.forName() needed).
+        -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.3.0</version>
         </dependency>
 
-        <!-- Updated Spring Boot to 3.3.x for Java 25 compatibility (uses Jakarta EE) -->
+        <!-- Spring Boot Test (version managed by parent) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.3.0</version>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Updated maven-compiler-plugin to 3.13.0 for Java 25 support -->
+            <!--
+                Updated maven-compiler-plugin from 3.8.1 to 3.13.0 (issue-2).
+                Version 3.13.0 fully supports Java 25 via the <release> flag.
+                Using <release> instead of <source>/<target> ensures the
+                bootstrap classpath is also constrained to the target release.
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>25</source>
-                    <target>25</target>
                     <release>25</release>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <!-- Updated maven-surefire-plugin for Java 25 compatibility -->
+
+            <!--
+                Added maven-surefire-plugin 3.2.5 (issue-7).
+                Without an explicit surefire version, Java 25 test execution
+                may fail due to JVM argument incompatibilities in older versions.
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>
