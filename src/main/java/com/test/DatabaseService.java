@@ -6,18 +6,29 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers.
+ * Database service with hardcoded connection details – intentional containerization blockers.
  *
- * Java 25 upgrade notes:
- *  - Removed explicit Class.forName("com.mysql.cj.jdbc.Driver") call.
- *    Since Java 6 / JDBC 4.0 the driver is auto-loaded via the ServiceLoader
- *    mechanism (META-INF/services/java.sql.Driver).  Keeping the manual
- *    Class.forName call is harmless but unnecessary and can mask classpath
- *    issues on newer runtimes.  The updated mysql-connector-j 9.x artifact
- *    (com.mysql:mysql-connector-j) fully supports Java 25 and registers its
- *    driver automatically.
- *  - No javax.* → jakarta.* migration is required in this file because it
- *    only uses core java.sql APIs which remain in the JDK.
+ * <h2>Java 25 Upgrade Notes</h2>
+ * <ul>
+ *   <li><strong>Removed explicit {@code Class.forName("com.mysql.cj.jdbc.Driver")} call
+ *       (JDBC 3 pattern):</strong>
+ *       Since Java 6 / JDBC 4.0 the JDBC driver is auto-discovered via the
+ *       {@link java.util.ServiceLoader} mechanism
+ *       ({@code META-INF/services/java.sql.Driver}).  Keeping the manual
+ *       {@code Class.forName} call is harmless but unnecessary and can mask
+ *       classpath / module-path issues on newer runtimes.  The updated
+ *       {@code com.mysql:mysql-connector-j:9.1.0} artifact fully supports
+ *       Java 17/25 and registers its driver automatically.
+ *   </li>
+ *   <li><strong>Dependency updated:</strong> The deprecated
+ *       {@code mysql:mysql-connector-java} artifact (groupId {@code mysql}) has
+ *       been replaced with {@code com.mysql:mysql-connector-j:9.1.0} in
+ *       {@code pom.xml}.  The new artifact supports Java 17+ and JDBC 4.3.
+ *   </li>
+ *   <li><strong>No javax.* → jakarta.* migration required</strong> in this file
+ *       because it only uses core {@code java.sql} APIs which remain in the JDK.
+ *   </li>
+ * </ul>
  */
 public class DatabaseService {
 
@@ -25,7 +36,8 @@ public class DatabaseService {
     private static final String DB_HOST = "localhost";
     private static final String DB_PORT = "3306";
     private static final String DB_NAME = "mini_app_db";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+    private static final String DB_URL =
+            "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
     private static final String DB_USERNAME = "root";
     private static final String DB_PASSWORD = "password123";
 
@@ -35,7 +47,8 @@ public class DatabaseService {
 
     // BLOCKER: Hardcoded API endpoints
     private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
-    private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
+    private static final String PAYMENT_SERVICE_URL =
+            "https://payment.internal.company.com/process";
 
     private Connection connection;
 
@@ -43,11 +56,18 @@ public class DatabaseService {
         try {
             System.out.println("Connecting to database...");
 
-            // Java 25 fix: removed explicit Class.forName("com.mysql.cj.jdbc.Driver").
-            // JDBC 4.0+ (Java 6+) auto-discovers drivers via ServiceLoader.
-            // The updated com.mysql:mysql-connector-j:9.1.0 dependency registers
-            // its driver automatically, so the manual load is no longer needed
-            // and was removed to avoid potential issues on the module path.
+            /*
+             * Java 25 fix: removed explicit Class.forName("com.mysql.cj.jdbc.Driver").
+             *
+             * JDBC 4.0 (Java 6+) introduced automatic driver discovery via
+             * ServiceLoader.  The com.mysql:mysql-connector-j:9.1.0 JAR ships a
+             * META-INF/services/java.sql.Driver file that registers
+             * com.mysql.cj.jdbc.Driver automatically when the JAR is on the
+             * classpath (or module path).  The manual Class.forName call is
+             * therefore redundant and has been removed to avoid potential
+             * ClassNotFoundException issues when running on the module path in
+             * Java 17/25.
+             */
 
             // BLOCKER: Hardcoded connection string and credentials
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);

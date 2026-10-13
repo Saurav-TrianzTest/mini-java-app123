@@ -11,11 +11,18 @@ import java.util.Properties;
 /**
  * Mini Java Application with intentional containerization blockers for testing.
  *
- * Java 25 upgrade notes:
- *  - Java 25 mandates UTF-8 as the default charset (JEP 400).  All byte/char
- *    conversions that previously relied on the platform default now use UTF-8.
- *    FileInputStream is wrapped with an explicit InputStreamReader(…, UTF-8)
- *    so behaviour is identical on every platform and Java version.
+ * <h2>Java 25 Upgrade Notes</h2>
+ * <ul>
+ *   <li><strong>JEP 400 / UTF-8 by default (Java 18+):</strong> Java 18 made UTF-8
+ *       the default charset for all byte/char conversions that previously relied on
+ *       the platform default.  Java 25 continues this behaviour.  The original code
+ *       used {@code new FileInputStream(configFile)} passed directly to
+ *       {@code Properties#load(InputStream)}, which reads bytes using the platform
+ *       default encoding.  The fix wraps the stream in an
+ *       {@code InputStreamReader(stream, StandardCharsets.UTF_8)} so the intent is
+ *       explicit and the behaviour is identical on every platform and Java version.
+ *   </li>
+ * </ul>
  */
 public class MiniApp {
 
@@ -52,13 +59,18 @@ public class MiniApp {
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
-                // Java 25 fix: explicitly specify UTF-8 charset instead of relying on
-                // the platform default (which changed to UTF-8 in Java 18 / JEP 400).
-                // Using InputStreamReader with StandardCharsets.UTF_8 makes the intent
-                // explicit and avoids any locale-encoding surprises.
+                /*
+                 * Java 25 fix (JEP 400): explicitly specify UTF-8 charset instead of
+                 * relying on the platform default.  Prior to Java 18 the platform
+                 * default could be any locale-specific encoding (e.g. ISO-8859-1 on
+                 * some Linux distributions).  Java 18+ mandates UTF-8 as the default,
+                 * but using an explicit InputStreamReader makes the intent clear and
+                 * ensures consistent behaviour across all Java versions.
+                 */
                 try (InputStreamReader reader =
-                             new InputStreamReader(new FileInputStream(configFile),
-                                                   StandardCharsets.UTF_8)) {
+                             new InputStreamReader(
+                                     new FileInputStream(configFile),
+                                     StandardCharsets.UTF_8)) {
                     props.load(reader);
                 }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
