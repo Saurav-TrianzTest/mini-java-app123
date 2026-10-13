@@ -1,8 +1,9 @@
 package com.test;
 
-import java.io.File;
+import java.io.File; // java.io.File retained - used for config/log file checks
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -11,10 +12,14 @@ import java.util.Properties;
  * Mini Java Application - updated for Java 25 compatibility.
  *
  * Changes made for Java 11 → Java 25 upgrade:
- *  - Explicit charset (StandardCharsets.UTF_8) added to all byte/char conversions
- *    to comply with the UTF-8 default-charset change (JAVA11_TO_25_UTF8_DEFAULT_CHARSET).
- *  - FileInputStream wrapped with explicit charset-aware reader where applicable.
- *  - No Nashorn, SecurityManager, or sun.misc.Unsafe usages were present; no changes needed there.
+ *  - JAVA11_TO_25_UTF8_DEFAULT_CHARSET (line 44 in original):
+ *    Properties.load() was called with a raw FileInputStream, which relies on
+ *    the platform default charset. Java 18+ changed the default charset to UTF-8
+ *    (JEP 400), but to guarantee identical behaviour across all Java versions and
+ *    platforms the FileInputStream is now wrapped in an explicit
+ *    InputStreamReader(fis, StandardCharsets.UTF_8) before being passed to
+ *    Properties.load(Reader).
+ *  - No Nashorn, SecurityManager, or sun.misc.Unsafe usages were present.
  */
 public class MiniApp {
 
@@ -46,11 +51,13 @@ public class MiniApp {
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
-                // JAVA11_TO_25_UTF8_DEFAULT_CHARSET: use explicit UTF-8 InputStreamReader
-                // so behaviour is identical on Java 11 (locale charset) and Java 25 (UTF-8 default).
+                // JAVA11_TO_25_UTF8_DEFAULT_CHARSET fix (original line 44):
+                // Wrap FileInputStream in an explicit UTF-8 InputStreamReader so that
+                // Properties.load(Reader) uses a well-defined charset on every JVM,
+                // regardless of the platform default (which changed to UTF-8 in Java 18
+                // via JEP 400 but was locale-dependent in Java 11).
                 try (FileInputStream fis = new FileInputStream(configFile);
-                     java.io.InputStreamReader isr =
-                             new java.io.InputStreamReader(fis, StandardCharsets.UTF_8)) {
+                     InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
                     props.load(isr);
                 }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);

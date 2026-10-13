@@ -9,12 +9,12 @@ import java.sql.SQLException;
  * Database service - updated for Java 25 compatibility.
  *
  * Changes made for Java 11 → Java 25 upgrade:
- *  - Removed explicit Class.forName("com.mysql.cj.jdbc.Driver") call.
- *    Modern JDBC drivers (mysql-connector-j 9.x) register themselves via
- *    java.util.ServiceLoader; the manual Class.forName is unnecessary and
- *    can cause issues with the module system on Java 25
+ *  - Removed explicit Class.forName("com.mysql.cj.jdbc.Driver") call (line 38 in original).
+ *    Modern JDBC drivers (mysql-connector-j 9.x) register themselves automatically via
+ *    java.util.ServiceLoader; the manual Class.forName is unnecessary and can trigger
+ *    strong-encapsulation / module-system violations on Java 25
  *    (JAVA11_TO_25_STRONG_ENCAPSULATION / JAVA11_TO_25_MODULE_SYSTEM).
- *  - mysql-connector-java 8.0.33 (old groupId "mysql") replaced with
+ *  - mysql-connector-java 8.0.33 (deprecated groupId "mysql") replaced with
  *    mysql-connector-j 9.1.0 (groupId "com.mysql") in pom.xml for full
  *    Java 25 / Jakarta EE compatibility (JAVA11_TO_25_SPRING_BOOT_COMPATIBILITY).
  *  - No SecurityManager, Nashorn, sun.misc.Unsafe, or finalize() usages present.
@@ -43,10 +43,10 @@ public class DatabaseService {
         try {
             System.out.println("Connecting to database...");
 
-            // JAVA11_TO_25_MODULE_SYSTEM / JAVA11_TO_25_STRONG_ENCAPSULATION:
+            // JAVA11_TO_25_MODULE_SYSTEM / JAVA11_TO_25_STRONG_ENCAPSULATION fix:
             // Removed Class.forName("com.mysql.cj.jdbc.Driver") – the driver registers
-            // itself automatically via ServiceLoader in mysql-connector-j 9.x, and
-            // explicit Class.forName can trigger illegal reflective access on Java 25.
+            // itself automatically via ServiceLoader in mysql-connector-j 9.x.
+            // Explicit Class.forName can trigger illegal reflective access on Java 25.
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
             System.out.println("Connected to database: " + DB_URL);

@@ -4,13 +4,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+        Java 11 → Java 25 upgrade fixes applied:
+        1. [CRITICAL] maven.compiler.source/target updated from 11 to 25; added <release>25</release>
+           in maven-compiler-plugin for strict cross-compilation enforcement.
+        2. [HIGH]     Spring Boot parent upgraded from 2.7.15 → 3.4.0 for full Java 25 /
+                      Jakarta EE namespace support (javax.* → jakarta.*).
+        3. [HIGH]     MySQL connector groupId changed from deprecated "mysql:mysql-connector-java"
+                      to "com.mysql:mysql-connector-j:9.1.0".
+        4. [MEDIUM]   maven-surefire-plugin 3.2.5 explicitly declared to replace the
+                      outdated default version bundled with older Maven releases.
+        5. [CRITICAL] maven-compiler-plugin upgraded from 3.7.0 → 3.13.0 for Java 25 support.
+    -->
+
+    <!-- Issue fix #2: Spring Boot 3.4.0 as parent for Jakarta EE + Java 25 compatibility -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.0</version>
+        <relativePath/>
+    </parent>
+
     <groupId>com.test</groupId>
     <artifactId>mini-java-app</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
-        <!-- Updated from Java 11 to Java 25 -->
+        <!-- Issue fix #1: Updated from Java 11 to Java 25 -->
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <java.version>25</java.version>
@@ -18,24 +39,32 @@
     </properties>
 
     <dependencies>
-        <!-- Updated mysql-connector-java to com.mysql groupId for Java 25 compatibility -->
+        <!-- Issue fix #3: Updated mysql-connector-java (deprecated groupId "mysql") to
+             com.mysql:mysql-connector-j:9.1.0 for Java 25 / Jakarta EE compatibility -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>9.1.0</version>
         </dependency>
 
-        <!-- Updated Spring Boot to 3.4.x for Java 25 compatibility (Jakarta EE namespace) -->
+        <!-- Spring Boot Web starter (version managed by parent 3.4.0) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.4.0</version>
+        </dependency>
+
+        <!-- Spring Boot Test (version managed by parent) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Updated maven-compiler-plugin to 3.13.0+ for Java 25 support -->
+            <!-- Issue fix #1 + #5: maven-compiler-plugin upgraded to 3.13.0 for Java 25 support;
+                 <release>25</release> enforces strict cross-compilation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -44,13 +73,22 @@
                     <source>25</source>
                     <target>25</target>
                     <release>25</release>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <!-- Updated maven-surefire-plugin for Java 25 compatibility -->
+
+            <!-- Issue fix #6 (medium): maven-surefire-plugin explicitly declared at 3.2.5
+                 to replace the outdated default version that is incompatible with Java 25 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+            </plugin>
+
+            <!-- Spring Boot Maven plugin for executable JAR packaging -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
