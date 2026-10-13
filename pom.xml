@@ -31,8 +31,8 @@
         already been applied.
     -->
     <properties>
-        <!-- Set to 17 to match the installed JDK; change to 25 when JDK 25 is available -->
-        <java.version>17</java.version>
+        <!-- Java 25 JDK (Temurin 25.0.4) is now available; set to 25 -->
+        <java.version>25</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Spring Boot 3.x uses jakarta.* namespace – required for Java 25 compatibility -->
