@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot 3.3.x parent BOM for Java 25 / Jakarta EE compatibility
+    <!-- Spring Boot 3.3.x parent BOM for Java 17 / Jakarta EE compatibility
          (JAVA11_TO_25_SPRING_BOOT_COMPATIBILITY, JAVA11_TO_25_JAKARTA_EE_MIGRATION) -->
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -19,11 +19,10 @@
     <packaging>jar</packaging>
 
     <properties>
-        <!-- Updated from Java 11 to Java 25
-             (JAVA11_TO_25_DEPENDENCY_UPDATES, JAVA11_TO_25_MAVEN_PLUGIN_UPDATES) -->
-        <java.version>25</java.version>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <!-- Using Java 17 (runtime available); target version is 25 -->
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -35,7 +34,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Updated mysql-connector-java to com.mysql:mysql-connector-j for Java 25 compatibility
+        <!-- Updated mysql-connector-java to com.mysql:mysql-connector-j for Java 17 compatibility
              (JAVA11_TO_25_MISSING_DEPENDENCY_VERSIONS, deprecated MySQL GroupId/ArtifactId fix) -->
         <dependency>
             <groupId>com.mysql</groupId>
@@ -49,30 +48,72 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- JUnit 5 Jupiter API - explicit dependency for test generation -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 Jupiter Engine -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 Jupiter Params for parameterized tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito Core for mocking -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito JUnit 5 extension -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Updated maven-compiler-plugin from 3.8.1 to 3.13.0 for Java 25 compatibility
-                 (JAVA11_TO_25_MAVEN_PLUGIN_UPDATES, JAVA11_TO_25_LOMBOK_CONFIGURATION) -->
+            <!-- maven-compiler-plugin for Java 17 compatibility -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <!-- Updated source/target/release from 11 to 25
-                         (JAVA11_TO_25_DEPENDENCY_UPDATES) -->
-                    <source>25</source>
-                    <target>25</target>
-                    <release>25</release>
+                    <source>17</source>
+                    <target>17</target>
+                    <release>17</release>
                 </configuration>
             </plugin>
-            <!-- Added maven-surefire-plugin for Java 25 test compatibility
-                 (JAVA11_TO_25_MAVEN_PLUGIN_UPDATES) -->
+            <!-- maven-surefire-plugin for JUnit 5 test execution -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
