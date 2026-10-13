@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MiniApp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mini-java-app</a> &gt; <a href="index.source.html" class="el_package">com.test</a> &gt; <span class="el_source">MiniApp.java</span></div><h1>MiniApp.java</h1><pre class="source lang-java linenums">package com.test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+/**
+ * Mini Java Application - Updated for Java 25 compatibility.
+ *
+ * Java 25 upgrade changes applied:
+ * - Explicit charset (StandardCharsets.UTF_8) used wherever byte/char conversions occur
+ *   to comply with the UTF-8 default-charset rule (JAVA11_TO_25_UTF8_DEFAULT_CHARSET).
+ * - No Nashorn, SecurityManager, or sun.misc.Unsafe usage present.
+ * - No javax.* enterprise imports; application does not use servlet/JPA/validation APIs
+ *   that require jakarta.* migration in this file.
+ */
+<span class="fc" id="L20">public class MiniApp {</span>
+
+    // Port is read from environment variable; falls back to 8080 for local development.
+    private static final int SERVER_PORT =
+<span class="fc" id="L24">            Integer.parseInt(System.getenv().getOrDefault(&quot;SERVER_PORT&quot;, &quot;8080&quot;));</span>
+
+    // File paths are read from environment variables; absolute defaults kept only as
+    // fallback documentation – in production these must be supplied via the environment.
+    private static final String CONFIG_FILE_PATH =
+<span class="fc" id="L29">            System.getenv().getOrDefault(&quot;APP_CONFIG_FILE&quot;, &quot;/opt/app/config/app.properties&quot;);</span>
+<span class="fc" id="L30">    private static final String LOG_FILE_PATH =</span>
+<span class="fc" id="L31">            System.getenv().getOrDefault(&quot;APP_LOG_FILE&quot;, &quot;/var/log/mini-app.log&quot;);</span>
+
+    public static void main(String[] args) {
+<span class="fc" id="L34">        System.out.println(&quot;Starting Mini Java Application...&quot;);</span>
+
+<span class="fc" id="L36">        MiniApp app = new MiniApp();</span>
+<span class="fc" id="L37">        app.initializeApplication();</span>
+<span class="fc" id="L38">        app.startServer();</span>
+<span class="fc" id="L39">    }</span>
+
+    private void initializeApplication() {
+<span class="fc" id="L42">        loadConfiguration();</span>
+<span class="fc" id="L43">        initializeLogging();</span>
+
+<span class="fc" id="L45">        DatabaseService dbService = new DatabaseService();</span>
+<span class="fc" id="L46">        dbService.connect();</span>
+<span class="fc" id="L47">    }</span>
+
+    private void loadConfiguration() {
+        try {
+<span class="fc" id="L51">            File configFile = new File(CONFIG_FILE_PATH);</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">            if (configFile.exists()) {</span>
+<span class="nc" id="L53">                Properties props = new Properties();</span>
+                // Java 25: UTF-8 is the default charset; use explicit InputStreamReader
+                // with StandardCharsets.UTF_8 to guarantee consistent behaviour across
+                // all environments (JAVA11_TO_25_UTF8_DEFAULT_CHARSET).
+<span class="nc" id="L57">                try (FileInputStream fis = new FileInputStream(configFile)) {</span>
+<span class="nc" id="L58">                    props.load(new java.io.InputStreamReader(fis, StandardCharsets.UTF_8));</span>
+                }
+<span class="nc" id="L60">                System.out.println(&quot;Configuration loaded from: &quot; + CONFIG_FILE_PATH);</span>
+<span class="nc" id="L61">            } else {</span>
+<span class="fc" id="L62">                System.out.println(&quot;Warning: Configuration file not found at: &quot; + CONFIG_FILE_PATH);</span>
+            }
+<span class="nc" id="L64">        } catch (IOException e) {</span>
+<span class="nc" id="L65">            System.err.println(&quot;Failed to load configuration: &quot; + e.getMessage());</span>
+<span class="fc" id="L66">        }</span>
+<span class="fc" id="L67">    }</span>
+
+    private void initializeLogging() {
+        try {
+<span class="fc" id="L71">            File logDir = new File(LOG_FILE_PATH).getParentFile();</span>
+<span class="pc bpc" id="L72" title="2 of 4 branches missed.">            if (logDir != null &amp;&amp; !logDir.exists()) {</span>
+<span class="nc" id="L73">                logDir.mkdirs();</span>
+            }
+
+<span class="fc" id="L76">            File logFile = new File(LOG_FILE_PATH);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">            if (!logFile.exists()) {</span>
+<span class="nc" id="L78">                logFile.createNewFile();</span>
+            }
+
+<span class="nc" id="L81">            System.out.println(&quot;Logging initialized at: &quot; + LOG_FILE_PATH);</span>
+<span class="fc" id="L82">        } catch (IOException e) {</span>
+<span class="fc" id="L83">            System.err.println(&quot;Failed to initialize logging: &quot; + e.getMessage());</span>
+<span class="nc" id="L84">        }</span>
+<span class="fc" id="L85">    }</span>
+
+    private void startServer() {
+        try {
+<span class="fc" id="L89">            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);</span>
+<span class="fc" id="L90">            System.out.println(&quot;Server started on port: &quot; + SERVER_PORT);</span>
+<span class="fc" id="L91">            System.out.println(&quot;Server ready to accept connections...&quot;);</span>
+
+            // Simulate server running
+<span class="fc" id="L94">            Thread.sleep(1000);</span>
+<span class="fc" id="L95">            serverSocket.close();</span>
+
+<span class="nc" id="L97">        } catch (Exception e) {</span>
+<span class="nc" id="L98">            System.err.println(&quot;Failed to start server: &quot; + e.getMessage());</span>
+<span class="fc" id="L99">        }</span>
+<span class="fc" id="L100">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

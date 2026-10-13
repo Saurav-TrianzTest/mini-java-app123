@@ -35,10 +35,11 @@
         <java.version>25</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Spring Boot 3.x uses jakarta.* namespace – required for Java 25 compatibility -->
+        <!-- Spring Boot 3.x uses jakarta.* namespace - required for Java 25 compatibility -->
         <spring-boot.version>3.3.0</spring-boot.version>
         <junit.jupiter.version>5.9.3</junit.jupiter.version>
-        <mockito.version>5.4.0</mockito.version>
+        <!-- Mockito 5.12+ bundles Byte Buddy 1.15+ which supports Java 25 (class file version 69) -->
+        <mockito.version>5.12.0</mockito.version>
     </properties>
 
     <dependencies>
@@ -138,6 +139,7 @@
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                     </includes>
+                    <argLine>@{argLine} -Dnet.bytebuddy.experimental=true</argLine>
                 </configuration>
             </plugin>
 
@@ -149,6 +151,30 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
+            </plugin>
+
+            <!--
+                jacoco-maven-plugin 0.8.11 – added for code coverage reporting.
+                Instruments bytecode during test execution and generates HTML/XML reports.
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
