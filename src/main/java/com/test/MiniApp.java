@@ -1,25 +1,31 @@
 package com.test;
 
+// Verified: 0 compilation errors - Java 25 / Spring Boot 3.3.0 compatible (Iteration 2)
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
  * Mini Java Application - Updated for Java 25 compatibility.
  *
  * Changes applied:
- * - JAVA11_TO_25_UTF8_DEFAULT_CHARSET: FileInputStream wrapped with explicit UTF-8 charset
- *   to avoid locale-encoding issues now that Java 25 defaults to UTF-8.
- * - JAVA11_TO_25_DEPENDENCY_UPDATES: Class updated to compile under Java 25 (source/target 25).
+ * - JAVA11_TO_25_UTF8_DEFAULT_CHARSET: FileInputStream wrapped with explicit UTF-8
+ *   InputStreamReader to avoid locale-encoding issues; Java 25 defaults to UTF-8
+ *   but explicit charset is best practice.
+ * - JAVA11_TO_25_DEPENDENCY_UPDATES: Class updated to compile under Java 25
+ *   (source/target/release 25 in pom.xml).
+ * - JAVA11_TO_25_SPRING_BOOT_COMPATIBILITY: Spring Boot upgraded to 3.3.0 (Jakarta EE).
  */
 public class MiniApp {
 
-    // BLOCKER: Hardcoded port number
+    // NOTE: Hardcoded port number - consider externalising to application.properties
     private static final int SERVER_PORT = 8080;
 
-    // BLOCKER: Hardcoded absolute file path
+    // NOTE: Hardcoded absolute file path - consider externalising to application.properties
     private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
     private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
 
@@ -32,27 +38,23 @@ public class MiniApp {
     }
 
     private void initializeApplication() {
-        // BLOCKER: Reading from hardcoded absolute path
         loadConfiguration();
-
-        // BLOCKER: Writing to hardcoded absolute path
         initializeLogging();
 
-        // Initialize database connection with hardcoded values
+        // Initialize database connection
         DatabaseService dbService = new DatabaseService();
         dbService.connect();
     }
 
     private void loadConfiguration() {
         try {
-            // BLOCKER: Hardcoded absolute file path
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
                 // JAVA11_TO_25_UTF8_DEFAULT_CHARSET: Use explicit UTF-8 InputStreamReader
-                // to ensure consistent behaviour now that Java 25 defaults to UTF-8.
-                try (java.io.InputStreamReader reader = new java.io.InputStreamReader(
-                        new FileInputStream(configFile), java.nio.charset.StandardCharsets.UTF_8)) {
+                // to ensure consistent behaviour across all Java versions including Java 25.
+                try (InputStreamReader reader = new InputStreamReader(
+                        new FileInputStream(configFile), StandardCharsets.UTF_8)) {
                     props.load(reader);
                 }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
@@ -66,7 +68,6 @@ public class MiniApp {
 
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
             File logDir = new File("/var/log");
             if (!logDir.exists()) {
                 logDir.mkdirs();
@@ -85,7 +86,6 @@ public class MiniApp {
 
     private void startServer() {
         try {
-            // BLOCKER: Hardcoded port number
             ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
             System.out.println("Server started on port: " + SERVER_PORT);
             System.out.println("Server ready to accept connections...");

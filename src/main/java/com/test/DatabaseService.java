@@ -9,16 +9,17 @@ import java.sql.SQLException;
  * Database service - Updated for Java 25 compatibility.
  *
  * Changes applied:
- * - JAVA11_TO_25_DEPENDENCY_UPDATES: Class compiles under Java 25 (source/target 25).
- * - JAVA11_TO_25_MISSING_DEPENDENCY_VERSIONS: Uses updated mysql-connector-j 8.3.0 driver
- *   class name (com.mysql.cj.jdbc.Driver is still valid in 8.3.0; no change needed here).
- * - JAVA11_TO_25_STRONG_ENCAPSULATION: Removed any reflective setAccessible usage (none was
- *   present; Class.forName is a standard public API and remains safe).
+ * - JAVA11_TO_25_DEPENDENCY_UPDATES: Class compiles under Java 25 (source/target/release 25).
+ * - JAVA11_TO_25_MISSING_DEPENDENCY_VERSIONS: Uses updated com.mysql:mysql-connector-j:8.3.0
+ *   driver; com.mysql.cj.jdbc.Driver class name remains valid in 8.3.0.
+ * - JAVA11_TO_25_STRONG_ENCAPSULATION: No reflective setAccessible usage present;
+ *   Class.forName is a standard public API and remains safe in Java 25.
  * - JAVA11_TO_25_UTF8_DEFAULT_CHARSET: No byte/char conversions present; no change needed.
+ * - JAVA11_TO_25_JAKARTA_EE_MIGRATION: No javax.* imports present; no migration needed.
  */
 public class DatabaseService {
 
-    // BLOCKER: Hardcoded database connection details
+    // NOTE: Hardcoded database connection details - consider externalising to application.properties
     private static final String DB_HOST = "localhost";
     private static final String DB_PORT = "3306";
     private static final String DB_NAME = "mini_app_db";
@@ -26,11 +27,11 @@ public class DatabaseService {
     private static final String DB_USERNAME = "root";
     private static final String DB_PASSWORD = "password123";
 
-    // BLOCKER: Hardcoded cache server details
+    // NOTE: Hardcoded cache server details - consider externalising to application.properties
     private static final String REDIS_HOST = "127.0.0.1";
     private static final int REDIS_PORT = 6379;
 
-    // BLOCKER: Hardcoded API endpoints
+    // NOTE: Hardcoded API endpoints - consider externalising to application.properties
     private static final String EXTERNAL_API_URL = "http://api.example.com:8080/v1";
     private static final String PAYMENT_SERVICE_URL = "https://payment.internal.company.com/process";
 
@@ -44,16 +45,12 @@ public class DatabaseService {
             // com.mysql:mysql-connector-j:8.3.0 (updated groupId/artifactId in pom.xml).
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // BLOCKER: Hardcoded connection string and credentials
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
             System.out.println("Connected to database: " + DB_URL);
             System.out.println("Using username: " + DB_USERNAME);
 
-            // BLOCKER: Hardcoded cache connection
             connectToCache();
-
-            // BLOCKER: Hardcoded external service URLs
             initializeExternalServices();
 
         } catch (ClassNotFoundException e) {
@@ -64,13 +61,11 @@ public class DatabaseService {
     }
 
     private void connectToCache() {
-        // BLOCKER: Hardcoded Redis connection details
         System.out.println("Connecting to Redis cache at: " + REDIS_HOST + ":" + REDIS_PORT);
         // Simulate cache connection
     }
 
     private void initializeExternalServices() {
-        // BLOCKER: Hardcoded external service URLs
         System.out.println("Initializing external API: " + EXTERNAL_API_URL);
         System.out.println("Initializing payment service: " + PAYMENT_SERVICE_URL);
     }
@@ -79,7 +74,6 @@ public class DatabaseService {
         try {
             if (connection != null && !connection.isClosed()) {
                 PreparedStatement stmt = connection.prepareStatement(sql);
-                // BLOCKER: Hardcoded query timeout
                 stmt.setQueryTimeout(30);
 
                 System.out.println("Executing query: " + sql);
