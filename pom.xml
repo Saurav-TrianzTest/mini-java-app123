@@ -10,11 +10,12 @@
            in maven-compiler-plugin for strict cross-compilation enforcement.
         2. [HIGH]     Spring Boot parent upgraded from 2.7.15 → 3.4.0 for full Java 25 /
                       Jakarta EE namespace support (javax.* → jakarta.*).
-        3. [HIGH]     MySQL connector groupId changed from deprecated "mysql:mysql-connector-java"
-                      to "com.mysql:mysql-connector-j:9.1.0".
+        3. [HIGH]     MySQL connector replaced with PostgreSQL JDBC driver (org.postgresql:postgresql:42.7.3)
+                      for PostgreSQL 16 compatibility. Spring Data JPA and HikariCP connection pool added.
         4. [MEDIUM]   maven-surefire-plugin 3.2.5 explicitly declared to replace the
                       outdated default version bundled with older Maven releases.
         5. [CRITICAL] maven-compiler-plugin upgraded from 3.7.0 → 3.13.0 for Java 25 support.
+        6. [CRITICAL] DB Migration: Switched from MySQL to PostgreSQL 16 as target database.
     -->
 
     <!-- Issue fix #2: Spring Boot 3.4.0 as parent for Jakarta EE + Java 25 compatibility -->
@@ -39,12 +40,18 @@
     </properties>
 
     <dependencies>
-        <!-- Issue fix #3: Updated mysql-connector-java (deprecated groupId "mysql") to
-             com.mysql:mysql-connector-j:9.1.0 for Java 25 / Jakarta EE compatibility -->
+        <!-- Issue fix #3 (DB Migration): Replaced MySQL connector with PostgreSQL JDBC driver
+             org.postgresql:postgresql:42.7.3 for PostgreSQL 16 / Java 25 compatibility -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>9.1.0</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+        </dependency>
+
+        <!-- Spring Boot Data JPA starter for ORM and repository support with PostgreSQL -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <!-- Spring Boot Web starter (version managed by parent 3.4.0) -->
