@@ -3,7 +3,9 @@ package com.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -44,7 +46,11 @@ public class MiniApp {
             File configFile = new File(CONFIG_FILE_PATH);
             if (configFile.exists()) {
                 Properties props = new Properties();
-                props.load(new FileInputStream(configFile));
+                // Use explicit UTF-8 charset via InputStreamReader to avoid platform-default encoding issues
+                try (InputStreamReader reader = new InputStreamReader(
+                        new FileInputStream(configFile), StandardCharsets.UTF_8)) {
+                    props.load(reader);
+                }
                 System.out.println("Configuration loaded from: " + CONFIG_FILE_PATH);
             } else {
                 System.out.println("Warning: Configuration file not found at: " + CONFIG_FILE_PATH);
