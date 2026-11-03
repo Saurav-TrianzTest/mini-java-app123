@@ -12,11 +12,11 @@ import java.util.Properties;
 public class MiniApp {
     
     // BLOCKER: Hardcoded port number
-    private static final int SERVER_PORT = 8080;
+    private static final int SERVER_PORT = Integer.parseInt(System.getenv("SERVER_PORT") != null ? System.getenv("SERVER_PORT") : "8080");
     
     // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+    private static final String CONFIG_FILE_PATH = System.getenv("CONFIG_FILE_PATH") != null ? System.getenv("CONFIG_FILE_PATH") : "/opt/app/config/app.properties";
+    private static final String LOG_FILE_PATH = System.getenv("LOG_FILE_PATH") != null ? System.getenv("LOG_FILE_PATH") : "/var/log/mini-app.log";
     
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
@@ -56,8 +56,13 @@ public class MiniApp {
     
     private void initializeLogging() {
         try {
-            // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
+            // Resolved cz-java-0058: Use environment variable for log directory path,
+            // backed by a GKE PersistentVolume (Google Filestore NFS) mount.
+            // Mount the PVC at the path specified by LOG_DIR_PATH (e.g., /mnt/filestore/logs).
+            String logDirPath = System.getenv("LOG_DIR_PATH") != null
+                    ? System.getenv("LOG_DIR_PATH")
+                    : "/mnt/filestore/logs";
+            File logDir = new File(logDirPath);
             if (!logDir.exists()) {
                 logDir.mkdirs();
             }
