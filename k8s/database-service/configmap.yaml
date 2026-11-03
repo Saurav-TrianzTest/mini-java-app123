@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-service-config
+  namespace: default
+  labels:
+    app: database-service
+    component: microservice
+data:
+  # Non-sensitive database connection parameters
+  DB_HOST: "database-host-service"
+  DB_PORT: "3306"
+  DB_NAME: "mini_app_db"
+  # cz-java-0062 fix: Cache host uses Kubernetes cluster-internal DNS service
+  # name instead of the previously hardcoded IP address "127.0.0.1".
+  # Kubernetes resolves "redis-service" to the correct ClusterIP at runtime,
+  # providing deployment flexibility across namespaces and clusters.
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  # External service URLs (resolved via Kubernetes DNS)
+  EXTERNAL_API_URL: "http://external-api-service/v1"
+  PAYMENT_SERVICE_URL: "http://payment-service/process"
