@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mini-java-container
+  namespace: mini-java-container
+  labels:
+    app: mini-java-container
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mini-java-container
+  template:
+    metadata:
+      labels:
+        app: mini-java-container
+    spec:
+      containers:
+        - name: mini-java-container
+          image: "{{IMAGE_URI}}"
+          ports:
+            - containerPort: 8080
+              name: app
+            - containerPort: 8081
+              name: health
+          env:
+            - name: APP_PORT
+              value: "8080"
+            - name: HEALTH_PORT
+              value: "8081"
+            - name: CONFIG_PATH
+              value: "/app/config/app.properties"
+            - name: LOG_PATH
+              value: "/app/logs/mini-app.log"
+            - name: LOG_DIR
+              value: "/app/logs"
+            - name: DB_HOST
+              value: "{{DB_HOST}}"
+            - name: DB_PORT
+              value: "{{DB_PORT}}"
+            - name: DB_NAME
+              value: "{{DB_NAME}}"
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mini-java-container-secrets
+                  key: db-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mini-java-container-secrets
+                  key: db-password
+            - name: REDIS_HOST
+              value: "{{REDIS_HOST}}"
+            - name: REDIS_PORT
+              value: "{{REDIS_PORT}}"
+            - name: EXTERNAL_API_URL
+              value: "{{EXTERNAL_API_URL}}"
+            - name: PAYMENT_SERVICE_URL
+              value: "{{PAYMENT_SERVICE_URL}}"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+            - name: logs-volume
+              mountPath: /app/logs
+            - name: uploads-volume
+              mountPath: /app/uploads
+            - name: temp-volume
+              mountPath: /tmp/mini-app
+      volumes:
+        - name: config-volume
+          configMap:
+            name: mini-java-container-config
+        - name: logs-volume
+          emptyDir: {}
+        - name: uploads-volume
+          emptyDir: {}
+        - name: temp-volume
+          emptyDir: {}

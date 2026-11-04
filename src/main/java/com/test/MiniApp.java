@@ -11,19 +11,31 @@ import java.util.Properties;
  */
 public class MiniApp {
     
-    // BLOCKER: Hardcoded port number
-    private static final int SERVER_PORT = 8080;
+    // Port from environment variable with fallback default
+    private static final int SERVER_PORT = Integer.parseInt(System.getenv().getOrDefault("APP_PORT", "8080"));
     
-    // BLOCKER: Hardcoded absolute file path
-    private static final String CONFIG_FILE_PATH = "/opt/app/config/app.properties";
-    private static final String LOG_FILE_PATH = "/var/log/mini-app.log";
+    // Config file path from environment variable with fallback default
+    private static final String CONFIG_FILE_PATH = System.getenv().getOrDefault("CONFIG_PATH", "/app/config/app.properties");
+    private static final String LOG_FILE_PATH = System.getenv().getOrDefault("LOG_PATH", "/app/logs/mini-app.log");
     
     public static void main(String[] args) {
         System.out.println("Starting Mini Java Application...");
-        
+
+        // Start health check endpoint first so it is available from start-up
+        HealthCheckServer.start();
+
         MiniApp app = new MiniApp();
         app.initializeApplication();
         app.startServer();
+
+        // Keep the process running so the health check endpoint stays available
+        // The application's own work ends after start-up; the health check server
+        // keeps the JVM alive for the container lifecycle.
+        try {
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
     
     private void initializeApplication() {
@@ -57,7 +69,7 @@ public class MiniApp {
     private void initializeLogging() {
         try {
             // BLOCKER: Hardcoded absolute path for log file
-            File logDir = new File("/var/log");
+            File logDir = new File(System.getenv().getOrDefault("LOG_DIR", "/app/logs"));
             if (!logDir.exists()) {
                 logDir.mkdirs();
             }

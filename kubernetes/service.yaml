@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mini-java-container-service
+  namespace: mini-java-container
+  labels:
+    app: mini-java-container
+spec:
+  type: ClusterIP
+  selector:
+    app: mini-java-container
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
