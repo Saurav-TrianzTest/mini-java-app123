@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Database service with hardcoded connection details - intentional containerization blockers
+ * Database service with hardcoded connection details - intentional containerization blockers (Java 25)
  */
 public class DatabaseService {
     
